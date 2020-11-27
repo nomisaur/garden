@@ -1,5 +1,12 @@
 import React from "react";
 
-const App = () => <div>hiooo</div>;
+import { Plant } from "./components/plant/plant";
 
-export default App;
+const App = () => (
+  <div>
+    <div>hi</div>
+    <Plant />
+  </div>
+);
+
+export { App };
