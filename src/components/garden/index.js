@@ -1,24 +1,18 @@
 import React from "react";
 import { PlanterBox } from "../planterBox";
 
+import { addToPayload } from "../../utils";
+
 const Garden = ({ state, setState }) => {
   return (
     <div>
-      {state.planterBoxes.map((planterBoxState, index) => {
+      {state.planterBoxes.map((planterBoxState, planterBoxIndex) => {
         return (
           planterBoxState.unlocked && (
             <PlanterBox
-              key={index}
+              key={planterBoxIndex}
               planterBoxState={planterBoxState}
-              setPlanterBoxState={(payload) => {
-                setState({
-                  action: "setPlantState",
-                  payload: {
-                    planterBoxIndex: index,
-                    ...payload,
-                  },
-                });
-              }}
+              setState={addToPayload(setState, { planterBoxIndex })}
             />
           )
         );

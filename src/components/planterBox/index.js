@@ -1,19 +1,19 @@
 import React from "react";
 import { Plant } from "../plant";
 
+import { addToPayload } from "../../utils";
+
 import "./styles.scss";
 
-const PlanterBox = ({ planterBoxState, setPlanterBoxState, harvest }) => {
+const PlanterBox = ({ planterBoxState, setState }) => {
   return (
     <div className={"planterBox"}>
-      {planterBoxState.plants.map((plantState, index) => {
+      {planterBoxState.plants.map((plantState, plantIndex) => {
         return (
           <Plant
-            key={index}
+            key={plantIndex}
             plantState={plantState}
-            setPlantState={(payload) => {
-              setPlanterBoxState({ plantIndex: index, ...payload });
-            }}
+            setState={addToPayload(setState, { plantIndex })}
           />
         );
       })}

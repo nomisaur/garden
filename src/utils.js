@@ -21,3 +21,17 @@ const time = ({
     daysToMilliseconds(days)
   );
 };
+
+const addToPayload = (setState, addition) => {
+  return ({ action, payload }) => {
+    setState({
+      action,
+      payload: {
+        ...payload,
+        ...addition,
+      },
+    });
+  };
+};
+
+export { addToPayload };
