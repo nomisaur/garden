@@ -1,23 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useTimer } from "../../hooks";
 
 import "./styles.scss";
-
-import { saveData } from "../../saveData";
 
 const phases = ["___", "_._", "_:_", "_+_"];
 
 const Plant = () => {
-  const { phase } = saveData.plant;
+  const [phase, setPhase] = useState(0);
 
-  const [timeoutSet, setTimeoutSet] = useState(false);
+  const [timerBeep, resetTimer] = useTimer(Date.now(), 3000);
 
-  if (!timeoutSet && phase < phases.length - 1) {
-    setTimeout(() => {
-      saveData.plant.phase = phase + 1;
-      setTimeoutSet(false);
-    }, 3000);
-    setTimeoutSet(true);
+  const canGrow = phase < phases.length - 1;
+
+  if (canGrow && timerBeep) {
+    setPhase(phase + 1);
+    resetTimer();
   }
+
   return (
     <div className="plant">
       <p>{phases[phase]}</p>
