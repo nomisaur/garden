@@ -1,39 +1,25 @@
 import React, { useReducer } from "react";
 import { useAutoSave } from "./hooks";
 
-import { Plant } from "./components/plant/plant";
+import { Garden } from "./components/garden";
 
 const App = ({ initialState }) => {
-  const [state, setState] = useReducer(
-    (state, { action, index, value, time }) => {
-      if (action === "setPhase") {
-        const plants = state.plants;
-        plants[index] = {
-          phase: value,
-          startTime: time,
-        };
-        return { ...state, plants };
-      }
-    },
-    initialState
-  );
+  const [state, setState] = useReducer((state, { action, payload }) => {
+    const newState = { ...state };
+    if (action === "setPlantState") {
+      const { planterBoxIndex, plantIndex, plantState } = payload;
+
+      newState.planterBoxes[planterBoxIndex].plants[plantIndex] = plantState;
+
+      return newState;
+    }
+  }, initialState);
 
   useAutoSave(state, 5000);
 
   return (
     <div>
-      {state.plants.map(({ phase, startTime }, index) => {
-        return (
-          <Plant
-            key={index}
-            phase={phase}
-            startTime={startTime}
-            setPhase={(value, time) => {
-              setState({ action: "setPhase", index, value, time });
-            }}
-          />
-        );
-      })}
+      <Garden state={state} setState={setState} />
     </div>
   );
 };

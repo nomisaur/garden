@@ -16,6 +16,9 @@ localForage
   )
   .catch(console.log);
 
-window.clearSave = () => window.indexedDB.deleteDatabase("localforage");
+window.clearSave = () => {
+  window.indexedDB.deleteDatabase("localforage");
+  location.reload();
+};
 
 module.hot.accept();

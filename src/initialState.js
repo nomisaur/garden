@@ -1,12 +1,93 @@
+const now = Date.now();
+
 export const initialState = {
-  plants: [
+  planterBoxes: [
     {
-      phase: 0,
-      startTime: Date.now(),
+      unlocked: true,
+      plants: [
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+      ],
     },
     {
-      phase: 2,
-      startTime: Date.now(),
+      unlocked: false,
+      plants: [
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+      ],
+    },
+    {
+      unlocked: false,
+      plants: [
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+        {
+          phase: 0,
+          startTime: now,
+        },
+      ],
     },
   ],
 };
