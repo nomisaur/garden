@@ -1,6 +1,7 @@
 const now = Date.now();
 
 export const initialState = {
+  plantMatter: 0,
   planterBoxes: [
     {
       unlocked: true,

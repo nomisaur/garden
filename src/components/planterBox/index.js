@@ -1,9 +1,11 @@
 import React from "react";
 import { Plant } from "../plant";
 
-const PlanterBox = ({ planterBoxState, setPlanterBoxState }) => {
+import "./styles.scss";
+
+const PlanterBox = ({ planterBoxState, setPlanterBoxState, harvest }) => {
   return (
-    <div>
+    <div className={"planterBox"}>
       {planterBoxState.plants.map((plantState, index) => {
         return (
           <Plant
@@ -11,6 +13,9 @@ const PlanterBox = ({ planterBoxState, setPlanterBoxState }) => {
             plantState={plantState}
             setPlantState={(plantState) => {
               setPlanterBoxState({ plantIndex: index, plantState });
+            }}
+            harvest={(plantState) => {
+              harvest({ plantIndex: index, plantState });
             }}
           />
         );

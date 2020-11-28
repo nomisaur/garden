@@ -16,6 +16,12 @@ const Garden = ({ state, setState }) => {
                   payload: { planterBoxIndex: index, plantIndex, plantState },
                 });
               }}
+              harvest={({ plantIndex, plantState }) => {
+                setState({
+                  action: "harvest",
+                  payload: { planterBoxIndex: index, plantIndex, plantState },
+                });
+              }}
             />
           )
         );
