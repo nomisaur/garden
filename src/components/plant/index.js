@@ -1,37 +1,33 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import { useTimer } from "../../hooks";
+import { plants } from "../../plants";
 
 import "./styles.scss";
 
-const phases = ["___", "_._", "_:_", "_|_", "_+_"];
-const maxGrowth = phases.length - 1;
-
 const Plant = ({ plantState, setState }) => {
-  const { phase, startTime } = plantState;
-  const [timerBeeps, resetTimer] = useTimer(startTime, 5000);
+  const { type, phase, startTime } = plantState;
+  const plant = plants[type];
+  const maxGrowth = plant.phases.length - 1;
 
-  const setPlantState = (phase, harvest = false) => {
+  const [timerBeeps, resetTimer] = useTimer(
+    startTime,
+    plant.phases[phase].duration
+  );
+
+  const setPlantState = (phase) => {
     const startTime = Date.now();
-    setState({
-      action: "setPlantState",
-      payload: {
-        plantState: {
-          startTime,
-          phase,
-        },
-        harvest,
-      },
+    setState("grow", {
+      startTime,
+      phase,
     });
-    resetTimer({ startTime });
+    resetTimer({ startTime, interval: plant.phases[phase].duration });
   };
-
-  const planted = phase > 0;
 
   const fullyGrown = phase === maxGrowth;
 
   useEffect(() => {
-    if (planted && !fullyGrown && timerBeeps) {
+    if (!fullyGrown && timerBeeps) {
       setPlantState(Math.min(phase + timerBeeps, maxGrowth));
     }
   });
@@ -40,11 +36,10 @@ const Plant = ({ plantState, setState }) => {
     <div
       className="plant"
       onClick={() => {
-        !planted && setPlantState(1);
-        fullyGrown && setPlantState(0, true);
+        fullyGrown && setState("harvest");
       }}
     >
-      <p>{phases[phase]}</p>
+      {plant.phases[phase].image}
     </div>
   );
 };

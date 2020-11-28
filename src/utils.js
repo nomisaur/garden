@@ -1,3 +1,7 @@
+import _clone from "rfdc";
+
+const clone = _clone();
+
 const getQueryParams = () => {
   const paramsIter = new URL(window.location.href).searchParams.entries();
   const params = {};
@@ -34,15 +38,12 @@ const time = ({
 };
 
 const addToPayload = (setState, addition) => {
-  return ({ action, payload }) => {
-    setState({
-      action,
-      payload: {
-        ...payload,
-        ...addition,
-      },
+  return (action, payload = {}) => {
+    setState(action, {
+      ...payload,
+      ...addition,
     });
   };
 };
 
-export { addToPayload, time, getQueryParams };
+export { addToPayload, time, getQueryParams, clone };

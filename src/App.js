@@ -1,17 +1,16 @@
 import React, { useReducer } from "react";
 import { useAutoSave } from "./hooks";
-import { setPlantState } from "./stateHandlers";
+import { handlers } from "./stateHandlers";
 import { config } from "./config";
+import { clone } from "./utils";
 
 import { Garden } from "./components/garden";
 
 const App = ({ initialState }) => {
-  const [state, setState] = useReducer((state, { action, payload }) => {
-    let newState = { ...state };
-    if (action === "setPlantState") {
-      return setPlantState(newState, payload);
-    }
-  }, initialState);
+  const [state, setState] = useReducer(
+    (state, [action, payload]) => handlers[action](clone(state), payload),
+    initialState
+  );
 
   useAutoSave(state, config.autosave);
 
@@ -22,7 +21,10 @@ const App = ({ initialState }) => {
   return (
     <div>
       <div>plant matter: {state.plantMatter}</div>
-      <Garden state={state} setState={setState} />
+      <Garden
+        state={state}
+        setState={(action, payload) => setState([action, payload])}
+      />
     </div>
   );
 };

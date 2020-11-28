@@ -1,5 +1,5 @@
 import React from "react";
-import { Plant } from "../plant";
+import { Patch } from "../patch";
 
 import { addToPayload } from "../../utils";
 
@@ -8,12 +8,12 @@ import "./styles.scss";
 const PlanterBox = ({ planterBoxState, setState }) => {
   return (
     <div className={"planterBox"}>
-      {planterBoxState.plants.map((plantState, plantIndex) => {
+      {planterBoxState.patches.map((patchState, patchIndex) => {
         return (
-          <Plant
-            key={plantIndex}
-            plantState={plantState}
-            setState={addToPayload(setState, { plantIndex })}
+          <Patch
+            key={patchIndex}
+            patchState={patchState}
+            setState={addToPayload(setState, { patchIndex })}
           />
         );
       })}

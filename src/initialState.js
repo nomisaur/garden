@@ -5,88 +5,160 @@ export const initialState = {
   planterBoxes: [
     {
       unlocked: true,
-      plants: [
+      patches: [
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
-        },
-      ],
-    },
-    {
-      unlocked: false,
-      plants: [
-        {
-          phase: 0,
-          startTime: now,
-        },
-        {
-          phase: 0,
-          startTime: now,
-        },
-        {
-          phase: 0,
-          startTime: now,
-        },
-        {
-          phase: 0,
-          startTime: now,
-        },
-        {
-          phase: 0,
-          startTime: now,
-        },
-        {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
       ],
     },
     {
       unlocked: false,
-      plants: [
+      patches: [
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
         {
-          phase: 0,
-          startTime: now,
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
+        },
+      ],
+    },
+    {
+      unlocked: false,
+      patches: [
+        {
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            type: null,
+            phase: null,
+            startTime: null,
+          },
         },
       ],
     },
