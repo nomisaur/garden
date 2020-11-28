@@ -13,6 +13,7 @@ localForage
       <App initialState={savedState ? savedState : initialState} />,
       document.getElementById("app")
     )
-  );
+  )
+  .catch(console.log);
 
 module.hot.accept();

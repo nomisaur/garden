@@ -10,26 +10,31 @@ const useInterval = (callback, interval) => {
   }, []);
 };
 
-const useTimer = (initialStartTime, initialInterval, tick = 50) => {
+const useTimer = (initialStartTime, initialInterval, tick = 20) => {
   const [startTime, setStartTime] = useState(initialStartTime);
   const [interval, setInterval] = useState(initialInterval);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   useInterval(() => setCurrentTime(Date.now()), tick);
 
-  const timerBeep = currentTime - startTime > interval;
+  const timerBeeps = Math.floor((currentTime - startTime) / interval);
 
   const resetTimer = ({ startTime, interval } = {}) => {
+    const now = Date.now();
     interval && setInterval(interval);
-    setStartTime(startTime || Date.now());
+    setStartTime(startTime || now);
+    setCurrentTime(now);
   };
 
-  return [timerBeep, resetTimer];
+  return [timerBeeps, resetTimer];
 };
 
 const useAutoSave = (state, interval) => {
   useInterval(() => {
-    localForage.setItem("savedState", state);
+    localForage
+      .setItem("savedState", state)
+      .then(() => console.log("auto save"))
+      .catch(console.log);
   }, interval);
 };
 

@@ -7,13 +7,13 @@ import "./styles.scss";
 const phases = ["___", "_._", "_:_", "_+_"];
 
 const Plant = ({ phase, setPhase, startTime }) => {
-  const [timerBeep, resetTimer] = useTimer(startTime, 1000);
+  const [timerBeeps, resetTimer] = useTimer(startTime, 1000);
 
   const canGrow = phase < phases.length - 1;
 
-  if (timerBeep) {
+  if (timerBeeps) {
     const now = Date.now();
-    setPhase(phase + 1, now);
+    setPhase(phase + timerBeeps, now);
     resetTimer({ startTime: now });
   }
 

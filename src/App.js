@@ -18,7 +18,7 @@ const App = ({ initialState }) => {
     initialState
   );
 
-  useAutoSave(state, 10000);
+  useAutoSave(state, 5000);
 
   return (
     <div>
