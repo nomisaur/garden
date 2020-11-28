@@ -1,8 +1,9 @@
 import { plants } from "./plants";
 
 const grow = (state, { planterBoxIndex, patchIndex, startTime, phase }) => {
-  state.planterBoxes[planterBoxIndex].patches[patchIndex].plant = {
-    ...state.planterBoxes[planterBoxIndex].patches[patchIndex].plant,
+  const patch = state.planterBoxes[planterBoxIndex].patches[patchIndex];
+  patch.plant = {
+    ...patch.plant,
     phase,
     startTime,
   };
@@ -23,15 +24,12 @@ const plant = (state, { planterBoxIndex, patchIndex, type }) => {
 };
 
 const harvest = (state, { planterBoxIndex, patchIndex }) => {
-  console.log({ patchIndex, planterBoxIndex });
-  const type =
-    state.planterBoxes[planterBoxIndex].patches[patchIndex].plant.type;
-  console.log(type);
+  const patch = state.planterBoxes[planterBoxIndex].patches[patchIndex];
 
-  state.plantMatter = state.plantMatter + plants[type].value;
+  state.plantMatter = state.plantMatter + plants[patch.plant.type].value;
 
-  state.planterBoxes[planterBoxIndex].patches[patchIndex] = {
-    empty: true,
+  patch.empty = true;
+  patch.plant = {
     plant: {
       type: null,
       phase: null,
