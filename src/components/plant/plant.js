@@ -7,19 +7,19 @@ import "./styles.scss";
 const phases = ["___", "_._", "_:_", "_+_"];
 
 const Plant = ({ phase, setPhase, startTime }) => {
-  const [timerBeeps, resetTimer] = useTimer(startTime, 1000);
+  const [timerBeeps, resetTimer] = useTimer(startTime, 10000);
 
   const canGrow = phase < phases.length - 1;
 
   if (timerBeeps) {
     const now = Date.now();
-    setPhase(phase + timerBeeps, now);
+    setPhase(Math.min(phase + timerBeeps, phases.length - 1), now);
     resetTimer({ startTime: now });
   }
 
   return (
     <div className="plant">
-      <p>{phase}</p>
+      <p>{phases[phase]}</p>
     </div>
   );
 };
