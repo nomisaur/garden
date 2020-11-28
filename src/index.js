@@ -8,12 +8,12 @@ import "./styles.scss";
 
 localForage
   .getItem("savedState")
-  .then((savedState) =>
+  .then((savedState) => {
     ReactDOM.render(
       <App initialState={savedState ? savedState : initialState} />,
       document.getElementById("app")
-    )
-  )
+    );
+  })
   .catch(console.log);
 
 window.clearSave = () => {

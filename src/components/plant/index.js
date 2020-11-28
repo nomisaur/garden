@@ -12,21 +12,29 @@ const Plant = ({ plantState, setState }) => {
   const [timerBeeps, resetTimer] = useTimer(startTime, 5000);
 
   const setPlantState = (phase, harvest = false) => {
-    const now = Date.now();
+    const startTime = Date.now();
     setState({
       action: "setPlantState",
-      payload: { plantState: { startTime: now, phase }, harvest },
+      payload: {
+        plantState: {
+          startTime,
+          phase,
+        },
+        harvest,
+      },
     });
-    resetTimer({ startTime: now });
+    resetTimer({ startTime });
   };
 
   const planted = phase > 0;
 
   const fullyGrown = phase === maxGrowth;
 
-  if (planted && !fullyGrown && timerBeeps) {
-    setPlantState(Math.min(phase + timerBeeps, maxGrowth));
-  }
+  useEffect(() => {
+    if (planted && !fullyGrown && timerBeeps) {
+      setPlantState(Math.min(phase + timerBeeps, maxGrowth));
+    }
+  });
 
   return (
     <div

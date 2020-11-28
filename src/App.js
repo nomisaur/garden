@@ -12,9 +12,9 @@ const App = ({ initialState }) => {
     }
   }, initialState);
 
-  window.seeState = () => console.log(state);
-
   useAutoSave(state, 500);
+
+  window.seeState = () => console.log(state);
 
   return (
     <div>
