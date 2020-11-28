@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import localForage from "localforage";
 
 const useInterval = (callback, interval) => {
   const timer = useRef();
@@ -9,20 +10,27 @@ const useInterval = (callback, interval) => {
   }, []);
 };
 
-const useTimer = (initialStartTime, initialInterval, tick = 1000) => {
-  const [interval, _setInterval] = useState(initialInterval);
+const useTimer = (initialStartTime, initialInterval, tick = 50) => {
   const [startTime, setStartTime] = useState(initialStartTime);
+  const [interval, setInterval] = useState(initialInterval);
   const [currentTime, setCurrentTime] = useState(Date.now());
 
   useInterval(() => setCurrentTime(Date.now()), tick);
 
   const timerBeep = currentTime - startTime > interval;
-  const resetTimer = (newInterval) => {
-    newInterval && _setInterval(newInterval);
-    setStartTime(Date.now());
+
+  const resetTimer = ({ startTime, interval } = {}) => {
+    interval && setInterval(interval);
+    setStartTime(startTime || Date.now());
   };
 
   return [timerBeep, resetTimer];
 };
 
-export { useInterval, useTimer };
+const useAutoSave = (state, interval) => {
+  useInterval(() => {
+    localForage.setItem("savedState", state);
+  }, interval);
+};
+
+export { useInterval, useTimer, useAutoSave };
