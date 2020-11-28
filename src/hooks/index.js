@@ -30,7 +30,6 @@ const useTimer = (initialStartTime, initialInterval, tick = 20) => {
 };
 
 const useAutoSave = (state, interval) => {
-  console.log("auto save, ", state);
   useInterval(() => {
     localForage
       .setItem("savedState", state)

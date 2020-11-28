@@ -10,18 +10,12 @@ const Garden = ({ state, setState }) => {
             <PlanterBox
               key={index}
               planterBoxState={planterBoxState}
-              setPlanterBoxState={({
-                plantIndex,
-                plantState,
-                harvest = false,
-              }) => {
+              setPlanterBoxState={(payload) => {
                 setState({
                   action: "setPlantState",
                   payload: {
                     planterBoxIndex: index,
-                    plantIndex,
-                    plantState,
-                    harvest,
+                    ...payload,
                   },
                 });
               }}

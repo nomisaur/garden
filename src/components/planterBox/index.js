@@ -11,8 +11,8 @@ const PlanterBox = ({ planterBoxState, setPlanterBoxState, harvest }) => {
           <Plant
             key={index}
             plantState={plantState}
-            setPlantState={(plantState, harvest) => {
-              setPlanterBoxState({ plantIndex: index, plantState, harvest });
+            setPlantState={(payload) => {
+              setPlanterBoxState({ plantIndex: index, ...payload });
             }}
           />
         );

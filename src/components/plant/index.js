@@ -8,14 +8,14 @@ const phases = ["___", "_._", "_:_", "_|_", "_+_"];
 const maxGrowth = phases.length - 1;
 
 const Plant = ({ plantState, setPlantState: _setPlantState }) => {
-  const setPlantState = (phase, harvest = false) => {
-    const now = Date.now();
-    _setPlantState({ startTime: now, phase }, harvest);
-    resetTimer({ startTime: now });
-  };
-
   const { phase, startTime } = plantState;
   const [timerBeeps, resetTimer] = useTimer(startTime, 5000);
+
+  const setPlantState = (phase, harvest = false) => {
+    const now = Date.now();
+    _setPlantState({ plantState: { startTime: now, phase }, harvest });
+    resetTimer({ startTime: now });
+  };
 
   const planted = phase > 0;
 
