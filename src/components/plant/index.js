@@ -4,7 +4,7 @@ import { useTimer } from "../../hooks";
 
 import "./styles.scss";
 
-const phases = ["___", "_._", "_:_", "_+_"];
+const phases = ["___", "_._", "_:_", "_|_", "_+_"];
 
 const Plant = ({ plantState, setPlantState: _setPlantState }) => {
   const setPlantState = (phase) => {
@@ -28,7 +28,7 @@ const Plant = ({ plantState, setPlantState: _setPlantState }) => {
     <div
       className="plant"
       onClick={() => {
-        setPlantState(1);
+        !planted && setPlantState(1);
       }}
     >
       <p>{phases[phase]}</p>
