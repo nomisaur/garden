@@ -1,6 +1,7 @@
 import React, { useReducer } from "react";
 import { useAutoSave } from "./hooks";
 import { setPlantState } from "./stateHandlers";
+import { config } from "./config";
 
 import { Garden } from "./components/garden";
 
@@ -12,9 +13,11 @@ const App = ({ initialState }) => {
     }
   }, initialState);
 
-  useAutoSave(state, 500);
+  useAutoSave(state, config.autosave);
 
-  window.seeState = () => console.log(state);
+  if (config.isDev) {
+    window.seeState = () => console.log(state);
+  }
 
   return (
     <div>

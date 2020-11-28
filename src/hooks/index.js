@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import localForage from "localforage";
+import { log } from "../log";
 
 const useInterval = (callback, interval) => {
   const timer = useRef();
@@ -10,7 +11,7 @@ const useInterval = (callback, interval) => {
   });
 };
 
-const useTimer = (initialStartTime, initialInterval, tick = 20) => {
+const useTimer = (initialStartTime, initialInterval, tick = 200) => {
   const [startTime, setStartTime] = useState(initialStartTime);
   const [interval, setInterval] = useState(initialInterval);
   const [currentTime, setCurrentTime] = useState(Date.now());
@@ -33,8 +34,8 @@ const useAutoSave = (state, interval) => {
   useInterval(() => {
     localForage
       .setItem("savedState", state)
-      .then(() => console.log("auto save"))
-      .catch(console.log);
+      .then(() => log("auto save"))
+      .catch(log);
   }, interval);
 };
 

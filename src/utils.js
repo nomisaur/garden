@@ -1,3 +1,14 @@
+const getQueryParams = () => {
+  const paramsIter = new URL(window.location.href).searchParams.entries();
+  const params = {};
+
+  for (const [key, value] of paramsIter) {
+    params[key] = value;
+  }
+
+  return params;
+};
+
 const secondsToMilliseconds = (seconds) => seconds * 1000;
 
 const minutesToMilliseconds = (minutes) => secondsToMilliseconds(minutes * 60);
@@ -34,4 +45,4 @@ const addToPayload = (setState, addition) => {
   };
 };
 
-export { addToPayload };
+export { addToPayload, time, getQueryParams };
