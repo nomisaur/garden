@@ -8,7 +8,7 @@ const useInterval = (callback, interval) => {
   useEffect(() => {
     timer.current = setInterval(callback, interval);
     return () => clearInterval(timer.current);
-  });
+  }, []);
 };
 
 const useTimer = (initialStartTime, initialInterval, tick = 200) => {
@@ -31,9 +31,11 @@ const useTimer = (initialStartTime, initialInterval, tick = 200) => {
 };
 
 const useAutoSave = (state, interval) => {
+  const stateRef = useRef(state);
+  stateRef.current = state;
   useInterval(() => {
     localForage
-      .setItem("savedState", state)
+      .setItem("savedState", stateRef.current)
       .then(() => log("auto save"))
       .catch(log);
   }, interval);

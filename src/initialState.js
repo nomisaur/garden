@@ -57,7 +57,7 @@ export const initialState = {
       ],
     },
     {
-      unlocked: false,
+      unlocked: true,
       patches: [
         {
           empty: true,
@@ -110,7 +110,7 @@ export const initialState = {
       ],
     },
     {
-      unlocked: false,
+      unlocked: true,
       patches: [
         {
           empty: true,

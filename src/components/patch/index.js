@@ -1,7 +1,6 @@
 import React from "react";
 import { Plant } from "../plant";
 
-import { addToPayload } from "../../utils";
 import "./styles.scss";
 
 const soil = `
