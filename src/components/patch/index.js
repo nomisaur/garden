@@ -15,6 +15,8 @@ const PatchDiv = styled.div`
   font-size: xx-large;
   font-family: monospace;
   white-space: pre;
+  width: fit-content;
+  block-size: fit-content;
 `;
 
 const Patch = ({ patchState, setState }) => {

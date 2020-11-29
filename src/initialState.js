@@ -1,5 +1,3 @@
-const now = Date.now();
-
 export const initialState = {
   plantMatter: 0,
   planterBoxes: [
@@ -9,102 +7,67 @@ export const initialState = {
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
-          },
-        },
-      ],
-    },
-    {
-      unlocked: true,
-      patches: [
-        {
-          empty: true,
-          plant: {
-            type: null,
-            phase: null,
-            startTime: null,
-          },
-        },
-        {
-          empty: true,
-          plant: {
-            type: null,
-            phase: null,
-            startTime: null,
-          },
-        },
-        {
-          empty: true,
-          plant: {
-            type: null,
-            phase: null,
-            startTime: null,
-          },
-        },
-        {
-          empty: true,
-          plant: {
-            type: null,
-            phase: null,
-            startTime: null,
-          },
-        },
-        {
-          empty: true,
-          plant: {
-            type: null,
-            phase: null,
-            startTime: null,
-          },
-        },
-        {
-          empty: true,
-          plant: {
-            type: null,
-            phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
       ],
@@ -115,49 +78,138 @@ export const initialState = {
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
         {
           empty: true,
           plant: {
+            timeStamp: null,
             type: null,
             phase: null,
-            startTime: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
+          },
+        },
+      ],
+    },
+    {
+      unlocked: true,
+      patches: [
+        {
+          empty: true,
+          plant: {
+            timeStamp: null,
+            type: null,
+            phase: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            timeStamp: null,
+            type: null,
+            phase: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            timeStamp: null,
+            type: null,
+            phase: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            timeStamp: null,
+            type: null,
+            phase: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            timeStamp: null,
+            type: null,
+            phase: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
+          },
+        },
+        {
+          empty: true,
+          plant: {
+            timeStamp: null,
+            type: null,
+            phase: null,
+            phaseTimeLeft: null,
+            waterLevel: null,
+            waterTimeLeft: null,
           },
         },
       ],

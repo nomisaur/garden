@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-import { useTimer } from '../../hooks';
+import { useTimer, useInterval, useCurrentTime } from '../../hooks';
 import { plants } from '../../plants';
 
 import styled from 'styled-components';
@@ -8,42 +8,54 @@ const PlantDiv = styled.div`
   color: green;
 `;
 
+const Status = styled.div`
+  font-size: small;
+`;
+
 const Plant = ({ plantState, setState }) => {
-  const { type, phase, startTime } = plantState;
-  const plant = plants[type];
-  const maxGrowth = plant.phases.length - 1;
+  const {
+    timeStamp,
+    type,
+    phase,
+    phaseTimeLeft,
+    waterLevel,
+    waterTimeLeft,
+  } = plantState;
 
-  const [timerBeeps, resetTimer] = useTimer(
-    startTime,
-    plant.phases[phase].duration,
-  );
+  const { phases } = plants[type];
+  const { image, waterLevels } = phases[phase];
+  const { status } = waterLevels[waterLevel];
 
-  const setPlantState = (phase) => {
-    const startTime = Date.now();
-    setState('grow', {
-      startTime,
-      phase,
-    });
-    resetTimer({ startTime, interval: plant.phases[phase].duration });
-  };
+  const fullyGrown = phase === phases.length - 1;
+  const fullyDry = waterLevel === 0;
 
-  const fullyGrown = phase === maxGrowth;
+  const currentTime = useCurrentTime();
+
+  const timePassed = currentTime - timeStamp;
+
+  const phaseBeep =
+    !fullyGrown && status === 'healthy' && phaseTimeLeft < timePassed;
+  const waterLevelBeep = !fullyDry && waterTimeLeft < timePassed;
 
   useEffect(() => {
-    if (!fullyGrown && timerBeeps) {
-      setPlantState(Math.min(phase + timerBeeps, maxGrowth));
+    if (phaseBeep || waterLevelBeep) {
+      setState('grow', { currentTime });
     }
-  });
+  }, [phaseBeep, waterLevelBeep]);
 
   return (
-    <PlantDiv
-      className='plant'
-      onClick={() => {
-        fullyGrown && setState('harvest');
-      }}
-    >
-      {plant.phases[phase].image}
-    </PlantDiv>
+    <>
+      <PlantDiv onClick={() => fullyGrown && setState('harvest')}>
+        {image}
+      </PlantDiv>
+      <Status>
+        <div>{status}</div>
+        <div>{waterLevel}</div>
+        <button onClick={() => setState('water', { currentTime })}>
+          water
+        </button>
+      </Status>
+    </>
   );
 };
 

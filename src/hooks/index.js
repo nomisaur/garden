@@ -21,6 +21,13 @@ const useInterval = (callback, interval) => {
   }, []);
 };
 
+const useCurrentTime = (tick = 200) => {
+  const [currentTime, setCurrentTime] = useState(Date.now());
+
+  useInterval(() => setCurrentTime(Date.now()), tick);
+  return currentTime;
+};
+
 const useTimer = (initialStartTime, initialInterval, tick = 200) => {
   const [startTime, setStartTime] = useState(initialStartTime);
   const [interval, setInterval] = useState(initialInterval);
@@ -51,4 +58,4 @@ const useAutoSave = (state, interval) => {
   }, interval);
 };
 
-export { useInterval, useTimer, useAutoSave, useFancyReducer };
+export { useInterval, useTimer, useAutoSave, useFancyReducer, useCurrentTime };

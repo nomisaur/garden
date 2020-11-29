@@ -1,52 +1,87 @@
 import { time } from '../utils';
 
+const phase = {
+  duration: time({ seconds: 3 }),
+  waterLevels: [
+    {
+      status: 'dry',
+      healthy: false,
+      dry: true,
+      wet: false,
+      duration: time({ seconds: 5 }),
+    },
+    {
+      status: 'dry',
+      healthy: false,
+      dry: true,
+      wet: false,
+      duration: time({ seconds: 5 }),
+    },
+    {
+      status: 'healthy',
+      healthy: true,
+      dry: false,
+      wet: false,
+      duration: time({ seconds: 5 }),
+    },
+    {
+      status: 'wet',
+      healthy: false,
+      dry: false,
+      wet: true,
+      duration: time({ seconds: 5 }),
+    },
+  ],
+};
+
 const popper = {
   value: 1,
+  initialWaterLevel: 2,
   phases: [
     {
+      ...phase,
       image: `
-     
-     
-     
+
+
+
 ~~.~~
 `,
-      duration: time({ seconds: 3 }),
     },
     {
+      ...phase,
       image: `
- 
- 
- 
+    
+    
+    
 ~~^~~
 `,
-      duration: time({ seconds: 3 }),
     },
     {
+      ...phase,
       image: `
  
  
   *  
 ~~^~~
 `,
-      duration: time({ seconds: 3 }),
     },
     {
+      ...phase,
       image: `
  
   *
   |
 ~~^~~
 `,
-      duration: time({ seconds: 3 }),
     },
     {
+      ...phase,
       image: `
   *
  ~+~
   |
 ~~^~~
 `,
-      duration: time({ seconds: 3 }),
     },
   ],
 };
