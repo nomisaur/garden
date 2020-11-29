@@ -1,6 +1,16 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useReducer } from "react";
 import localForage from "localforage";
 import { log } from "../log";
+import { clone } from "../utils";
+
+const useFancyReducer = (handlers, initialState) => {
+  const [state, setState] = useReducer(
+    (state, [action, payload]) => handlers[action](clone(state), payload),
+    initialState
+  );
+
+  return [state, (action, payload) => setState([action, payload])];
+};
 
 const useInterval = (callback, interval) => {
   const timer = useRef();
@@ -41,4 +51,4 @@ const useAutoSave = (state, interval) => {
   }, interval);
 };
 
-export { useInterval, useTimer, useAutoSave };
+export { useInterval, useTimer, useAutoSave, useFancyReducer };
