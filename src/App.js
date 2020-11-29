@@ -2,8 +2,13 @@ import React, { useReducer } from "react";
 import { useAutoSave, useFancyReducer } from "./hooks";
 import { handlers } from "./stateHandlers";
 import { config } from "./config";
+import styled from "styled-components";
 
 import { Garden } from "./components/garden";
+
+const ColorDiv = styled.div`
+  color: ${({ color = "blue" }) => color};
+`;
 
 const App = ({ initialState }) => {
   const [state, setState] = useFancyReducer(handlers, initialState);
@@ -15,10 +20,11 @@ const App = ({ initialState }) => {
   }
 
   return (
-    <div>
+    <ColorDiv>
+      <ColorDiv color={"red"}>hi :)</ColorDiv>
       <div>plant matter: {state.plantMatter}</div>
       <Garden state={state} setState={setState} />
-    </div>
+    </ColorDiv>
   );
 };
 export { App };

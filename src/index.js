@@ -7,7 +7,6 @@ import { config } from "./config";
 
 import { initialState } from "./initialState";
 import { App } from "./App";
-import "./styles.scss";
 
 localForage
   .getItem("savedState")

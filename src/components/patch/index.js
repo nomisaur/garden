@@ -1,13 +1,20 @@
 import React from "react";
 import { Plant } from "../plant";
 
-import "./styles.scss";
+import styled from "styled-components";
 
 const soil = `
      
      
      
 ~~~~~
+`;
+
+const PatchDiv = styled.div`
+  color: brown;
+  font-size: xx-large;
+  font-family: monospace;
+  white-space: pre;
 `;
 
 const Patch = ({ patchState, setState }) => {
@@ -18,9 +25,9 @@ const Patch = ({ patchState, setState }) => {
   };
 
   return (
-    <div className={"patch"} onClick={onClick}>
+    <PatchDiv onClick={onClick}>
       {empty ? soil : <Plant plantState={plantState} setState={setState} />}
-    </div>
+    </PatchDiv>
   );
 };
 

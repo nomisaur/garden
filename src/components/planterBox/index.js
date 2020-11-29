@@ -2,12 +2,15 @@ import React from "react";
 import { Patch } from "../patch";
 
 import { addToPayload } from "../../utils";
+import styled from "styled-components";
 
-import "./styles.scss";
+const PlanterBoxDiv = styled.div`
+  display: flex;
+`;
 
 const PlanterBox = ({ planterBoxState, setState }) => {
   return (
-    <div className={"planterBox"}>
+    <PlanterBoxDiv>
       {planterBoxState.patches.map((patchState, patchIndex) => {
         return (
           <Patch
@@ -17,7 +20,7 @@ const PlanterBox = ({ planterBoxState, setState }) => {
           />
         );
       })}
-    </div>
+    </PlanterBoxDiv>
   );
 };
 

@@ -3,7 +3,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { useTimer } from "../../hooks";
 import { plants } from "../../plants";
 
-import "./styles.scss";
+import styled from "styled-components";
+const PlantDiv = styled.div`
+  color: green;
+`;
 
 const Plant = ({ plantState, setState }) => {
   const { type, phase, startTime } = plantState;
@@ -33,14 +36,14 @@ const Plant = ({ plantState, setState }) => {
   });
 
   return (
-    <div
+    <PlantDiv
       className="plant"
       onClick={() => {
         fullyGrown && setState("harvest");
       }}
     >
       {plant.phases[phase].image}
-    </div>
+    </PlantDiv>
   );
 };
 
