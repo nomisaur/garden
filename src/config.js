@@ -1,8 +1,6 @@
-import { time, getQueryParams } from "./utils";
-
-const queryParams = getQueryParams();
+import { time } from "./utils";
 
 export const config = {
+  ...webpackConfig,
   autosave: time({ seconds: 3 }),
-  isDev: Boolean(queryParams.dev),
 };
