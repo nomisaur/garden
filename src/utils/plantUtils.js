@@ -1,4 +1,5 @@
 import { plants } from '../plants';
+
 const shouldUpdateLevels = (plantState, currentTime) => {
   const {
     timeStamp,
