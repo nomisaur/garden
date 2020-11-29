@@ -1,4 +1,5 @@
 import { plants } from './plants';
+import { shouldUpdateLevels } from './utils/plantUtils';
 
 const plant = (state, { planterBoxIndex, patchIndex, type }) => {
   const plant = plants[type];
@@ -36,28 +37,22 @@ const getNewWaterTimeLeft = (
 
 const updateLevels = (state, { planterBoxIndex, patchIndex, currentTime }) => {
   const patch = state.planterBoxes[planterBoxIndex].patches[patchIndex];
+  const { type } = patch.plant;
 
   const plantData = plants[patch.plant.type];
 
   const getNewPlantState = (plantState, prevPlantState) => {
     const timePassed = currentTime - plantState.timeStamp;
 
-    const fullyGrown = plantState.phase === plantData.phases.length - 1;
-    const fullyDry = plantState.waterLevel === 0;
-    const { status } = plantData.phases[plantState.phase].waterLevels[
-      plantState.waterLevel
-    ];
-
     const prevStatus =
       plantData.phases[prevPlantState.phase].waterLevels[
         prevPlantState.waterLevel
       ].status;
 
-    const waterBeep = !fullyDry && plantState.waterTimeLeft < timePassed;
-    const phaseBeep =
-      !fullyGrown &&
-      status === 'healthy' &&
-      plantState.phaseTimeLeft < timePassed;
+    const { phaseBeep, waterBeep } = shouldUpdateLevels(
+      plantState,
+      currentTime,
+    );
 
     const doPhaseChange = waterBeep
       ? phaseBeep && plantState.phaseTimeLeft < plantState.waterTimeLeft
@@ -76,6 +71,7 @@ const updateLevels = (state, { planterBoxIndex, patchIndex, currentTime }) => {
 
       return getNewPlantState(
         {
+          type,
           timeStamp,
           phase,
           phaseTimeLeft,
@@ -98,6 +94,7 @@ const updateLevels = (state, { planterBoxIndex, patchIndex, currentTime }) => {
 
       return getNewPlantState(
         {
+          type,
           timeStamp,
           phase,
           phaseTimeLeft,

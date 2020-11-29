@@ -24,7 +24,8 @@ const Plant = ({ plantState, setState }) => {
 
   const currentTime = useCurrentTime();
 
-  const updateLevels = shouldUpdateLevels(plantState, currentTime);
+  const { phaseBeep, waterBeep } = shouldUpdateLevels(plantState, currentTime);
+  const updateLevels = phaseBeep || waterBeep;
 
   useEffect(() => {
     if (updateLevels) {
