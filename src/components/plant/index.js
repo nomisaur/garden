@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import { useTimer, useInterval, useCurrentTime } from '../../hooks';
 import { plants } from '../../plants';
+import { shouldUpdateLevels } from '../../utils/plantUtils';
 
 import styled from 'styled-components';
 const PlantDiv = styled.div`
@@ -13,35 +14,23 @@ const Status = styled.div`
 `;
 
 const Plant = ({ plantState, setState }) => {
-  const {
-    timeStamp,
-    type,
-    phase,
-    phaseTimeLeft,
-    waterLevel,
-    waterTimeLeft,
-  } = plantState;
+  const { type, phase, waterLevel } = plantState;
 
   const { phases } = plants[type];
   const { image, waterLevels } = phases[phase];
   const { status } = waterLevels[waterLevel];
 
   const fullyGrown = phase === phases.length - 1;
-  const fullyDry = waterLevel === 0;
 
   const currentTime = useCurrentTime();
 
-  const timePassed = currentTime - timeStamp;
-
-  const phaseBeep =
-    !fullyGrown && status === 'healthy' && phaseTimeLeft < timePassed;
-  const waterLevelBeep = !fullyDry && waterTimeLeft < timePassed;
+  const updateLevels = shouldUpdateLevels(plantState, currentTime);
 
   useEffect(() => {
-    if (phaseBeep || waterLevelBeep) {
-      setState('grow', { currentTime });
+    if (updateLevels) {
+      setState('updateLevels', { currentTime });
     }
-  }, [phaseBeep, waterLevelBeep]);
+  }, [updateLevels]);
 
   return (
     <>

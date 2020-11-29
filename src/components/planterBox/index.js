@@ -1,7 +1,7 @@
 import React from 'react';
 import { Patch } from '../patch';
 
-import { addToPayload } from '../../utils';
+import { addToPayload } from '../../utils/pureUtils';
 import styled from 'styled-components';
 
 const PlanterBoxDiv = styled.div`

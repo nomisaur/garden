@@ -1,4 +1,4 @@
-import { time } from './utils';
+import { time } from './utils/pureUtils';
 
 export const config = {
   ...webpackConfig,

@@ -34,7 +34,7 @@ const getNewWaterTimeLeft = (
   return Math.round(newDuration * (timeLeft / duration));
 };
 
-const grow = (state, { planterBoxIndex, patchIndex, currentTime }) => {
+const updateLevels = (state, { planterBoxIndex, patchIndex, currentTime }) => {
   const patch = state.planterBoxes[planterBoxIndex].patches[patchIndex];
 
   const plantData = plants[patch.plant.type];
@@ -161,7 +161,7 @@ const water = (state, { planterBoxIndex, patchIndex, currentTime }) => {
 
 export const handlers = {
   plant,
-  grow,
+  updateLevels,
   harvest,
   water,
 };

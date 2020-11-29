@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useReducer } from 'react';
 import localForage from 'localforage';
 import { log } from '../log';
-import { clone } from '../utils';
+import { clone } from '../utils/pureUtils';
 
 const useFancyReducer = (handlers, initialState) => {
   const [state, setState] = useReducer(

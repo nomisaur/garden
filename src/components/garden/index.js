@@ -1,7 +1,7 @@
 import React from 'react';
 import { PlanterBox } from '../planterBox';
 
-import { addToPayload } from '../../utils';
+import { addToPayload } from '../../utils/pureUtils';
 
 const Garden = ({ state, setState }) => {
   return (

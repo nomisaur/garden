@@ -1,15 +1,8 @@
-import { time } from '../utils';
+import { time } from '../utils/pureUtils';
 
 const phase = {
   duration: time({ seconds: 3 }),
   waterLevels: [
-    {
-      status: 'dry',
-      healthy: false,
-      dry: true,
-      wet: false,
-      duration: time({ seconds: 5 }),
-    },
     {
       status: 'dry',
       healthy: false,
@@ -36,7 +29,7 @@ const phase = {
 
 const popper = {
   value: 1,
-  initialWaterLevel: 2,
+  initialWaterLevel: 1,
   phases: [
     {
       ...phase,
