@@ -1,10 +1,10 @@
-const webpack = require('webpack')
-const path = require('path')
+const webpack = require('webpack');
+const path = require('path');
 
-const resolvePath = (filePath) => path.resolve(__dirname, filePath)
+const resolvePath = (filePath) => path.resolve(__dirname, filePath);
 
 module.exports = (env, argv) => {
-  const isDev = argv.mode === 'development'
+  const isDev = argv.mode === 'development';
 
   return {
     entry: resolvePath('./src/index.js'),
@@ -39,5 +39,5 @@ module.exports = (env, argv) => {
       hot: true,
     },
     ...(isDev ? { devtool: 'eval-source-map' } : {}),
-  }
-}
+  };
+};

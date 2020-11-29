@@ -1,9 +1,9 @@
-import { config } from './config'
+import { config } from './config';
 
 const log = (...args) => {
   if (config.isDev) {
-    console.log(...args)
+    console.log(...args);
   }
-}
+};
 
-export { log }
+export { log };
