@@ -1,12 +1,12 @@
-import React from "react";
-import { Patch } from "../patch";
+import React from 'react'
+import { Patch } from '../patch'
 
-import { addToPayload } from "../../utils";
-import styled from "styled-components";
+import { addToPayload } from '../../utils'
+import styled from 'styled-components'
 
 const PlanterBoxDiv = styled.div`
   display: flex;
-`;
+`
 
 const PlanterBox = ({ planterBoxState, setState }) => {
   return (
@@ -18,10 +18,10 @@ const PlanterBox = ({ planterBoxState, setState }) => {
             patchState={patchState}
             setState={addToPayload(setState, { patchIndex })}
           />
-        );
+        )
       })}
     </PlanterBoxDiv>
-  );
-};
+  )
+}
 
-export { PlanterBox };
+export { PlanterBox }

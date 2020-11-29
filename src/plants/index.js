@@ -1,4 +1,4 @@
-import { time } from "../utils";
+import { time } from '../utils'
 
 const popper = {
   value: 1,
@@ -49,6 +49,6 @@ const popper = {
       duration: time({ seconds: 3 }),
     },
   ],
-};
+}
 
-export const plants = { popper };
+export const plants = { popper }

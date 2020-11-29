@@ -1,7 +1,7 @@
-import React from "react";
-import { PlanterBox } from "../planterBox";
+import React from 'react'
+import { PlanterBox } from '../planterBox'
 
-import { addToPayload } from "../../utils";
+import { addToPayload } from '../../utils'
 
 const Garden = ({ state, setState }) => {
   return (
@@ -15,10 +15,10 @@ const Garden = ({ state, setState }) => {
               setState={addToPayload(setState, { planterBoxIndex })}
             />
           )
-        );
+        )
       })}
     </div>
-  );
-};
+  )
+}
 
-export { Garden };
+export { Garden }

@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack serve --config ./webpack.config.js --mode development",
-    "reset": "rm -rf ./node_modules && rm -rf package-lock.json && npm i",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "reset": "rm -rf ./node_modules && rm -rf package-lock.json && npm i"
   },
   "keywords": [],
   "author": "Embers",
@@ -16,6 +15,7 @@
     "@babel/preset-env": "^7.12.7",
     "@babel/preset-react": "^7.12.7",
     "babel-loader": "^8.2.2",
+    "prettier": "^2.2.1",
     "react-hot-loader": "^4.13.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.8.0",

@@ -1,25 +1,25 @@
-import _clone from "rfdc";
+import _clone from 'rfdc'
 
-const clone = _clone();
+const clone = _clone()
 
 const getQueryParams = () => {
-  const paramsIter = new URL(window.location.href).searchParams.entries();
-  const params = {};
+  const paramsIter = new URL(window.location.href).searchParams.entries()
+  const params = {}
 
   for (const [key, value] of paramsIter) {
-    params[key] = value;
+    params[key] = value
   }
 
-  return params;
-};
+  return params
+}
 
-const secondsToMilliseconds = (seconds) => seconds * 1000;
+const secondsToMilliseconds = (seconds) => seconds * 1000
 
-const minutesToMilliseconds = (minutes) => secondsToMilliseconds(minutes * 60);
+const minutesToMilliseconds = (minutes) => secondsToMilliseconds(minutes * 60)
 
-const hoursToMilliseconds = (hours) => minutesToMilliseconds(hours * 60);
+const hoursToMilliseconds = (hours) => minutesToMilliseconds(hours * 60)
 
-const daysToMilliseconds = (days) => hoursToMilliseconds(days * 24);
+const daysToMilliseconds = (days) => hoursToMilliseconds(days * 24)
 
 const time = ({
   milliseconds = 0,
@@ -34,16 +34,16 @@ const time = ({
     minutesToMilliseconds(minutes) +
     hoursToMilliseconds(hours) +
     daysToMilliseconds(days)
-  );
-};
+  )
+}
 
 const addToPayload = (setState, addition) => {
   return (action, payload = {}) => {
     setState(action, {
       ...payload,
       ...addition,
-    });
-  };
-};
+    })
+  }
+}
 
-export { addToPayload, time, getQueryParams, clone };
+export { addToPayload, time, getQueryParams, clone }
