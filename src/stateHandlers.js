@@ -49,14 +49,14 @@ const updateLevels = (state, { planterBoxIndex, patchIndex, currentTime }) => {
         prevPlantState.waterLevel
       ].status;
 
-    const { phaseBeep, waterBeep } = shouldUpdateLevels(
+    const { shouldUpdatePhase, shouldUpdateWater } = shouldUpdateLevels(
       plantState,
       currentTime,
     );
 
-    const doPhaseChange = waterBeep
-      ? phaseBeep && plantState.phaseTimeLeft < plantState.waterTimeLeft
-      : phaseBeep;
+    const doPhaseChange = shouldUpdateWater
+      ? shouldUpdatePhase && plantState.phaseTimeLeft < plantState.waterTimeLeft
+      : shouldUpdatePhase;
 
     if (doPhaseChange) {
       const timeStamp = plantState.timeStamp + plantState.phaseTimeLeft;
@@ -80,7 +80,7 @@ const updateLevels = (state, { planterBoxIndex, patchIndex, currentTime }) => {
         },
         plantState,
       );
-    } else if (waterBeep) {
+    } else if (shouldUpdateWater) {
       const timeStamp = plantState.timeStamp + plantState.waterTimeLeft;
       const { phase } = plantState;
 

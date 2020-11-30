@@ -19,11 +19,12 @@ const shouldUpdateLevels = (plantState, currentTime) => {
 
   const timePassed = currentTime - timeStamp;
 
-  const phaseBeep =
+  const shouldUpdatePhase =
     !fullyGrown && status === 'healthy' && phaseTimeLeft < timePassed;
-  const waterBeep = !fullyDry && waterTimeLeft < timePassed;
 
-  return { phaseBeep, waterBeep };
+  const shouldUpdateWater = !fullyDry && waterTimeLeft < timePassed;
+
+  return { shouldUpdatePhase, shouldUpdateWater };
 };
 
 export { shouldUpdateLevels };
