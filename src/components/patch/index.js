@@ -23,7 +23,7 @@ const Patch = ({ patchState, setState }) => {
   const { empty, plant: plantState } = patchState;
 
   const onClick = () => {
-    empty && setState('plant', { type: 'popper' });
+    empty && setState('plant', { type: 'pennyPlant' });
   };
 
   return (
