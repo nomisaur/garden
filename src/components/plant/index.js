@@ -17,8 +17,6 @@ const Plant = ({ plantState, setState }) => {
   const { type, phase, waterLevel } = plantState;
 
   const { phases } = plants[type];
-  const { image, waterLevels } = phases[phase];
-  const { status } = waterLevels[waterLevel];
 
   const fullyGrown = phase === phases.length - 1;
 
@@ -32,6 +30,9 @@ const Plant = ({ plantState, setState }) => {
       setState('updateLevels', { currentTime });
     }
   }, [updateLevels]);
+
+  const { image, waterLevels } = phases[phase];
+  const { status } = waterLevels[waterLevel];
 
   return (
     <>
