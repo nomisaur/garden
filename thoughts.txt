@@ -24,3 +24,5 @@ plants can have defined ranges of healthy, dry, wet, etc
 for each phase:
 dry: 0-19, healthy: 20-79, wet: 80-99
 rate of drying: 1 every duration
+
+:)
