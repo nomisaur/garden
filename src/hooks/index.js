@@ -3,11 +3,20 @@ import localForage from 'localforage';
 import { log } from '../log';
 import { clone } from '../utils/pureUtils';
 
+const save = (state, message = 'saved') => {
+  localForage
+    .setItem('savedState', state)
+    .then(() => log(message))
+    .catch(log);
+};
+
 const useFancyReducer = (handlers, initialState) => {
   const [state, setState] = useReducer(
     (state, [action, payload]) => handlers[action](clone(state), payload),
     initialState,
   );
+
+  save(state, 'saved on state change');
 
   return [state, (action, payload) => setState([action, payload])];
 };
@@ -50,12 +59,7 @@ const useTimer = (initialStartTime, initialInterval, tick = 200) => {
 const useAutoSave = (state, interval) => {
   const stateRef = useRef(state);
   stateRef.current = state;
-  useInterval(() => {
-    localForage
-      .setItem('savedState', stateRef.current)
-      .then(() => log('auto save'))
-      .catch(log);
-  }, interval);
+  useInterval(() => save(stateRef.current, 'auto saved'), interval);
 };
 
 export { useInterval, useTimer, useAutoSave, useFancyReducer, useCurrentTime };
