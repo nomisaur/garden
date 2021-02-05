@@ -1,7 +1,18 @@
-import { useState, useEffect, useRef, useReducer } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useReducer,
+  useContext,
+  createContext,
+} from 'react';
 import localForage from 'localforage';
 import { log } from '../log';
 import { clone } from '../utils/pureUtils';
+
+const AppContext = createContext();
+
+const useAppContext = () => useContext(AppContext);
 
 const save = (state, message = 'saved') => {
   localForage
@@ -62,4 +73,12 @@ const useAutoSave = (state, interval) => {
   useInterval(() => save(stateRef.current, 'auto saved'), interval);
 };
 
-export { useInterval, useTimer, useAutoSave, useFancyReducer, useCurrentTime };
+export {
+  AppContext,
+  useAppContext,
+  useInterval,
+  useTimer,
+  useAutoSave,
+  useFancyReducer,
+  useCurrentTime,
+};
