@@ -22,12 +22,11 @@ const save = (state, message = 'saved') => {
 };
 
 const useFancyReducer = (handlers, initialState) => {
-  const [state, setState] = useReducer(
-    (state, [action, payload]) => handlers[action](clone(state), payload),
-    initialState,
-  );
-
-  save(state, 'saved on state change');
+  const [state, setState] = useReducer((state, [action, payload]) => {
+    const newState = handlers[action](clone(state), payload);
+    save(newState, 'saved on state change');
+    return newState;
+  }, initialState);
 
   return [state, (action, payload) => setState([action, payload])];
 };

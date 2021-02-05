@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { useAutoSave, useFancyReducer } from './hooks';
+import { useAutoSave, useFancyReducer, useCurrentTime } from './hooks';
 import { handlers } from './stateHandlers';
 import { config } from './config';
 import styled from 'styled-components';
@@ -14,6 +14,8 @@ const ColorDiv = styled.div`
 const App = ({ initialState }) => {
   const [state, setState] = useFancyReducer(handlers, initialState);
 
+  const currentTime = useCurrentTime();
+
   useAutoSave(state, config.autosave);
 
   if (config.isDev) {
@@ -21,7 +23,7 @@ const App = ({ initialState }) => {
   }
 
   return (
-    <AppContext.Provider value={{ state, setState }}>
+    <AppContext.Provider value={{ state, setState, currentTime }}>
       <ColorDiv>
         <ColorDiv color='red'>hi :)</ColorDiv>
         <div>plant matter: {state.plantMatter}</div>
