@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 
-import { useTimer, useInterval, useCurrentTime } from '../../hooks';
+import { useAppContext } from '../../hooks';
 import { plants } from '../../plants';
 import { shouldUpdateLevels } from '../../utils/plantUtils';
 
@@ -20,7 +20,7 @@ const Plant = ({ plantState, setState }) => {
 
   const fullyGrown = phase === phases.length - 1;
 
-  const currentTime = useCurrentTime();
+  const { currentTime } = useAppContext();
 
   const { shouldUpdatePhase, shouldUpdateWater } = shouldUpdateLevels(
     plantState,

@@ -1,7 +1,18 @@
-import { useState, useEffect, useRef, useReducer } from 'react';
+import {
+  useState,
+  useEffect,
+  useRef,
+  useReducer,
+  useContext,
+  createContext,
+} from 'react';
 import localForage from 'localforage';
 import { log } from '../log';
 import { clone } from '../utils/pureUtils';
+
+const AppContext = createContext();
+
+const useAppContext = () => useContext(AppContext);
 
 const save = (state, message = 'saved') => {
   localForage
@@ -11,12 +22,11 @@ const save = (state, message = 'saved') => {
 };
 
 const useFancyReducer = (handlers, initialState) => {
-  const [state, setState] = useReducer(
-    (state, [action, payload]) => handlers[action](clone(state), payload),
-    initialState,
-  );
-
-  save(state, 'saved on state change');
+  const [state, setState] = useReducer((state, [action, payload]) => {
+    const newState = handlers[action](clone(state), payload);
+    save(newState, 'saved on state change');
+    return newState;
+  }, initialState);
 
   return [state, (action, payload) => setState([action, payload])];
 };
@@ -37,29 +47,17 @@ const useCurrentTime = (tick = 200) => {
   return currentTime;
 };
 
-const useTimer = (initialStartTime, initialInterval, tick = 200) => {
-  const [startTime, setStartTime] = useState(initialStartTime);
-  const [interval, setInterval] = useState(initialInterval);
-  const [currentTime, setCurrentTime] = useState(Date.now());
-
-  useInterval(() => setCurrentTime(Date.now()), tick);
-
-  const timerBeeps = Math.floor((currentTime - startTime) / interval);
-
-  const resetTimer = ({ startTime, interval } = {}) => {
-    const now = Date.now();
-    interval && setInterval(interval);
-    setStartTime(startTime || now);
-    setCurrentTime(now);
-  };
-
-  return [timerBeeps, resetTimer];
-};
-
 const useAutoSave = (state, interval) => {
   const stateRef = useRef(state);
   stateRef.current = state;
   useInterval(() => save(stateRef.current, 'auto saved'), interval);
 };
 
-export { useInterval, useTimer, useAutoSave, useFancyReducer, useCurrentTime };
+export {
+  AppContext,
+  useAppContext,
+  useInterval,
+  useAutoSave,
+  useFancyReducer,
+  useCurrentTime,
+};

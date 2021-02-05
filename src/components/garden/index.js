@@ -1,9 +1,11 @@
 import React from 'react';
 import { PlanterBox } from '../planterBox';
+import { useAppContext } from '../../hooks';
 
 import { addToPayload } from '../../utils/pureUtils';
 
-const Garden = ({ state, setState }) => {
+const Garden = () => {
+  const { state, setState } = useAppContext();
   return (
     <div>
       {state.planterBoxes.map((planterBoxState, planterBoxIndex) => {
