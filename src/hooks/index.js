@@ -47,25 +47,6 @@ const useCurrentTime = (tick = 200) => {
   return currentTime;
 };
 
-const useTimer = (initialStartTime, initialInterval, tick = 200) => {
-  const [startTime, setStartTime] = useState(initialStartTime);
-  const [interval, setInterval] = useState(initialInterval);
-  const [currentTime, setCurrentTime] = useState(Date.now());
-
-  useInterval(() => setCurrentTime(Date.now()), tick);
-
-  const timerBeeps = Math.floor((currentTime - startTime) / interval);
-
-  const resetTimer = ({ startTime, interval } = {}) => {
-    const now = Date.now();
-    interval && setInterval(interval);
-    setStartTime(startTime || now);
-    setCurrentTime(now);
-  };
-
-  return [timerBeeps, resetTimer];
-};
-
 const useAutoSave = (state, interval) => {
   const stateRef = useRef(state);
   stateRef.current = state;
@@ -76,7 +57,6 @@ export {
   AppContext,
   useAppContext,
   useInterval,
-  useTimer,
   useAutoSave,
   useFancyReducer,
   useCurrentTime,

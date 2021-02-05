@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 
-import { useTimer, useInterval, useAppContext } from '../../hooks';
+import { useAppContext } from '../../hooks';
 import { plants } from '../../plants';
 import { shouldUpdateLevels } from '../../utils/plantUtils';
 
