@@ -1,0 +1,7 @@
+on update call:
+soil water level can evaporate
+plant can drink soil water level
+plant can grow
+
+first determine which of the three will happen first.
+do that. loop again.
