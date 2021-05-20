@@ -1,5 +1,6 @@
 import { plantModels } from './models';
 import { shouldUpdateLevels } from './models/plantUtils';
+import { clone } from './utils';
 
 const plant = (state, { soilIndex, type }) => {
   const {
@@ -37,8 +38,8 @@ const plant = (state, { soilIndex, type }) => {
 }; */
 
 const shouldUpdate = (soilState, currentTime) => {
-  const timePassed = currentTime - soilState.timeStamp;
   const {
+    timeStamp,
     waterLevel: soilWaterLevel,
     waterTimeLeft: soilWaterTimeLeft,
     plant: {
@@ -50,6 +51,9 @@ const shouldUpdate = (soilState, currentTime) => {
     },
   } = soilState;
   const { lifeStages, healthyMin, healthyMax } = plantModels[type];
+
+  const timePassed = currentTime - timeStamp;
+
   const shouldEvaporate = soilWaterTimeLeft < timePassed && soilWaterLevel > 0;
   const shouldDrink = plantWaterTimeLeft < timePassed && plantWaterLevel < 100;
   const shouldGrow =
@@ -63,10 +67,25 @@ const shouldUpdate = (soilState, currentTime) => {
 
 const update = (state, { soilIndex, currentTime }) => {
   const getNewSoilState = (soilState, prevSoilState) => {
+    const newSoilState = clone(soilState);
+
     const { shouldEvaporate, shouldDrink, shouldGrow } = shouldUpdate(
       soilState,
       currentTime,
     );
+
+    if (shouldEvaporate) {
+    }
+    if (shouldDrink) {
+    }
+    if (shouldGrow) {
+    }
+
+    if (shouldEvaporate || shouldDrink || shouldGrow) {
+      return getNewSoilState(newSoilState, soilState);
+    } else {
+      return soilState;
+    }
   };
 
   const newSoilState = getNewSoilState(
