@@ -1,16 +1,19 @@
 const initialPlantState = {
   timeStamp: null,
   type: null,
-  phase: null,
-  phaseTimeLeft: null,
+  lifeStage: null,
   waterLevel: null,
+  phaseTimeLeft: null,
   waterTimeLeft: null,
 };
 
 const initialSoilState = {
+  timeStamp: null,
+  type: 'starter',
   empty: true,
-  soilWaterLevel: null,
+  waterLevel: 0,
   plant: initialPlantState,
+  waterTimeLeft: null,
 };
 
 export const initialState = {

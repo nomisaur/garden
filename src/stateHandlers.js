@@ -1,27 +1,27 @@
-import { plantModels } from './plants';
-import { shouldUpdateLevels } from './plants/plantUtils';
+import { plantModels } from './models';
+import { shouldUpdateLevels } from './models/plantUtils';
 
 const plant = (state, { soilIndex, type }) => {
   const {
-    phases: [firstPhase],
-    initialWaterLevel: waterLevel,
+    lifeStages: [firstPhase],
   } = plantModels[type];
 
   state.soils[soilIndex] = {
+    ...state.soils[soilIndex],
     empty: false,
     plant: {
       timeStamp: Date.now(),
       type,
-      phase: 0,
-      phaseTimeLeft: firstPhase.duration,
-      waterLevel,
-      waterTimeLeft: firstPhase.waterLevels[waterLevel].duration,
+      lifeStage: 0,
+      lifeStageTimeLeft: firstPhase.duration,
+      waterLevel: 0,
+      waterTimeLeft: firstPhase.drinkrate,
     },
   };
   return state;
 };
 
-const getNewWaterTimeLeft = (
+/* const getNewWaterTimeLeft = (
   newPhase,
   { phase, waterTimeLeft, waterLevel },
   plantModel,
@@ -34,9 +34,27 @@ const getNewWaterTimeLeft = (
   const timeLeft = waterTimeLeft - timePassed;
 
   return Math.round(newDuration * (timeLeft / duration));
+}; */
+
+const update = (state, { soilIndex, currentTime }) => {
+  const getNewSoilState = (soilState, prevSoilState) => {
+    const timePassed = currentTime - soilState.timeStamp;
+  };
+
+  const newSoilState = getNewSoilState(
+    state.soils[soilIndex],
+    state.soils[soilIndex],
+  );
+
+  state.soils[soilIndex] = {
+    ...state.soils[soilIndex],
+    ...newSoilState,
+  };
+
+  return state;
 };
 
-const updateLevels = (state, { soilIndex, currentTime }) => {
+/* const updateLevels = (state, { soilIndex, currentTime }) => {
   const soil = state.soils[soilIndex];
   const { type } = soil.plant;
   const plantModel = plantModels[type];
@@ -119,7 +137,7 @@ const updateLevels = (state, { soilIndex, currentTime }) => {
   };
 
   return state;
-};
+}; */
 
 const harvest = (state, { soilIndex }) => {
   const soil = state.soils[soilIndex];
@@ -142,26 +160,19 @@ const harvest = (state, { soilIndex }) => {
 };
 
 const water = (state, { soilIndex, currentTime }) => {
-  const soil = state.soils[soilIndex];
-  const current = soil.plant;
+  const soilState = state.soils[soilIndex];
 
-  const { waterLevels } = plantModels[current.type].phases[current.phase];
-
-  const maxWaterLevel = waterLevels.length - 1;
-
-  const waterLevel = Math.min(current.waterLevel + 1, maxWaterLevel);
-
-  soil.plant = {
-    ...current,
-    waterLevel,
+  state.soils[soilIndex] = {
+    ...soilState,
     timeStamp: currentTime,
+    waterLevel: Math.min(soilState.waterLevel + 10, 100),
   };
   return state;
 };
 
 export const handlers = {
   plant,
-  updateLevels,
+  update,
   harvest,
   water,
 };

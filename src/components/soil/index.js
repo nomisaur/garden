@@ -1,14 +1,9 @@
 import React from 'react';
 import { Plant } from '../plant';
+import { soilModels } from '../../models';
+import { useAppContext } from '../../hooks';
 
 import styled from 'styled-components';
-
-const soilImg = `
-     
-     
-     
-~~~~~
-`;
 
 const SoilDiv = styled.div`
   color: brown;
@@ -20,16 +15,22 @@ const SoilDiv = styled.div`
 `;
 
 const Soil = ({ soilState, setState }) => {
-  const { empty, plant: plantState } = soilState;
+  const { currentTime } = useAppContext();
+  const { plant: plantState, empty, type, waterLevel } = soilState;
+  const { image } = soilModels[type];
 
   const onClick = () => {
     empty && setState('plant', { type: 'pennyPlant' });
   };
 
   return (
-    <SoilDiv onClick={onClick}>
-      {empty ? soilImg : <Plant plantState={plantState} setState={setState} />}
-    </SoilDiv>
+    <>
+      <SoilDiv onClick={onClick}>
+        {empty ? image : <Plant plantState={plantState} setState={setState} />}
+      </SoilDiv>
+      <div>soil water level: {waterLevel}</div>
+      <button onClick={() => setState('water', { currentTime })}>water</button>
+    </>
   );
 };
 

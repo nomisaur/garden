@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 
 import { useAppContext } from '../../hooks';
-import { plantModels } from '../../plants';
-import { shouldUpdateLevels } from '../../plants/plantUtils';
+import { plantModels } from '../../models';
+import { shouldUpdateLevels } from '../../models/plantUtils';
 
 import styled from 'styled-components';
 const PlantDiv = styled.div`
@@ -14,7 +14,29 @@ const Status = styled.div`
 `;
 
 const Plant = ({ plantState, setState }) => {
-  const { type, phase, waterLevel } = plantState;
+  const { type, lifeStage, waterLevel } = plantState;
+  const plantModel = plantModels[type];
+  const { image, healthyMax, healthyMin } = plantModel.lifeStages[lifeStage];
+  const fullyGrown = plantState.lifeStage === plantModel.lifeStages - 1;
+  const status =
+    waterLevel < healthyMin
+      ? 'dry'
+      : waterLevel > healthyMax
+      ? 'wet'
+      : 'healthy';
+  return (
+    <>
+      <PlantDiv onClick={() => fullyGrown && setState('harvest')}>
+        {image}
+      </PlantDiv>
+      <Status>
+        <div>status: {status}</div>
+        <div>plant water level: {waterLevel}</div>
+      </Status>
+    </>
+  );
+
+  /* const { type, phase, waterLevel } = plantState;
 
   const { phases } = plantModels[type];
 
@@ -34,8 +56,13 @@ const Plant = ({ plantState, setState }) => {
     }
   }, [updateLevels]);
 
-  const { image, waterLevels } = phases[phase];
-  const { status } = waterLevels[waterLevel];
+  const { image, healthyMin, healthyMax } = phases[phase];
+  const status =
+    waterLevel < healthyMin
+      ? 'dry'
+      : waterLevel > healthyMax
+      ? 'wet'
+      : 'healthy';
 
   return (
     <>
@@ -45,12 +72,9 @@ const Plant = ({ plantState, setState }) => {
       <Status>
         <div>{status}</div>
         <div>{waterLevel}</div>
-        <button onClick={() => setState('water', { currentTime })}>
-          water
-        </button>
       </Status>
     </>
-  );
+  ); */
 };
 
 export { Plant };
