@@ -1,3 +1,3 @@
 import { pennyPlant } from './pennyPlant';
 
-export const plantForms = { pennyPlant };
+export const plantModels = { pennyPlant };

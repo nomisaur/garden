@@ -1,10 +1,11 @@
-import { plantForms } from './plants';
+import { plantModels } from './plants';
 import { shouldUpdateLevels } from './plants/plantUtils';
 
 const plant = (state, { soilIndex, type }) => {
-  const plant = plantForms[type];
-  const firstPhase = plant.phases[0];
-  const waterLevel = plant.initialWaterLevel;
+  const {
+    phases: [firstPhase],
+    initialWaterLevel: waterLevel,
+  } = plantModels[type];
 
   state.soils[soilIndex] = {
     empty: false,
@@ -23,13 +24,13 @@ const plant = (state, { soilIndex, type }) => {
 const getNewWaterTimeLeft = (
   newPhase,
   { phase, waterTimeLeft, waterLevel },
-  plantData,
+  plantModel,
   timePassed,
 ) => {
   const newDuration =
-    plantData.phases[newPhase].waterLevels[waterLevel].duration;
+    plantModel.phases[newPhase].waterLevels[waterLevel].duration;
 
-  const { duration } = plantData.phases[phase].waterLevels[waterLevel];
+  const { duration } = plantModel.phases[phase].waterLevels[waterLevel];
   const timeLeft = waterTimeLeft - timePassed;
 
   return Math.round(newDuration * (timeLeft / duration));
@@ -38,14 +39,13 @@ const getNewWaterTimeLeft = (
 const updateLevels = (state, { soilIndex, currentTime }) => {
   const soil = state.soils[soilIndex];
   const { type } = soil.plant;
-
-  const plantData = plantForms[soil.plant.type];
+  const plantModel = plantModels[type];
 
   const getNewPlantState = (plantState, prevPlantState) => {
     const timePassed = currentTime - plantState.timeStamp;
 
     const prevStatus =
-      plantData.phases[prevPlantState.phase].waterLevels[
+      plantModel.phases[prevPlantState.phase].waterLevels[
         prevPlantState.waterLevel
       ].status;
 
@@ -60,12 +60,15 @@ const updateLevels = (state, { soilIndex, currentTime }) => {
 
     if (doPhaseChange) {
       const timeStamp = plantState.timeStamp + plantState.phaseTimeLeft;
-      const phase = Math.min(plantState.phase + 1, plantData.phases.length - 1);
-      const phaseTimeLeft = plantData.phases[phase].duration;
+      const phase = Math.min(
+        plantState.phase + 1,
+        plantModel.phases.length - 1,
+      );
+      const phaseTimeLeft = plantModel.phases[phase].duration;
       const waterTimeLeft = getNewWaterTimeLeft(
         phase,
         plantState,
-        plantData,
+        plantModel,
         timePassed,
       );
 
@@ -86,7 +89,7 @@ const updateLevels = (state, { soilIndex, currentTime }) => {
 
       const waterLevel = Math.max(0, plantState.waterLevel - 1);
       const waterTimeLeft =
-        plantData.phases[phase].waterLevels[waterLevel].duration;
+        plantModel.phases[phase].waterLevels[waterLevel].duration;
       const phaseTimeLeft =
         prevStatus === 'healthy'
           ? plantState.phaseTimeLeft - plantState.waterTimeLeft
@@ -121,7 +124,7 @@ const updateLevels = (state, { soilIndex, currentTime }) => {
 const harvest = (state, { soilIndex }) => {
   const soil = state.soils[soilIndex];
 
-  state.plantMatter = state.plantMatter + plantForms[soil.plant.type].value;
+  state.plantMatter = state.plantMatter + plantModels[soil.plant.type].value;
 
   soil.empty = true;
   soil.plant = {
@@ -142,7 +145,7 @@ const water = (state, { soilIndex, currentTime }) => {
   const soil = state.soils[soilIndex];
   const current = soil.plant;
 
-  const { waterLevels } = plantForms[current.type].phases[current.phase];
+  const { waterLevels } = plantModels[current.type].phases[current.phase];
 
   const maxWaterLevel = waterLevels.length - 1;
 

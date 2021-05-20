@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { useAppContext } from '../../hooks';
-import { plantForms } from '../../plants';
+import { plantModels } from '../../plants';
 import { shouldUpdateLevels } from '../../plants/plantUtils';
 
 import styled from 'styled-components';
@@ -16,7 +16,7 @@ const Status = styled.div`
 const Plant = ({ plantState, setState }) => {
   const { type, phase, waterLevel } = plantState;
 
-  const { phases } = plantForms[type];
+  const { phases } = plantModels[type];
 
   const fullyGrown = phase === phases.length - 1;
 
