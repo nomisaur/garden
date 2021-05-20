@@ -3,14 +3,14 @@ import { Plant } from '../plant';
 
 import styled from 'styled-components';
 
-const soil = `
+const soilImg = `
      
      
      
 ~~~~~
 `;
 
-const PatchDiv = styled.div`
+const SoilDiv = styled.div`
   color: brown;
   font-size: xx-large;
   font-family: monospace;
@@ -19,18 +19,18 @@ const PatchDiv = styled.div`
   block-size: fit-content;
 `;
 
-const Patch = ({ patchState, setState }) => {
-  const { empty, plant: plantState } = patchState;
+const Soil = ({ soilState, setState }) => {
+  const { empty, plant: plantState } = soilState;
 
   const onClick = () => {
     empty && setState('plant', { type: 'pennyPlant' });
   };
 
   return (
-    <PatchDiv onClick={onClick}>
-      {empty ? soil : <Plant plantState={plantState} setState={setState} />}
-    </PatchDiv>
+    <SoilDiv onClick={onClick}>
+      {empty ? soilImg : <Plant plantState={plantState} setState={setState} />}
+    </SoilDiv>
   );
 };
 
-export { Patch };
+export { Soil };

@@ -1,22 +1,20 @@
 import React from 'react';
-import { PlanterBox } from '../planterBox';
+import { Soil } from '../soil';
 import { useAppContext } from '../../hooks';
 
-import { addToPayload } from '../../utils/pureUtils';
+import { addToPayload } from '../../utils';
 
 const Garden = () => {
   const { state, setState } = useAppContext();
   return (
     <div>
-      {state.planterBoxes.map((planterBoxState, planterBoxIndex) => {
+      {state.soils.map((soilState, soilIndex) => {
         return (
-          planterBoxState.unlocked && (
-            <PlanterBox
-              key={planterBoxIndex}
-              planterBoxState={planterBoxState}
-              setState={addToPayload(setState, { planterBoxIndex })}
-            />
-          )
+          <Soil
+            key={soilIndex}
+            soilState={soilState}
+            setState={addToPayload(setState, { soilIndex })}
+          />
         );
       })}
     </div>

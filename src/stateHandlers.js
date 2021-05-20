@@ -1,12 +1,12 @@
-import { plants } from './plants';
-import { shouldUpdateLevels } from './utils/plantUtils';
+import { plantForms } from './plants';
+import { shouldUpdateLevels } from './plants/plantUtils';
 
-const plant = (state, { planterBoxIndex, patchIndex, type }) => {
-  const plant = plants[type];
+const plant = (state, { soilIndex, type }) => {
+  const plant = plantForms[type];
   const firstPhase = plant.phases[0];
   const waterLevel = plant.initialWaterLevel;
 
-  state.planterBoxes[planterBoxIndex].patches[patchIndex] = {
+  state.soils[soilIndex] = {
     empty: false,
     plant: {
       timeStamp: Date.now(),
@@ -35,11 +35,11 @@ const getNewWaterTimeLeft = (
   return Math.round(newDuration * (timeLeft / duration));
 };
 
-const updateLevels = (state, { planterBoxIndex, patchIndex, currentTime }) => {
-  const patch = state.planterBoxes[planterBoxIndex].patches[patchIndex];
-  const { type } = patch.plant;
+const updateLevels = (state, { soilIndex, currentTime }) => {
+  const soil = state.soils[soilIndex];
+  const { type } = soil.plant;
 
-  const plantData = plants[patch.plant.type];
+  const plantData = plantForms[soil.plant.type];
 
   const getNewPlantState = (plantState, prevPlantState) => {
     const timePassed = currentTime - plantState.timeStamp;
@@ -108,23 +108,23 @@ const updateLevels = (state, { planterBoxIndex, patchIndex, currentTime }) => {
     }
   };
 
-  const newPlantState = getNewPlantState(patch.plant, patch.plant);
+  const newPlantState = getNewPlantState(soil.plant, soil.plant);
 
-  patch.plant = {
-    ...patch.plant,
+  soil.plant = {
+    ...soil.plant,
     ...newPlantState,
   };
 
   return state;
 };
 
-const harvest = (state, { planterBoxIndex, patchIndex }) => {
-  const patch = state.planterBoxes[planterBoxIndex].patches[patchIndex];
+const harvest = (state, { soilIndex }) => {
+  const soil = state.soils[soilIndex];
 
-  state.plantMatter = state.plantMatter + plants[patch.plant.type].value;
+  state.plantMatter = state.plantMatter + plantForms[soil.plant.type].value;
 
-  patch.empty = true;
-  patch.plant = {
+  soil.empty = true;
+  soil.plant = {
     plant: {
       timeStamp: null,
       type: null,
@@ -138,17 +138,17 @@ const harvest = (state, { planterBoxIndex, patchIndex }) => {
   return state;
 };
 
-const water = (state, { planterBoxIndex, patchIndex, currentTime }) => {
-  const patch = state.planterBoxes[planterBoxIndex].patches[patchIndex];
-  const current = patch.plant;
+const water = (state, { soilIndex, currentTime }) => {
+  const soil = state.soils[soilIndex];
+  const current = soil.plant;
 
-  const { waterLevels } = plants[current.type].phases[current.phase];
+  const { waterLevels } = plantForms[current.type].phases[current.phase];
 
   const maxWaterLevel = waterLevels.length - 1;
 
   const waterLevel = Math.min(current.waterLevel + 1, maxWaterLevel);
 
-  patch.plant = {
+  soil.plant = {
     ...current,
     waterLevel,
     timeStamp: currentTime,

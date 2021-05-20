@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React from 'react';
 import { useAutoSave, useFancyReducer, useCurrentTime } from './hooks';
 import { handlers } from './stateHandlers';
 import { config } from './config';
@@ -16,7 +16,7 @@ const App = ({ initialState }) => {
 
   const currentTime = useCurrentTime();
 
-  useAutoSave(state, config.autosave);
+  //useAutoSave(state, config.autosave);
 
   if (config.isDev) {
     window.seeState = () => console.log(state);

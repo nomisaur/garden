@@ -8,7 +8,7 @@ import {
 } from 'react';
 import localForage from 'localforage';
 import { log } from '../log';
-import { clone } from '../utils/pureUtils';
+import { clone } from '../utils';
 
 const AppContext = createContext();
 

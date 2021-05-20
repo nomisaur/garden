@@ -12,7 +12,7 @@ localForage
   .getItem('savedState')
   .then((savedState) => {
     ReactDOM.render(
-      <App initialState={savedState ? savedState : initialState} />,
+      <App initialState={savedState || initialState} />,
       document.getElementById('app'),
     );
   })

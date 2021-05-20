@@ -1,4 +1,4 @@
-import { time } from '../utils/pureUtils';
+import { time } from '../utils';
 
 const phase = {
   duration: time({ seconds: 3 }),

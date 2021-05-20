@@ -1,4 +1,4 @@
-import { plants } from '../plants';
+import { plantForms } from './index';
 
 const shouldUpdateLevels = (plantState, currentTime) => {
   const {
@@ -10,7 +10,7 @@ const shouldUpdateLevels = (plantState, currentTime) => {
     waterTimeLeft,
   } = plantState;
 
-  const { phases } = plants[type];
+  const { phases } = plantForms[type];
   const { waterLevels } = phases[phase];
   const { status } = waterLevels[waterLevel];
 
