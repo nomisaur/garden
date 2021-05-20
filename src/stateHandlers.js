@@ -67,7 +67,7 @@ const shouldUpdate = (soilState, currentTime) => {
 
 const update = (state, { soilIndex, currentTime }) => {
   const getNewSoilState = (soilState, prevSoilState) => {
-    const newSoilState = clone(soilState);
+    const newState = { soil: clone(soilState) };
 
     const { shouldEvaporate, shouldDrink, shouldGrow } = shouldUpdate(
       soilState,
@@ -75,6 +75,10 @@ const update = (state, { soilIndex, currentTime }) => {
     );
 
     if (shouldEvaporate) {
+      state.soil.waterLevel = state.soil.waterLevel - 1;
+      state.soil = {
+        ...state.soil,
+      };
     }
     if (shouldDrink) {
     }
@@ -82,7 +86,7 @@ const update = (state, { soilIndex, currentTime }) => {
     }
 
     if (shouldEvaporate || shouldDrink || shouldGrow) {
-      return getNewSoilState(newSoilState, soilState);
+      return getNewSoilState(newState.soil, soilState);
     } else {
       return soilState;
     }
