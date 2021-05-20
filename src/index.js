@@ -26,3 +26,16 @@ if (config.isDev) {
 }
 
 module.hot.accept();
+
+const betterTry = (logger = () => {}) => (tryFn, catchFn) => {
+  try {
+    return tryFn()
+  } catch (err) {
+    logger(err)
+    try {
+      return catchFn()
+    } catch (err2) {
+      logger(err2)
+    }
+  }
+}

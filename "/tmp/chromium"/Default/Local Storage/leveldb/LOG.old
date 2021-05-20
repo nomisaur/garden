@@ -1,0 +1,7 @@
+2021/04/23-23:40:49.297 3103 Reusing MANIFEST /Users/nlsaltis/fun/garden/"/tmp/chromium"/Default/Local Storage/leveldb/MANIFEST-000001
+2021/04/23-23:40:49.298 3103 Recovering log #3
+2021/04/23-23:40:49.299 3103 (ignoring error) /Users/nlsaltis/fun/garden/"/tmp/chromium"/Default/Local Storage/leveldb/000003.log: dropping 8553 bytes; Corruption: checksum mismatch
+2021/04/23-23:40:49.299 3103 Reusing old log /Users/nlsaltis/fun/garden/"/tmp/chromium"/Default/Local Storage/leveldb/000003.log 
+2021/04/24-00:06:57.261 4d17 Level-0 table #5: started
+2021/04/24-00:06:57.354 4d17 Level-0 table #5: 72716 bytes OK
+2021/04/24-00:06:57.647 4d17 Delete type=0 #3
