@@ -36,9 +36,37 @@ const plant = (state, { soilIndex, type }) => {
   return Math.round(newDuration * (timeLeft / duration));
 }; */
 
+const shouldUpdate = (soilState, currentTime) => {
+  const timePassed = currentTime - soilState.timeStamp;
+  const {
+    waterLevel: soilWaterLevel,
+    waterTimeLeft: soilWaterTimeLeft,
+    plant: {
+      type,
+      waterLevel: plantWaterLevel,
+      waterTimeLeft: plantWaterTimeLeft,
+      lifeTimeLeft,
+      lifeStage,
+    },
+  } = soilState;
+  const { lifeStages, healthyMin, healthyMax } = plantModels[type];
+  const shouldEvaporate = soilWaterTimeLeft < timePassed && soilWaterLevel > 0;
+  const shouldDrink = plantWaterTimeLeft < timePassed && plantWaterLevel < 100;
+  const shouldGrow =
+    lifeTimeLeft < timePassed &&
+    lifeStage < lifeStages.length - 1 &&
+    plantWaterLevel >= healthyMin &&
+    plantWaterLevel <= healthyMax;
+
+  return { shouldEvaporate, shouldDrink, shouldGrow };
+};
+
 const update = (state, { soilIndex, currentTime }) => {
   const getNewSoilState = (soilState, prevSoilState) => {
-    const timePassed = currentTime - soilState.timeStamp;
+    const { shouldEvaporate, shouldDrink, shouldGrow } = shouldUpdate(
+      soilState,
+      currentTime,
+    );
   };
 
   const newSoilState = getNewSoilState(
