@@ -151,7 +151,8 @@ const update = (state, { planterIndex, currentTime }) => {
     }
 
     const timePassed = currentTime - newState.soil.timeStamp;
-    newState.soil.timeStamp = newState.soil.timeStamp + timePassed;
+    newState.soil.timeStamp =
+      newState.soil.timeStamp + Math.min(newState.soil.evaporateTimeLeft);
 
     const {
       evaporateTimeLeft,
@@ -165,6 +166,17 @@ const update = (state, { planterIndex, currentTime }) => {
         growTimeLeft,
       },
     } = newState.soil;
+
+    newState.soil.timeStamp =
+      newState.soil.timeStamp +
+      (hasPlant
+        ? Math.min(
+            newState.soil.evaporateTimeLeft,
+            newState.soil.plant.drinkTimeLeft,
+            newState.soil.plant.dryTimeLeft,
+            newState.soil.plant.growTimeLeft,
+          )
+        : newState.soil.evaporateTimeLeft);
 
     newState.soil.evaporateTimeLeft =
       evaporateTimeLeft - timePassed <= 0
