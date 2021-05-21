@@ -20,7 +20,7 @@ const App = ({ initialState }) => {
 
   const currentTime = useCurrentTime();
 
-  useAutoSave(state, config.autosave);
+  //useAutoSave(state, config.autosave);
 
   if (config.isDev) {
     window.dev.showState = () => console.log(state);
