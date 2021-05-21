@@ -151,7 +151,7 @@ const update = (state, { planterIndex, currentTime }) => {
     }
 
     const timePassed = currentTime - newState.soil.timeStamp;
-    newState.soil.timeStamp = currentTime;
+    newState.soil.timeStamp = newState.soil.timeStamp + timePassed;
 
     const {
       evaporateTimeLeft,
