@@ -29,18 +29,18 @@ const images = [
 ];
 
 const lifeStage = ({
-  ageRate = time({ seconds: 3 }),
-  drinkRate = time({ seconds: 1 }),
-  dryRate = time({ seconds: 2 }),
-  healthyMin = 10,
-  healthyMax = 90,
+  growRate = time({ seconds: 10 }),
+  drinkRate = time({ seconds: 3 }),
+  dryRate = time({ seconds: 7 }),
+  healthyPlantMin = 10,
+  healthyPlantMax = 90,
   image = ':)',
 }) => ({
-  ageRate,
+  growRate,
   drinkRate,
   dryRate,
-  healthyMin,
-  healthyMax,
+  healthyPlantMin,
+  healthyPlantMax,
   image,
 });
 

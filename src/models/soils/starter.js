@@ -3,9 +3,9 @@ import { time } from '../../utils';
 const image = `~~~~~`;
 
 const starter = {
-  evaporationRate: time({ seconds: 5 }),
-  healthyMin: 20,
-  healthyMax: 80,
+  evaporationRate: time({ seconds: 30 }),
+  healthySoilMin: 20,
+  healthySoilMax: 80,
   initialWaterLevel: 50,
   image,
 };

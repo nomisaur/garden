@@ -3,41 +3,28 @@ import { StyledImage, StyledButton } from './styled';
 import { soilModels, plantModels, planter } from '../models';
 import { shouldUpdate } from '../stateHandlers';
 import { useAppContext } from '../hooks';
+import { getPlanterState } from '../state';
 
 const Planter = ({ planterState, setState }) => {
   const { currentTime } = useAppContext();
+  const fullPlanterState = getPlanterState(planterState);
+
   const {
     hasSoil,
-    soil: {
-      hasPlant,
-      type: soilType,
-      waterLevel,
-      plant: { type: plantType, lifeStage, hydration },
-    },
-  } = planterState;
-
-  const { lifeStages } = hasPlant ? plantModels[plantType] : {};
-  const { image: plantImage, healthyMax, healthyMin } = hasPlant
-    ? lifeStages[lifeStage]
-    : {};
-
-  const fullyGrown = hasPlant && lifeStage === lifeStages.length - 1;
-  const status =
-    hasPlant && hydration < healthyMin
-      ? 'dry'
-      : hydration > healthyMax
-      ? 'wet'
-      : 'healthy';
-
-  const { shouldDoUpdate = false } = hasSoil
-    ? shouldUpdate(planterState.soil, currentTime)
-    : {};
+    hasPlant,
+    waterLevel,
+    hydration,
+    fullyGrown,
+    status,
+    plantImage,
+    soilImage,
+  } = fullPlanterState;
 
   useEffect(() => {
-    if (shouldDoUpdate) {
+    if (shouldUpdate(fullPlanterState, currentTime).shouldDoUpdate) {
       setState('update');
     }
-  }, [shouldDoUpdate]);
+  });
 
   return (
     <div>
@@ -45,7 +32,7 @@ const Planter = ({ planterState, setState }) => {
         {hasPlant ? plantImage : plantModels.empty}
       </StyledImage>
       <StyledImage color='brown' lineHeight={0.25}>
-        {hasSoil ? soilModels[soilType].image : soilModels.empty}
+        {hasSoil ? soilImage : soilModels.empty}
       </StyledImage>
       <StyledImage color='grey' lineHeight={0.25} marginBottom={'10px'}>
         {planter}

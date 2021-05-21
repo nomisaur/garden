@@ -1,7 +1,7 @@
 import { list } from './utils';
 
 export const initialPlantState = {
-  type: null,
+  plantType: null,
   lifeStage: null,
   hydration: null,
   growTimeLeft: null,
@@ -11,7 +11,7 @@ export const initialPlantState = {
 
 export const initialSoilState = {
   timeStamp: null,
-  type: null,
+  soilType: null,
   hasPlant: false,
   waterLevel: null,
   evaporateTimeLeft: null,

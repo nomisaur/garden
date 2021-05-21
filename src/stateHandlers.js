@@ -1,21 +1,22 @@
 import { plantModels, soilModels } from './models';
 import { initialPlantState } from './initialState';
 import { clone } from './utils';
+import { getPlanterState } from './state';
 
-const plant = (state, { planterIndex, type }) => {
+const plant = (state, { planterIndex, type, currentTime }) => {
   const {
-    lifeStages: [{ ageRate, drinkRate, dryRate }],
+    lifeStages: [{ growRate, drinkRate, dryRate }],
   } = plantModels[type];
 
   state.planters[planterIndex].soil = {
     ...state.planters[planterIndex].soil,
-    timeStamp: Date.now(),
+    timeStamp: currentTime,
     hasPlant: true,
     plant: {
-      type,
+      plantType: type,
       lifeStage: 0,
       hydration: 0,
-      growTimeLeft: ageRate,
+      growTimeLeft: growRate,
       drinkTimeLeft: drinkRate,
       dryTimeLeft: dryRate,
     },
@@ -23,15 +24,15 @@ const plant = (state, { planterIndex, type }) => {
   return state;
 };
 
-const soil = (state, { planterIndex, type }) => {
+const soil = (state, { planterIndex, type, currentTime }) => {
   const { initialWaterLevel, evaporationRate } = soilModels[type];
   state.planters[planterIndex] = {
     ...state.planters[planterIndex],
     hasSoil: true,
     soil: {
       ...state.planters[planterIndex].soil,
-      timeStamp: Date.now(),
-      type,
+      timeStamp: currentTime,
+      soilType: type,
       hasPlant: false,
       waterLevel: initialWaterLevel,
       evaporateTimeLeft: evaporationRate,
@@ -53,7 +54,8 @@ const water = (state, { planterIndex }) => {
 const harvest = (state, { planterIndex }) => {
   const soil = state.planters[planterIndex].soil;
 
-  state.plantMatter = state.plantMatter + plantModels[soil.plant.type].value;
+  state.plantMatter =
+    state.plantMatter + plantModels[soil.plant.plantType].value;
 
   soil.hasPlant = false;
   soil.plant = {
@@ -63,38 +65,55 @@ const harvest = (state, { planterIndex }) => {
   return state;
 };
 
-export const shouldUpdate = (soilState, currentTime) => {
+export const shouldUpdate = (planterState, currentTime) => {
   const {
     timeStamp,
+    hasSoil,
+    hasPlant,
     waterLevel,
     evaporateTimeLeft,
-    hasPlant,
-    plant: {
-      type: plantType,
-      lifeStage,
-      hydration,
-      growTimeLeft,
-      drinkTimeLeft,
-      dryTimeLeft,
-    },
-  } = soilState;
-  const plantModel = hasPlant ? plantModels[plantType] : {};
-  const { healthyMin, healthyMax } = hasPlant
-    ? plantModel.lifeStages[lifeStage]
-    : {};
+    hydration,
+    growTimeLeft,
+    drinkTimeLeft,
+    dryTimeLeft,
+    fullyGrown,
+    status,
+  } = planterState;
 
-  const timePassed = currentTime - timeStamp;
+  if (!hasSoil) {
+    return {};
+  }
 
-  const shouldEvaporate = evaporateTimeLeft < timePassed && waterLevel > 0;
-  const shouldDrink =
-    hasPlant && drinkTimeLeft < timePassed && hydration < 100 && waterLevel > 0;
-  const shouldDry = hasPlant && dryTimeLeft < timePassed && hydration > 0;
-  const shouldGrow =
-    hasPlant &&
-    growTimeLeft < timePassed &&
-    lifeStage < plantModel.lifeStages.length - 1 &&
-    hydration >= healthyMin &&
-    hydration <= healthyMax;
+  const totalTimePassed = currentTime - timeStamp;
+
+  const evaporateTimerActive = waterLevel > 0;
+  const drinkTimerActive = hasPlant && hydration < 100 && waterLevel > 0;
+  const dryTimerActive = hasPlant && hydration > 0;
+  const growTimerActive = hasPlant && !fullyGrown && status === 'healthy';
+
+  const tickTime = Math.min(
+    ...[
+      [evaporateTimerActive, evaporateTimeLeft],
+      [drinkTimerActive, drinkTimeLeft],
+      [dryTimerActive, dryTimeLeft],
+      [growTimerActive, growTimeLeft],
+    ]
+      .filter(([isActive, timeLeft]) => isActive && timeLeft)
+      .map(([, timeLeft]) => timeLeft),
+  );
+
+  if (totalTimePassed < tickTime) {
+    return {};
+  }
+
+  const shouldEvaporate =
+    evaporateTimerActive && evaporateTimeLeft === tickTime;
+
+  const shouldDrink = drinkTimerActive && drinkTimeLeft === tickTime;
+
+  const shouldDry = dryTimerActive && dryTimeLeft === tickTime;
+
+  const shouldGrow = growTimerActive && growTimeLeft === tickTime;
 
   const shouldDoUpdate =
     shouldEvaporate || shouldDrink || shouldDry || shouldGrow;
@@ -105,30 +124,89 @@ export const shouldUpdate = (soilState, currentTime) => {
     shouldDry,
     shouldGrow,
     shouldDoUpdate,
+    timePassed: tickTime,
   };
 };
 
+const getNewTimer = (timeLeft, oldTimer, newTimer) =>
+  Math.round(newTimer * (timeLeft / oldTimer));
+
 const update = (state, { planterIndex, currentTime }) => {
-  const getNewSoilState = (soilState, prevSoilState) => {
+  const getNewPlanterState = (planterState) => {
+    const fullPlanterState = getPlanterState(planterState);
     const {
       shouldEvaporate,
       shouldDrink,
       shouldDry,
       shouldGrow,
       shouldDoUpdate,
-    } = shouldUpdate(soilState, currentTime);
+      timePassed,
+    } = shouldUpdate(fullPlanterState, currentTime);
 
     if (!shouldDoUpdate) {
-      return soilState;
+      return planterState;
     }
 
-    const newState = { soil: clone(soilState) };
+    const {
+      timeStamp,
+      waterLevel,
+      evaporateTimeLeft,
+      lifeStage,
+      hydration,
+      growTimeLeft,
+      drinkTimeLeft,
+      dryTimeLeft,
+      drinkRate,
+      dryRate,
+      lifeStages,
+      status,
+      evaporationRate,
+      fullyGrown,
+    } = fullPlanterState;
+
+    const newState = clone(planterState);
+
+    newState.soil.timeStamp = timeStamp + timePassed;
 
     if (shouldGrow) {
-      const { lifeStage, type } = newState.soil.plant;
-      const { lifeStages } = plantModels[type];
       const newLifeStage = Math.min(lifeStage + 1, lifeStages.length - 1);
+
+      const {
+        growRate: newGrowRate,
+        dryRate: newDryRate,
+        drinkRate: newDrinkRate,
+      } = lifeStages[newLifeStage];
+
       newState.soil.plant.lifeStage = newLifeStage;
+
+      newState.soil.plant.growTimeLeft = newGrowRate;
+
+      newState.soil.plant.dryTimeLeft = shouldDry
+        ? newDryRate
+        : getNewTimer(dryTimeLeft - timePassed, dryRate, newDryRate);
+
+      newState.soil.plant.drinkTimeLeft = shouldDrink
+        ? newDrinkRate
+        : getNewTimer(drinkTimeLeft - timePassed, drinkRate, newDrinkRate);
+
+      newState.soil.evaporateTimeLeft = shouldEvaporate
+        ? evaporationRate
+        : evaporateTimeLeft - timePassed;
+    } else {
+      if (status === 'healthy' && !fullyGrown) {
+        newState.soil.plant.growTimeLeft = growTimeLeft - timePassed;
+      }
+      newState.soil.plant.drinkTimeLeft = drinkTimeLeft - timePassed;
+      newState.soil.plant.dryTimeLeft = dryTimeLeft - timePassed;
+      newState.soil.evaporateTimeLeft = evaporateTimeLeft - timePassed;
+    }
+
+    if (shouldDrink) {
+      newState.soil.plant.hydration = Math.min(hydration + 1, 100);
+      newState.soil.waterLevel = Math.max(waterLevel - 1, 0);
+      if (!shouldGrow) {
+        newState.soil.plant.drinkTimeLeft = drinkRate;
+      }
     }
 
     if (shouldDry) {
@@ -136,88 +214,28 @@ const update = (state, { planterIndex, currentTime }) => {
         newState.soil.plant.hydration - 1,
         0,
       );
-    }
-
-    if (shouldDrink) {
-      newState.soil.plant.hydration = Math.min(
-        newState.soil.plant.hydration + 1,
-        100,
-      );
-      newState.soil.waterLevel = Math.max(newState.soil.waterLevel - 1, 0);
+      if (!shouldGrow) {
+        newState.soil.plant.dryTimeLeft = dryRate;
+      }
     }
 
     if (shouldEvaporate) {
       newState.soil.waterLevel = Math.max(newState.soil.waterLevel - 1, 0);
-    }
-
-    const timePassed = currentTime - newState.soil.timeStamp;
-    newState.soil.timeStamp =
-      newState.soil.timeStamp + Math.min(newState.soil.evaporateTimeLeft);
-
-    const {
-      evaporateTimeLeft,
-      type: soilType,
-      hasPlant,
-      plant: {
-        type: plantType,
-        lifeStage,
-        drinkTimeLeft,
-        dryTimeLeft,
-        growTimeLeft,
-      },
-    } = newState.soil;
-
-    newState.soil.timeStamp =
-      newState.soil.timeStamp +
-      (hasPlant
-        ? Math.min(
-            newState.soil.evaporateTimeLeft,
-            newState.soil.plant.drinkTimeLeft,
-            newState.soil.plant.dryTimeLeft,
-            newState.soil.plant.growTimeLeft,
-          )
-        : newState.soil.evaporateTimeLeft);
-
-    newState.soil.evaporateTimeLeft =
-      evaporateTimeLeft - timePassed <= 0
-        ? soilModels[soilType].evaporationRate
-        : evaporateTimeLeft - timePassed;
-
-    if (hasPlant) {
-      const { drinkRate, dryRate, ageRate } = plantModels[plantType].lifeStages[
-        lifeStage
-      ];
-
-      newState.soil.plant.drinkTimeLeft =
-        drinkTimeLeft - timePassed <= 0
-          ? drinkRate
-          : drinkTimeLeft - timePassed;
-
-      newState.soil.plant.dryTimeLeft =
-        dryTimeLeft - timePassed <= 0 ? dryRate : dryTimeLeft - timePassed;
-
-      const prevHydration = prevSoilState.plant.hydration;
-      const { healthyMax, healthyMin } = plantModels[
-        prevSoilState.plant.type
-      ].lifeStages[prevSoilState.plant.lifeStage];
-
-      if (prevHydration >= healthyMin && prevHydration <= healthyMax) {
-        newState.soil.plant.growTimeLeft =
-          growTimeLeft - timePassed <= 0 ? ageRate : growTimeLeft - timePassed;
+      if (!shouldGrow) {
+        newState.soil.evaporateTimeLeft = evaporationRate;
       }
     }
-
-    return getNewSoilState(newState.soil, soilState);
+    return getNewPlanterState(newState);
   };
 
-  const newSoilState = getNewSoilState(
-    state.planters[planterIndex].soil,
-    state.planters[planterIndex].soil,
+  const newPlanterState = getNewPlanterState(
+    state.planters[planterIndex],
+    state.planters[planterIndex],
   );
 
   state.planters[planterIndex].soil = {
     ...state.planters[planterIndex].soil,
-    ...newSoilState,
+    ...newPlanterState.soil,
   };
 
   return state;
