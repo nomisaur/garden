@@ -19,7 +19,8 @@ localForage
   .catch(log);
 
 if (config.isDev) {
-  window.clearSave = () => {
+  window.dev = {};
+  window.dev.clearSave = () => {
     window.indexedDB.deleteDatabase('localforage');
     window.location.reload();
   };

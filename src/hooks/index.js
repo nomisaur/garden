@@ -24,7 +24,7 @@ const save = (state, message = 'saved') => {
 const useFancyReducer = (handlers, initialState) => {
   const [state, setState] = useReducer((state, [action, payload]) => {
     const newState = handlers[action](clone(state), payload);
-    save(newState, 'saved on state change');
+    //save(newState, 'saved on state change');
     return newState;
   }, initialState);
 

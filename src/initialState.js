@@ -1,21 +1,27 @@
-const initialPlantState = {
+import { list } from './utils';
+
+export const initialPlantState = {
   type: null,
   lifeStage: null,
-  waterLevel: null,
-  lifeTimeLeft: null,
-  waterTimeLeft: null,
+  hydration: null,
+  growTimeLeft: null,
+  drinkTimeLeft: null,
+  dryTimeLeft: null,
 };
 
-const initialSoilState = {
+export const initialSoilState = {
   timeStamp: null,
-  type: 'starter',
-  empty: true,
-  waterLevel: 50,
+  type: null,
+  hasPlant: false,
+  waterLevel: null,
+  evaporateTimeLeft: null,
   plant: initialPlantState,
-  waterTimeLeft: null,
 };
 
 export const initialState = {
   plantMatter: 0,
-  soils: [initialSoilState, initialSoilState, initialSoilState],
+  planters: list(4, (n) => ({
+    hasSoil: false,
+    soil: initialSoilState,
+  })),
 };

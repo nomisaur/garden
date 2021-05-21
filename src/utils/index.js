@@ -46,4 +46,7 @@ const addToPayload = (setState, addition) => {
   };
 };
 
-export { addToPayload, time, getQueryParams, clone };
+const numberList = (num) => [...Array(num)];
+const list = (num, func) => numberList(num).map((_, i) => func(i));
+
+export { addToPayload, time, getQueryParams, clone, list };

@@ -1,5 +1,14 @@
 import * as plants from './plants';
 import * as soils from './soils';
 
-export const plantModels = plants;
-export const soilModels = soils;
+const emptyPlant = `    
+    
+    
+    
+`;
+
+const emptySoil = `    `;
+export const planter = `-----`;
+
+export const plantModels = { ...plants, empty: emptyPlant };
+export const soilModels = { ...soils, empty: emptySoil };

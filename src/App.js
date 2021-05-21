@@ -7,8 +7,12 @@ import { AppContext } from './hooks';
 
 import { Garden } from './components/garden';
 
-const ColorDiv = styled.div`
-  color: ${({ color = 'blue' }) => color};
+const AppStyle = styled.div`
+  background-color: #000;
+  color: #fff;
+  font-size: large;
+  font-family: monospace;
+  min-height: 100vh;
 `;
 
 const App = ({ initialState }) => {
@@ -16,20 +20,20 @@ const App = ({ initialState }) => {
 
   const currentTime = useCurrentTime();
 
-  //useAutoSave(state, config.autosave);
+  useAutoSave(state, config.autosave);
 
   if (config.isDev) {
-    window.seeState = () => console.log(state);
+    window.dev.showState = () => console.log(state);
+    window.dev.forceState = (func) => setState('forceState', func);
   }
 
   return (
-    <AppContext.Provider value={{ state, setState, currentTime }}>
-      <ColorDiv>
-        <ColorDiv color='red'>hi :)</ColorDiv>
+    <AppStyle>
+      <AppContext.Provider value={{ state, setState, currentTime }}>
         <div>plant matter: {state.plantMatter}</div>
         <Garden />
-      </ColorDiv>
-    </AppContext.Provider>
+      </AppContext.Provider>
+    </AppStyle>
   );
 };
 export { App };
