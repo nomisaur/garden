@@ -7,6 +7,7 @@ import { config } from './config';
 
 import { initialState } from './initialState';
 import { App } from './App';
+import * as playground from './playground';
 
 if (config.isDev) {
   window.dev = {};
@@ -14,6 +15,7 @@ if (config.isDev) {
     window.indexedDB.deleteDatabase('localforage');
     window.location.reload();
   };
+  window.p = playground;
 }
 
 localForage

@@ -44,16 +44,18 @@ export const App = ({ initialState }) => {
   }
 
   return (
-    <AppStyle>
-      <AppContext.Provider
-        value={{
-          state,
-          handleState,
-          currentTime: isTimePaused ? pausedTime : currentTime,
-        }}
-      >
-        <Main />
-      </AppContext.Provider>
-    </AppStyle>
+    <React.StrictMode>
+      <AppStyle>
+        <AppContext.Provider
+          value={{
+            state,
+            handleState,
+            currentTime: isTimePaused ? pausedTime : currentTime,
+          }}
+        >
+          <Main />
+        </AppContext.Provider>
+      </AppStyle>
+    </React.StrictMode>
   );
 };
