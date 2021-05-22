@@ -77,7 +77,7 @@ export const shouldUpdate = (planterState, currentTime) => {
     drinkTimeLeft,
     dryTimeLeft,
     fullyGrown,
-    status,
+    isHealthy,
     drainValue,
   } = planterState;
 
@@ -91,7 +91,7 @@ export const shouldUpdate = (planterState, currentTime) => {
   const drinkTimerActive =
     hasPlant && hydration < 100 && waterLevel >= drainValue;
   const dryTimerActive = hasPlant && hydration > 0 && waterLevel === 0;
-  const growTimerActive = hasPlant && !fullyGrown && status === 'healthy';
+  const growTimerActive = hasPlant && !fullyGrown && isHealthy;
 
   const tickTime = Math.min(
     ...[

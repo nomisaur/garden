@@ -22,13 +22,9 @@ export const getPlanterState = (planterState) => {
   } = planterState;
 
   // SOIL MODEL
-  const {
-    initialWaterLevel,
-    evaporationRate,
-    healthySoilMin,
-    healthySoilMax,
-    image: soilImage,
-  } = soilType ? soilModels[soilType] : {};
+  const { initialWaterLevel, evaporationRate, image: soilImage } = soilType
+    ? soilModels[soilType]
+    : {};
 
   // PLANT MODEL
   const { value, lifeStages } = hasPlant ? plantModels[plantType] : {};
@@ -37,19 +33,22 @@ export const getPlanterState = (planterState) => {
     drinkRate,
     dryRate,
     conversion: [drinkValue, drainValue] = [],
-    healthyPlantMin,
-    healthyPlantMax,
+    healthyMin,
+    healthyMax,
     image: plantImage,
   } = hasPlant ? lifeStages[lifeStage] : {};
 
   // MISC
   const fullyGrown = hasPlant && lifeStage >= lifeStages.length - 1;
   const status =
-    hasPlant && hydration < healthyPlantMin
+    hasPlant && hydration < healthyMin
       ? 'dry'
-      : hydration > healthyPlantMax
+      : hydration > healthyMax
       ? 'wet'
       : 'healthy';
+  const isDry = status === 'dry';
+  const isHealthy = status === 'healthy';
+  const isWet = status === 'wet';
 
   return {
     // STATE
@@ -69,8 +68,6 @@ export const getPlanterState = (planterState) => {
     // SOIL MODEL
     initialWaterLevel,
     evaporationRate,
-    healthySoilMin,
-    healthyPlantMax,
     soilImage,
 
     // PLANT MODEL
@@ -81,12 +78,15 @@ export const getPlanterState = (planterState) => {
     dryRate,
     drinkValue,
     drainValue,
-    healthyPlantMin,
-    healthySoilMax,
+    healthyMin,
+    healthyMax,
     plantImage,
 
     // MISC
     fullyGrown,
     status,
+    isDry,
+    isWet,
+    isHealthy,
   };
 };
