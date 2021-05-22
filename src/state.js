@@ -1,22 +1,27 @@
 import { plantModels, soilModels } from './models';
 
-export const getSoilState = (soilState) => {
+export const getPlanterState = (planterState) => {
+  // STATE
   const {
-    timeStamp,
-    soilType,
-    hasPlant,
-    waterLevel,
-    evaporateTimeLeft,
-    plant: {
-      plantType,
-      lifeStage,
-      hydration,
-      growTimeLeft,
-      drinkTimeLeft,
-      dryTimeLeft,
+    hasSoil,
+    soil: {
+      timeStamp,
+      soilType,
+      hasPlant,
+      waterLevel,
+      evaporateTimeLeft,
+      plant: {
+        plantType,
+        lifeStage,
+        hydration,
+        growTimeLeft,
+        drinkTimeLeft,
+        dryTimeLeft,
+      },
     },
-  } = soilState;
+  } = planterState;
 
+  // SOIL MODEL
   const {
     evaporationRate,
     healthySoilMin,
@@ -25,8 +30,8 @@ export const getSoilState = (soilState) => {
     image: soilImage,
   } = soilType ? soilModels[soilType] : {};
 
+  // PLANT MODEL
   const { value, lifeStages } = hasPlant ? plantModels[plantType] : {};
-
   const {
     growRate,
     drinkRate,
@@ -34,8 +39,10 @@ export const getSoilState = (soilState) => {
     healthyPlantMin,
     healthyPlantMax,
     image: plantImage,
+    conversion: [drinkValue, drainValue] = [],
   } = hasPlant ? lifeStages[lifeStage] : {};
 
+  // MISC
   const fullyGrown = hasPlant && lifeStage >= lifeStages.length - 1;
   const status =
     hasPlant && hydration < healthyPlantMin
@@ -45,6 +52,7 @@ export const getSoilState = (soilState) => {
       : 'healthy';
 
   return {
+    hasSoil,
     timeStamp,
     soilType,
     hasPlant,
@@ -66,18 +74,12 @@ export const getSoilState = (soilState) => {
     dryRate,
     healthyPlantMin,
     healthySoilMax,
+    drinkValue,
+    drainValue,
     plantImage,
     value,
     lifeStages,
     fullyGrown,
     status,
-  };
-};
-
-export const getPlanterState = (planterState) => {
-  const { hasSoil, soil } = planterState;
-  return {
-    hasSoil,
-    ...getSoilState(soil),
   };
 };

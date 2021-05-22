@@ -1,4 +1,4 @@
-import { time, list } from '../../utils';
+import { time, definePlant } from '../../utils';
 
 const images = [
   `     
@@ -28,25 +28,16 @@ const images = [
 `,
 ];
 
-const lifeStage = ({
-  growRate = time({ seconds: 10 }),
-  drinkRate = time({ seconds: 3 }),
-  dryRate = time({ seconds: 7 }),
-  healthyPlantMin = 10,
-  healthyPlantMax = 90,
-  image = ':)',
-}) => ({
-  growRate,
-  drinkRate,
-  dryRate,
-  healthyPlantMin,
-  healthyPlantMax,
-  image,
-});
-
-const pennyPlant = {
+export const pennyPlant = definePlant({
   value: 1,
-  lifeStages: list(5, (n) => lifeStage({ image: images[n] })),
-};
-
-export { pennyPlant };
+  images,
+  stages: [{}, {}, {}, {}, {}],
+  defaultStage: {
+    growRate: time({ seconds: 10 }),
+    drinkRate: time({ seconds: 3 }),
+    dryRate: time({ seconds: 3 }),
+    healthyPlantMin: 1,
+    healthyPlantMax: 100,
+    conversion: [1, 1],
+  },
+});

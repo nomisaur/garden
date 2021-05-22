@@ -78,6 +78,7 @@ export const shouldUpdate = (planterState, currentTime) => {
     dryTimeLeft,
     fullyGrown,
     status,
+    drainValue,
   } = planterState;
 
   if (!hasSoil) {
@@ -87,7 +88,8 @@ export const shouldUpdate = (planterState, currentTime) => {
   const totalTimePassed = currentTime - timeStamp;
 
   const evaporateTimerActive = waterLevel > 0;
-  const drinkTimerActive = hasPlant && hydration < 100 && waterLevel > 0;
+  const drinkTimerActive =
+    hasPlant && hydration < 100 && waterLevel >= drainValue;
   const dryTimerActive = hasPlant && hydration > 0 && waterLevel === 0;
   const growTimerActive = hasPlant && !fullyGrown && status === 'healthy';
 
@@ -166,6 +168,8 @@ const update = (state, { planterIndex, currentTime }) => {
       dryRate,
       lifeStages,
       evaporationRate,
+      drinkValue,
+      drainValue,
     } = fullPlanterState;
 
     const newState = clone(planterState);
@@ -228,8 +232,8 @@ const update = (state, { planterIndex, currentTime }) => {
     }
 
     if (shouldDrink) {
-      newState.soil.plant.hydration = Math.min(hydration + 1, 100);
-      newState.soil.waterLevel = Math.max(waterLevel - 1, 0);
+      newState.soil.plant.hydration = Math.min(hydration + drinkValue, 100);
+      newState.soil.waterLevel = Math.max(waterLevel - drainValue, 0);
     }
 
     if (shouldDry) {
