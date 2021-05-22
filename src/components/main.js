@@ -11,29 +11,19 @@ const screens = {
 
 export const Main = () => {
   const { state, handleState } = useAppContext();
+
+  const openScreen = (screen) => () => {
+    handleState((state) => {
+      state.screen = screen;
+      return state;
+    });
+  };
+
   return (
     <>
       <InlineDiv>
-        <StyledButton
-          onClick={() =>
-            handleState((state) => {
-              state.screen = 'garden';
-              return state;
-            })
-          }
-        >
-          garden
-        </StyledButton>
-        <StyledButton
-          onClick={() =>
-            handleState((state) => {
-              state.screen = 'shop';
-              return state;
-            })
-          }
-        >
-          shop
-        </StyledButton>
+        <StyledButton onClick={openScreen('garden')}>garden</StyledButton>
+        <StyledButton onClick={openScreen('shop')}>shop</StyledButton>
       </InlineDiv>
       <div>plant matter: {state.plantMatter}</div>
       {screens[state.screen]}
