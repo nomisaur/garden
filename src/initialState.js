@@ -19,10 +19,12 @@ export const initialSoilState = {
 };
 
 export const initialState = {
-  plantMatter: 0,
   screen: 'garden',
   planters: list(4, (n) => ({
     hasSoil: false,
     soil: initialSoilState,
   })),
+  inventory: {
+    plantMatter: 1,
+  },
 };

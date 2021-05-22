@@ -58,7 +58,7 @@ export const Planter = ({ planterState, handleState }) => {
           add plant
         </StyledButton>
       )}
-      {hasPlant && fullyGrown && (
+      {hasPlant && (
         <StyledButton onClick={() => handleState(harvest)}>
           harvest
         </StyledButton>

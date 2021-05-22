@@ -3,6 +3,7 @@ import { useAppContext } from '../hooks';
 
 import { StyledButton, InlineDiv } from './styled';
 import { Garden } from './garden';
+import { Inventory } from './inventory';
 
 const screens = {
   garden: <Garden />,
@@ -25,8 +26,8 @@ export const Main = () => {
         <StyledButton onClick={openScreen('garden')}>garden</StyledButton>
         <StyledButton onClick={openScreen('shop')}>shop</StyledButton>
       </InlineDiv>
-      <div>plant matter: {state.plantMatter}</div>
       {screens[state.screen]}
+      <Inventory />
     </>
   );
 };

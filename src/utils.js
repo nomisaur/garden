@@ -55,3 +55,6 @@ export const list = (num, func) => numberList(num).map((_, i) => func(i));
 
 export const includeIf = (item, condition) =>
   condition && item != null ? [item] : [];
+
+export const arrayToObject = (list, getKey) =>
+  list.reduce((grow, feed) => ({ ...grow, [getKey(feed)]: feed }), {});

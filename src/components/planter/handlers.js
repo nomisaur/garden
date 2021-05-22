@@ -1,7 +1,7 @@
 import { clone, includeIf } from '../../utils';
-import { getPlanterState } from '../../state';
+import { getPlanterState, getState } from '../../state';
 import { initialPlantState } from '../../initialState';
-import { plantModels, soilModels } from '../../models';
+import { plantModels, soilModels, itemModels } from '../../models';
 
 export const plant = (state, { planterIndex, type, currentTime }) => {
   const {
@@ -52,11 +52,16 @@ export const water = (state, { planterIndex, currentTime }) => {
 };
 
 export const harvest = (state, { planterIndex }) => {
+  const { planters, inventory } = getState(state);
+
+  const { drops } = planters[planterIndex];
+
+  Object.entries(drops).forEach(([item, amount]) => {
+    const { amount: amountInInventory, max } = inventory[item];
+    state.inventory[item] = Math.min(amountInInventory + amount, max);
+  });
+
   const soil = state.planters[planterIndex].soil;
-
-  state.plantMatter =
-    state.plantMatter + plantModels[soil.plant.plantType].value;
-
   soil.hasPlant = false;
   soil.plant = {
     plant: initialPlantState,

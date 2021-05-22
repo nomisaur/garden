@@ -1,4 +1,5 @@
-import { plantModels, soilModels } from './models';
+import { plantModels, soilModels, itemModels } from './models';
+import { arrayToObject } from './utils';
 
 export const getPlanterState = (planterState) => {
   // STATE
@@ -27,8 +28,9 @@ export const getPlanterState = (planterState) => {
     : {};
 
   // PLANT MODEL
-  const { value, lifeStages } = hasPlant ? plantModels[plantType] : {};
+  const { plantName, lifeStages } = hasPlant ? plantModels[plantType] : {};
   const {
+    drops,
     growRate,
     drinkRate,
     dryRate,
@@ -71,7 +73,8 @@ export const getPlanterState = (planterState) => {
     soilImage,
 
     // PLANT MODEL
-    value,
+    plantName,
+    drops,
     lifeStages,
     growRate,
     drinkRate,
@@ -88,5 +91,20 @@ export const getPlanterState = (planterState) => {
     isDry,
     isWet,
     isHealthy,
+  };
+};
+
+export const getState = (state) => {
+  const { screen, planters, inventory } = state;
+
+  const items = Object.entries(inventory).map(([item, amount]) => {
+    const { name, value, max } = itemModels[item];
+    return { item, amount, name, value, max };
+  });
+
+  return {
+    screen,
+    planters: planters.map(getPlanterState),
+    inventory: arrayToObject(items, (item) => item.item),
   };
 };
