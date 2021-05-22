@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { StyledImage, StyledButton } from './styled';
-import { soilModels, plantModels, planter } from '../models';
-import { shouldUpdate } from '../stateHandlers';
 import { useAppContext } from '../hooks';
 import { getPlanterState } from '../state';
+import { soilModels, plantModels, planterImage } from '../models';
+import { shouldUpdate } from '../stateHandlers/gardenHandlers';
 
-const Planter = ({ planterState, setState }) => {
+import { StyledImage, StyledButton } from './styled';
+
+export const Planter = ({ planterState, setState }) => {
   const { currentTime } = useAppContext();
   const fullPlanterState = getPlanterState(planterState);
 
@@ -35,7 +36,7 @@ const Planter = ({ planterState, setState }) => {
         {hasSoil ? soilImage : soilModels.empty}
       </StyledImage>
       <StyledImage color='grey' lineHeight={0.25} marginBottom={'10px'}>
-        {planter}
+        {planterImage}
       </StyledImage>
 
       {hasPlant && <div>status: {status}</div>}
@@ -61,5 +62,3 @@ const Planter = ({ planterState, setState }) => {
     </div>
   );
 };
-
-export { Planter };

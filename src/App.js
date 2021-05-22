@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
-import { useAutoSave, useFancyReducer, useCurrentTime } from './hooks';
-import { handlers } from './stateHandlers';
-import { config } from './config';
 import styled from 'styled-components';
-import { AppContext } from './hooks';
 
-import { Garden } from './components/garden';
+import { config } from './config';
 import { time } from './utils';
 import { log } from './log';
+import { handlers } from './stateHandlers';
+import {
+  AppContext,
+  useAutoSave,
+  useFancyReducer,
+  useCurrentTime,
+} from './hooks';
+
+import { Main } from './components/main';
 
 const AppStyle = styled.div`
   background-color: #000;
@@ -19,22 +24,20 @@ const AppStyle = styled.div`
 
 const App = ({ initialState }) => {
   const [state, setState] = useFancyReducer(handlers, initialState);
-  const [timeOn, setTimeOn] = useState(true);
-  const [pauseTime, setPauseTime] = useState(0);
-
   const currentTime = useCurrentTime();
-
   useAutoSave(state, config.autosave);
 
+  const [isTimePaused, setIsTimePaused] = useState(false);
+  const [pausedTime, setPausedTime] = useState(0);
   if (config.isDev) {
     window.dev.showState = () => log(state);
     window.dev.forceState = (func) => setState('forceState', func);
     window.dev.stop = () => {
-      setTimeOn(false);
-      setPauseTime(currentTime);
+      setIsTimePaused(true);
+      setPausedTime(currentTime);
     };
-    window.dev.start = () => setTimeOn(true);
-    window.dev.jump = (amount) => setPauseTime(pauseTime + time(amount));
+    window.dev.start = () => setIsTimePaused(false);
+    window.dev.jump = (amount) => setPausedTime(pausedTime + time(amount));
   }
 
   return (
@@ -43,11 +46,10 @@ const App = ({ initialState }) => {
         value={{
           state,
           setState,
-          currentTime: timeOn ? currentTime : pauseTime,
+          currentTime: isTimePaused ? pausedTime : currentTime,
         }}
       >
-        <div>plant matter: {state.plantMatter}</div>
-        <Garden />
+        <Main />
       </AppContext.Provider>
     </AppStyle>
   );

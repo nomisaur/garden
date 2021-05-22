@@ -1,7 +1,7 @@
-import { plantModels, soilModels } from './models';
-import { initialPlantState } from './initialState';
-import { clone } from './utils';
-import { getPlanterState } from './state';
+import { clone } from '../utils';
+import { getPlanterState } from '../state';
+import { initialPlantState } from '../initialState';
+import { plantModels, soilModels } from '../models';
 
 const plant = (state, { planterIndex, type, currentTime }) => {
   const {
@@ -47,6 +47,7 @@ const water = (state, { planterIndex }) => {
   state.planters[planterIndex].soil = {
     ...soilState,
     waterLevel: Math.min(soilState.waterLevel + 10, 100),
+    evaporateTimeLeft: soilModels[soilState.soilType].evaporationRate,
   };
   return state;
 };
@@ -119,6 +120,10 @@ export const shouldUpdate = (planterState, currentTime) => {
     shouldEvaporate || shouldDrink || shouldDry || shouldGrow;
 
   return {
+    evaporateTimerActive,
+    drinkTimerActive,
+    dryTimerActive,
+    growTimerActive,
     shouldEvaporate,
     shouldDrink,
     shouldDry,
@@ -135,6 +140,10 @@ const update = (state, { planterIndex, currentTime }) => {
   const getNewPlanterState = (planterState) => {
     const fullPlanterState = getPlanterState(planterState);
     const {
+      evaporateTimerActive,
+      drinkTimerActive,
+      dryTimerActive,
+      growTimerActive,
       shouldEvaporate,
       shouldDrink,
       shouldDry,
@@ -159,9 +168,7 @@ const update = (state, { planterIndex, currentTime }) => {
       drinkRate,
       dryRate,
       lifeStages,
-      status,
       evaporationRate,
-      fullyGrown,
     } = fullPlanterState;
 
     const newState = clone(planterState);
@@ -193,12 +200,18 @@ const update = (state, { planterIndex, currentTime }) => {
         ? evaporationRate
         : evaporateTimeLeft - timePassed;
     } else {
-      if (status === 'healthy' && !fullyGrown) {
+      if (growTimerActive) {
         newState.soil.plant.growTimeLeft = growTimeLeft - timePassed;
       }
-      newState.soil.plant.drinkTimeLeft = drinkTimeLeft - timePassed;
-      newState.soil.plant.dryTimeLeft = dryTimeLeft - timePassed;
-      newState.soil.evaporateTimeLeft = evaporateTimeLeft - timePassed;
+      if (evaporateTimerActive) {
+        newState.soil.plant.drinkTimeLeft = drinkTimeLeft - timePassed;
+      }
+      if (drinkTimerActive) {
+        newState.soil.plant.dryTimeLeft = dryTimeLeft - timePassed;
+      }
+      if (dryTimerActive) {
+        newState.soil.evaporateTimeLeft = evaporateTimeLeft - timePassed;
+      }
     }
 
     if (shouldDrink) {
@@ -240,17 +253,12 @@ const update = (state, { planterIndex, currentTime }) => {
 
   return state;
 };
+update.shouldNotSave = true;
 
-const forceState = (state, change) => {
-  change(state);
-  return state;
-};
-
-export const handlers = {
+export const gardenHandlers = {
   plant,
   soil,
   update,
   harvest,
   water,
-  forceState,
 };

@@ -8,7 +8,7 @@ const emptyPlant = `
 `;
 
 const emptySoil = `    `;
-export const planter = `-----`;
+export const planterImage = `-----`;
 
 export const plantModels = { ...plants, empty: emptyPlant };
 export const soilModels = { ...soils, empty: emptySoil };
