@@ -1,6 +1,5 @@
 import { time } from '../../utils';
 import { definePlant } from './utils';
-import { plantMatter } from '../items';
 
 const images = [
   `     
@@ -35,7 +34,7 @@ export const pennyPlant = definePlant({
   images,
   stages: [{}, {}, {}, {}, {}],
   defaultStage: {
-    drops: { plantMatter: 1 },
+    drops: [{ item: 'plantMatter', amount: 1 }],
     growRate: time({ seconds: 10 }),
     drinkRate: time({ seconds: 3 }),
     dryRate: time({ seconds: 3 }),
