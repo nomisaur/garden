@@ -6,14 +6,14 @@ import { InlineDiv } from './styled';
 import { Planter } from './planter';
 
 export const Garden = () => {
-  const { state, setState, currentTime } = useAppContext();
+  const { state, handleState, currentTime } = useAppContext();
   return (
     <InlineDiv>
       {state.planters.map((planterState, planterIndex) => (
         <Planter
           key={planterIndex}
           planterState={planterState}
-          setState={addToPayload(setState, { planterIndex, currentTime })}
+          handleState={addToPayload(handleState, { planterIndex, currentTime })}
         />
       ))}
     </InlineDiv>

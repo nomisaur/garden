@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { config } from './config';
 import { time } from './utils';
 import { log } from './log';
-import { handlers } from './stateHandlers';
 import {
   AppContext,
   useAutoSave,
@@ -23,7 +22,7 @@ const AppStyle = styled.div`
 `;
 
 export const App = ({ initialState }) => {
-  const [state, setState] = useFancyReducer(handlers, initialState);
+  const [state, handleState] = useFancyReducer(initialState);
   const currentTime = useCurrentTime();
   useAutoSave(state, config.autosave);
 
@@ -31,7 +30,11 @@ export const App = ({ initialState }) => {
   const [pausedTime, setPausedTime] = useState(0);
   if (config.isDev) {
     window.dev.showState = () => log(state);
-    window.dev.forceState = (func) => setState('forceState', func);
+    window.dev.forceState = (func) =>
+      handleState((state) => {
+        func(state);
+        return state;
+      });
     window.dev.stop = () => {
       setIsTimePaused(true);
       setPausedTime(currentTime);
@@ -45,7 +48,7 @@ export const App = ({ initialState }) => {
       <AppContext.Provider
         value={{
           state,
-          setState,
+          handleState,
           currentTime: isTimePaused ? pausedTime : currentTime,
         }}
       >

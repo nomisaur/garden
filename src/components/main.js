@@ -10,14 +10,28 @@ const screens = {
 };
 
 export const Main = () => {
-  const { state, setState } = useAppContext();
+  const { state, handleState } = useAppContext();
   return (
     <>
       <InlineDiv>
-        <StyledButton onClick={() => setState('screen', 'garden')}>
+        <StyledButton
+          onClick={() =>
+            handleState((state) => {
+              state.screen = 'garden';
+              return state;
+            })
+          }
+        >
           garden
         </StyledButton>
-        <StyledButton onClick={() => setState('screen', 'shop')}>
+        <StyledButton
+          onClick={() =>
+            handleState((state) => {
+              state.screen = 'shop';
+              return state;
+            })
+          }
+        >
           shop
         </StyledButton>
       </InlineDiv>

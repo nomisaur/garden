@@ -41,9 +41,9 @@ export const time = (arg) => {
   );
 };
 
-export const addToPayload = (setState, addition) => {
-  return (action, payload = {}) => {
-    setState(action, {
+export const addToPayload = (handleState, addition) => {
+  return (handler, payload = {}) => {
+    handleState(handler, {
       ...payload,
       ...addition,
     });

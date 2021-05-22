@@ -1,9 +1,9 @@
-import { clone, includeIf } from '../utils';
-import { getPlanterState } from '../state';
-import { initialPlantState } from '../initialState';
-import { plantModels, soilModels } from '../models';
+import { clone, includeIf } from '../../utils';
+import { getPlanterState } from '../../state';
+import { initialPlantState } from '../../initialState';
+import { plantModels, soilModels } from '../../models';
 
-const plant = (state, { planterIndex, type, currentTime }) => {
+export const plant = (state, { planterIndex, type, currentTime }) => {
   const {
     lifeStages: [{ growRate, drinkRate, dryRate }],
   } = plantModels[type];
@@ -23,7 +23,7 @@ const plant = (state, { planterIndex, type, currentTime }) => {
   return state;
 };
 
-const soil = (state, { planterIndex, type, currentTime }) => {
+export const soil = (state, { planterIndex, type, currentTime }) => {
   const { initialWaterLevel, evaporationRate } = soilModels[type];
   state.planters[planterIndex] = {
     ...state.planters[planterIndex],
@@ -40,7 +40,7 @@ const soil = (state, { planterIndex, type, currentTime }) => {
   return state;
 };
 
-const water = (state, { planterIndex, currentTime }) => {
+export const water = (state, { planterIndex, currentTime }) => {
   const soilState = state.planters[planterIndex].soil;
   state.planters[planterIndex].soil = {
     ...soilState,
@@ -51,7 +51,7 @@ const water = (state, { planterIndex, currentTime }) => {
   return state;
 };
 
-const harvest = (state, { planterIndex }) => {
+export const harvest = (state, { planterIndex }) => {
   const soil = state.planters[planterIndex].soil;
 
   state.plantMatter =
@@ -249,7 +249,7 @@ const getNewPlanterState = (planterState, currentTime) => {
   return getNewPlanterState(newState, currentTime);
 };
 
-const update = (state, { planterIndex, currentTime }) => {
+export const update = (state, { planterIndex, currentTime }) => {
   const newPlanterState = getNewPlanterState(
     state.planters[planterIndex],
     currentTime,
@@ -263,11 +263,3 @@ const update = (state, { planterIndex, currentTime }) => {
   return state;
 };
 update.shouldNotSave = true;
-
-export const gardenHandlers = {
-  plant,
-  soil,
-  update,
-  harvest,
-  water,
-};
