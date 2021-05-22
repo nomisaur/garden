@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import { useAppContext } from '../hooks';
-import { getPlanterState } from '../state';
-import { soilModels, plantModels, planterImage } from '../models';
-import { shouldUpdate } from '../stateHandlers/gardenHandlers';
+import { useAppContext } from '../../hooks';
+import { getPlanterState } from '../../state';
+import { soilModels, plantModels, planterImage } from '../../models';
+import { shouldUpdate, plant, soil, harvest, update, water } from './handlers';
 
-import { StyledImage, StyledButton } from './styled';
+import { StyledImage, StyledButton } from '../styled';
 
-export const Planter = ({ planterState, setState }) => {
+export const Planter = ({ planterState, handleState }) => {
   const { currentTime } = useAppContext();
   const fullPlanterState = getPlanterState(planterState);
 
@@ -23,7 +23,7 @@ export const Planter = ({ planterState, setState }) => {
 
   useEffect(() => {
     if (shouldUpdate(fullPlanterState, currentTime).shouldDoUpdate) {
-      setState('update');
+      handleState(update);
     }
   });
 
@@ -44,20 +44,24 @@ export const Planter = ({ planterState, setState }) => {
       {hasSoil && <div>water lvl: {waterLevel}</div>}
 
       {!hasSoil && (
-        <StyledButton onClick={() => setState('soil', { type: 'starter' })}>
+        <StyledButton onClick={() => handleState(soil, { type: 'starter' })}>
           add soil
         </StyledButton>
       )}
       {hasSoil && (
-        <StyledButton onClick={() => setState('water')}>water</StyledButton>
+        <StyledButton onClick={() => handleState(water)}>water</StyledButton>
       )}
       {hasSoil && !hasPlant && (
-        <StyledButton onClick={() => setState('plant', { type: 'pennyPlant' })}>
+        <StyledButton
+          onClick={() => handleState(plant, { type: 'pennyPlant' })}
+        >
           add plant
         </StyledButton>
       )}
       {hasPlant && fullyGrown && (
-        <StyledButton onClick={() => setState('harvest')}>harvest</StyledButton>
+        <StyledButton onClick={() => handleState(harvest)}>
+          harvest
+        </StyledButton>
       )}
     </div>
   );

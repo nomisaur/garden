@@ -21,14 +21,13 @@ export const save = (state, message = 'saved') => {
     .catch(log);
 };
 
-export const useFancyReducer = (handlers, initialState) => {
-  const [state, setState] = useReducer((state, [action, payload]) => {
-    const handler = handlers[action];
+export const useFancyReducer = (initialState) => {
+  const [state, handleState] = useReducer((state, [handler, payload]) => {
     const newState = handler(clone(state), payload);
     !handler.shouldNotSave && save(newState, 'saved on state change');
     return newState;
   }, initialState);
-  return [state, (action, payload) => setState([action, payload])];
+  return [state, (handler, payload) => handleState([handler, payload])];
 };
 
 const useInterval = (callback, interval) => {
