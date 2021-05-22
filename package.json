@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack serve --config ./webpack.config.js --mode development",
     "reset": "git clean -dxf && npm i",
-    "build": "webpack --config ./webpack.config.js",
+    "build": "webpack --config ./webpack.config.js --mode development",
     "prettier": "prettier -w ."
   },
   "keywords": [],
