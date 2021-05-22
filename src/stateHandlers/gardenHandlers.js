@@ -88,7 +88,7 @@ export const shouldUpdate = (planterState, currentTime) => {
 
   const evaporateTimerActive = waterLevel > 0;
   const drinkTimerActive = hasPlant && hydration < 100 && waterLevel > 0;
-  const dryTimerActive = hasPlant && hydration > 0;
+  const dryTimerActive = hasPlant && hydration > 0 && waterLevel === 0;
   const growTimerActive = hasPlant && !fullyGrown && status === 'healthy';
 
   const tickTime = Math.min(
@@ -187,36 +187,49 @@ const update = (state, { planterIndex, currentTime }) => {
 
       newState.soil.plant.dryTimeLeft = shouldDry
         ? newDryRate
-        : getNewTimer(dryTimeLeft - timePassed, dryRate, newDryRate);
+        : getNewTimer(
+            dryTimerActive ? dryTimeLeft - timePassed : dryTimeLeft,
+            dryRate,
+            newDryRate,
+          );
 
       newState.soil.plant.drinkTimeLeft = shouldDrink
         ? newDrinkRate
-        : getNewTimer(drinkTimeLeft - timePassed, drinkRate, newDrinkRate);
+        : getNewTimer(
+            drinkTimerActive ? drinkTimeLeft - timePassed : dryTimeLeft,
+            drinkRate,
+            newDrinkRate,
+          );
 
       newState.soil.evaporateTimeLeft = shouldEvaporate
         ? evaporationRate
-        : evaporateTimeLeft - timePassed;
+        : evaporateTimerActive
+        ? evaporateTimeLeft - timePassed
+        : evaporateTimeLeft;
     } else {
       if (growTimerActive) {
         newState.soil.plant.growTimeLeft = growTimeLeft - timePassed;
       }
-      if (evaporateTimerActive) {
-        newState.soil.plant.drinkTimeLeft = drinkTimeLeft - timePassed;
-      }
       if (drinkTimerActive) {
-        newState.soil.plant.dryTimeLeft = dryTimeLeft - timePassed;
+        newState.soil.plant.drinkTimeLeft = shouldDrink
+          ? drinkRate
+          : drinkTimeLeft - timePassed;
       }
       if (dryTimerActive) {
-        newState.soil.evaporateTimeLeft = evaporateTimeLeft - timePassed;
+        newState.soil.plant.dryTimeLeft = shouldDry
+          ? dryRate
+          : dryTimeLeft - timePassed;
+      }
+      if (evaporateTimerActive) {
+        newState.soil.evaporateTimeLeft = shouldEvaporate
+          ? evaporationRate
+          : evaporateTimeLeft - timePassed;
       }
     }
 
     if (shouldDrink) {
       newState.soil.plant.hydration = Math.min(hydration + 1, 100);
       newState.soil.waterLevel = Math.max(waterLevel - 1, 0);
-      if (!shouldGrow) {
-        newState.soil.plant.drinkTimeLeft = drinkRate;
-      }
     }
 
     if (shouldDry) {
@@ -224,17 +237,12 @@ const update = (state, { planterIndex, currentTime }) => {
         newState.soil.plant.hydration - 1,
         0,
       );
-      if (!shouldGrow) {
-        newState.soil.plant.dryTimeLeft = dryRate;
-      }
     }
 
     if (shouldEvaporate) {
       newState.soil.waterLevel = Math.max(newState.soil.waterLevel - 1, 0);
-      if (!shouldGrow) {
-        newState.soil.evaporateTimeLeft = evaporationRate;
-      }
     }
+
     return getNewPlanterState(newState);
   };
 
