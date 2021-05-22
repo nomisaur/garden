@@ -1,4 +1,4 @@
-import { clone } from '../utils';
+import { clone, includeIf } from '../utils';
 import { getPlanterState } from '../state';
 import { initialPlantState } from '../initialState';
 import { plantModels, soilModels } from '../models';
@@ -95,10 +95,10 @@ export const shouldUpdate = (planterState, currentTime) => {
 
   const tickTime = Math.min(
     ...[
-      ...(evaporateTimerActive && evaporateTimeLeft ? [evaporateTimeLeft] : []),
-      ...(drinkTimerActive && drinkTimeLeft ? [drinkTimeLeft] : []),
-      ...(dryTimerActive && dryTimeLeft ? [dryTimeLeft] : []),
-      ...(growTimerActive && growTimeLeft ? [growTimeLeft] : []),
+      ...includeIf(evaporateTimeLeft, evaporateTimerActive),
+      ...includeIf(drinkTimeLeft, drinkTimerActive),
+      ...includeIf(dryTimeLeft, dryTimerActive),
+      ...includeIf(growTimeLeft, growTimerActive),
     ],
   );
 

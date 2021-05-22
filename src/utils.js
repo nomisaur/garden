@@ -52,3 +52,6 @@ export const addToPayload = (setState, addition) => {
 
 const numberList = (num) => [...Array(num)];
 export const list = (num, func) => numberList(num).map((_, i) => func(i));
+
+export const includeIf = (item, condition) =>
+  condition && item == null ? [item] : [];
