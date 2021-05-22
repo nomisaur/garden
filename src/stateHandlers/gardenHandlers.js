@@ -7,7 +7,6 @@ const plant = (state, { planterIndex, type, currentTime }) => {
   const {
     lifeStages: [{ growRate, drinkRate, dryRate }],
   } = plantModels[type];
-
   state.planters[planterIndex].soil = {
     ...state.planters[planterIndex].soil,
     timeStamp: currentTime,
@@ -43,7 +42,6 @@ const soil = (state, { planterIndex, type, currentTime }) => {
 
 const water = (state, { planterIndex, currentTime }) => {
   const soilState = state.planters[planterIndex].soil;
-
   state.planters[planterIndex].soil = {
     ...soilState,
     timeStamp: currentTime,
