@@ -10,8 +10,12 @@ export const Inventory = () => {
       {Object.entries(state.inventory).map(([item, amount], index) => {
         return (
           <div key={index}>
-            <div>{item}</div>
-            <div>{amount}</div>
+            {amount > 0 && (
+              <>
+                <div>{item}</div>
+                <div>{amount}</div>
+              </>
+            )}
           </div>
         );
       })}

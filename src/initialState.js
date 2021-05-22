@@ -25,6 +25,6 @@ export const initialState = {
     soil: initialSoilState,
   })),
   inventory: {
-    plantMatter: 1,
+    plantMatter: 0,
   },
 };
