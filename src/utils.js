@@ -1,8 +1,8 @@
 import _clone from 'rfdc';
 
-const clone = _clone();
+export const clone = _clone();
 
-const getQueryParams = () => {
+export const getQueryParams = () => {
   const paramsIter = new URL(window.location.href).searchParams.entries();
   const params = {};
 
@@ -21,13 +21,17 @@ const hoursToMilliseconds = (hours) => minutesToMilliseconds(hours * 60);
 
 const daysToMilliseconds = (days) => hoursToMilliseconds(days * 24);
 
-const time = ({
-  milliseconds = 0,
-  seconds = 0,
-  minutes = 0,
-  hours = 0,
-  days = 0,
-}) => {
+export const time = (arg) => {
+  if (typeof arg === 'number') {
+    return arg;
+  }
+  const {
+    milliseconds = 0,
+    seconds = 0,
+    minutes = 0,
+    hours = 0,
+    days = 0,
+  } = arg;
   return (
     milliseconds +
     secondsToMilliseconds(seconds) +
@@ -37,7 +41,7 @@ const time = ({
   );
 };
 
-const addToPayload = (setState, addition) => {
+export const addToPayload = (setState, addition) => {
   return (action, payload = {}) => {
     setState(action, {
       ...payload,
@@ -46,4 +50,8 @@ const addToPayload = (setState, addition) => {
   };
 };
 
-export { addToPayload, time, getQueryParams, clone };
+const numberList = (num) => [...Array(num)];
+export const list = (num, func) => numberList(num).map((_, i) => func(i));
+
+export const includeIf = (item, condition) =>
+  condition && item != null ? [item] : [];

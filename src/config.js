@@ -2,5 +2,5 @@ import { time } from './utils';
 
 export const config = {
   ...webpackConfig, // defined by webpack
-  autosave: time({ seconds: 30 }),
+  autosave: time({ minutes: 5 }),
 };

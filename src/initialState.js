@@ -1,19 +1,28 @@
-const initialPlantState = {
-  timeStamp: null,
-  type: null,
-  phase: null,
-  phaseTimeLeft: null,
-  waterLevel: null,
-  waterTimeLeft: null,
+import { list } from './utils';
+
+export const initialPlantState = {
+  plantType: null,
+  lifeStage: null,
+  hydration: null,
+  growTimeLeft: null,
+  drinkTimeLeft: null,
+  dryTimeLeft: null,
 };
 
-const initialSoilState = {
-  empty: true,
-  soilWaterLevel: null,
+export const initialSoilState = {
+  timeStamp: null,
+  soilType: null,
+  hasPlant: false,
+  waterLevel: null,
+  evaporateTimeLeft: null,
   plant: initialPlantState,
 };
 
 export const initialState = {
   plantMatter: 0,
-  soils: [initialSoilState, initialSoilState, initialSoilState],
+  screen: 'garden',
+  planters: list(4, (n) => ({
+    hasSoil: false,
+    soil: initialSoilState,
+  })),
 };

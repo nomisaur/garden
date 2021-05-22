@@ -1,35 +1,57 @@
-import React from 'react';
-import { useAutoSave, useFancyReducer, useCurrentTime } from './hooks';
-import { handlers } from './stateHandlers';
-import { config } from './config';
+import React, { useState } from 'react';
 import styled from 'styled-components';
-import { AppContext } from './hooks';
 
-import { Garden } from './components/garden';
+import { config } from './config';
+import { time } from './utils';
+import { log } from './log';
+import { handlers } from './stateHandlers';
+import {
+  AppContext,
+  useAutoSave,
+  useFancyReducer,
+  useCurrentTime,
+} from './hooks';
 
-const ColorDiv = styled.div`
-  color: ${({ color = 'blue' }) => color};
+import { Main } from './components/main';
+
+const AppStyle = styled.div`
+  background-color: #000;
+  color: #fff;
+  font-size: large;
+  font-family: monospace;
+  min-height: 100vh;
 `;
 
 const App = ({ initialState }) => {
   const [state, setState] = useFancyReducer(handlers, initialState);
-
   const currentTime = useCurrentTime();
+  useAutoSave(state, config.autosave);
 
-  //useAutoSave(state, config.autosave);
-
+  const [isTimePaused, setIsTimePaused] = useState(false);
+  const [pausedTime, setPausedTime] = useState(0);
   if (config.isDev) {
-    window.seeState = () => console.log(state);
+    window.dev.showState = () => log(state);
+    window.dev.forceState = (func) => setState('forceState', func);
+    window.dev.stop = () => {
+      setIsTimePaused(true);
+      setPausedTime(currentTime);
+    };
+    window.dev.start = () => setIsTimePaused(false);
+    window.dev.jump = (amount) => setPausedTime(pausedTime + time(amount));
   }
 
   return (
-    <AppContext.Provider value={{ state, setState, currentTime }}>
-      <ColorDiv>
-        <ColorDiv color='red'>hi :)</ColorDiv>
-        <div>plant matter: {state.plantMatter}</div>
-        <Garden />
-      </ColorDiv>
-    </AppContext.Provider>
+    <AppStyle>
+      <AppContext.Provider
+        value={{
+          state,
+          setState,
+          currentTime: isTimePaused ? pausedTime : currentTime,
+        }}
+      >
+        <Main />
+      </AppContext.Provider>
+    </AppStyle>
   );
 };
 export { App };
