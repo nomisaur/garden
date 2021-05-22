@@ -41,11 +41,12 @@ const soil = (state, { planterIndex, type, currentTime }) => {
   return state;
 };
 
-const water = (state, { planterIndex }) => {
+const water = (state, { planterIndex, currentTime }) => {
   const soilState = state.planters[planterIndex].soil;
 
   state.planters[planterIndex].soil = {
     ...soilState,
+    timeStamp: currentTime,
     waterLevel: Math.min(soilState.waterLevel + 10, 100),
     evaporateTimeLeft: soilModels[soilState.soilType].evaporationRate,
   };
@@ -94,13 +95,11 @@ export const shouldUpdate = (planterState, currentTime) => {
 
   const tickTime = Math.min(
     ...[
-      [evaporateTimerActive, evaporateTimeLeft],
-      [drinkTimerActive, drinkTimeLeft],
-      [dryTimerActive, dryTimeLeft],
-      [growTimerActive, growTimeLeft],
-    ]
-      .filter(([isActive, timeLeft]) => isActive && timeLeft)
-      .map(([, timeLeft]) => timeLeft),
+      ...(evaporateTimerActive && evaporateTimeLeft ? [evaporateTimeLeft] : []),
+      ...(drinkTimerActive && drinkTimeLeft ? [drinkTimeLeft] : []),
+      ...(dryTimerActive && dryTimeLeft ? [dryTimeLeft] : []),
+      ...(growTimerActive && growTimeLeft ? [growTimeLeft] : []),
+    ],
   );
 
   if (totalTimePassed < tickTime) {
