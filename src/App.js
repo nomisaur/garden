@@ -22,7 +22,7 @@ const AppStyle = styled.div`
   min-height: 100vh;
 `;
 
-const App = ({ initialState }) => {
+export const App = ({ initialState }) => {
   const [state, setState] = useFancyReducer(handlers, initialState);
   const currentTime = useCurrentTime();
   useAutoSave(state, config.autosave);
@@ -54,4 +54,3 @@ const App = ({ initialState }) => {
     </AppStyle>
   );
 };
-export { App };
