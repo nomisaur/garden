@@ -55,16 +55,3 @@ export const list = (num, func) => numberList(num).map((_, i) => func(i));
 
 export const includeIf = (item, condition) =>
   condition && item != null ? [item] : [];
-
-export const definePlant = ({ images, stages, defaultStage, ...rest }) => {
-  return {
-    ...rest,
-    lifeStages: stages.map((stage, index) => {
-      return {
-        ...defaultStage,
-        ...stage,
-        image: images[index],
-      };
-    }),
-  };
-};

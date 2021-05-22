@@ -1,4 +1,5 @@
-import { time, definePlant } from '../../utils';
+import { time } from '../../utils';
+import { definePlant } from './utils';
 
 const images = [
   `     
