@@ -1,0 +1,27 @@
+encapsulate stateful object
+
+it should have properties, some should be changeable. the changeable ones need to be saved.
+
+how to merge state properties (should be saved)
+with non-state properties.
+
+saved: [
+  {type: blueCircle, amount: 3}
+]
+
+inventory[
+{
+  type: blueCircle
+  color: blue
+  shape: circle
+  amount: 3 (state)
+}
+]
+
+want to:
+-define once, in one place.
+-get passed along in handler
+-easily edit state
+
+
+(coolState)

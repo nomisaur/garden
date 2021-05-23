@@ -23,6 +23,17 @@ export const plant = (state, { planterIndex, type, currentTime }) => {
   return state;
 };
 
+/* export const plant = (state, { planterIndex, type, currentTime }) => {
+  const planterState = state.getPlanter(planterIndex);
+  const newPlant = createPlant(type);
+
+  planterState.setTimeStamp(currentTime);
+  planterState.setHasPlant(true);
+  planterState.setPlant(newPlant);
+
+  return state.state();
+}; */
+
 export const soil = (state, { planterIndex, type, currentTime }) => {
   const { initialWaterLevel, evaporationRate } = soilModels[type];
   state.planters[planterIndex] = {
