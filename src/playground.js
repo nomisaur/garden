@@ -68,14 +68,14 @@ const node = (state) => {
       return grow;
     });
 
-    return Object.entries(state).reduce((grow, [prop, leaf]) => {
+    return nodeReducer((grow, key, leaf) => {
       if (leaf.type === 'virtual') {
-        grow[prop] = leaf.val(realValues);
+        grow[key] = leaf.val(realValues);
       } else {
-        grow[prop] = realValues[prop];
+        grow[key] = realValues[key];
       }
       return grow;
-    }, {});
+    });
   };
 
   const mutate = (fn) => {
