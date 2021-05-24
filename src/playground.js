@@ -1,3 +1,7 @@
+import _clone from 'rfdc';
+
+const clone = _clone();
+
 const noop = () => {};
 
 const commonReducer = (target, func) => {
@@ -137,13 +141,16 @@ export const node = (init) => {
   };
   const getSignedState = () => {
     return sign(
-      commonReducer(state.current, (grow, key, val) => {
-        const childState = val[signedState]();
-        if (childState !== empty) {
-          grow[key] = childState;
-        }
-        return grow;
-      }),
+      Object.assign(
+        {},
+        commonReducer(state.current, (grow, key, val) => {
+          const childState = val[signedState]();
+          if (childState !== empty) {
+            grow[key] = childState;
+          }
+          return grow;
+        }),
+      ),
     );
   };
   const getProps = () => {
@@ -161,10 +168,8 @@ export const node = (init) => {
     commonForEach(getState(), (key) => {
       if (newState && newState.hasOwnProperty(key)) {
         if (newState[stateSymbol]) {
-          console.log('ey', newState[key]);
           state.current[key].mutate(() => newState[key]);
         } else {
-          console.log('nah', newState[key]);
           state.current[key] = mut(newState[key]);
         }
       } else {
@@ -186,6 +191,16 @@ export const myState = node({
   x: imm(1),
   y: imm(node({ a: mut(1), b: imm(1) })),
 });
+
+myState.mutate((state) => {
+  state.a = 2;
+  state.b = 2;
+  state.x = 2;
+  state.y.a = 2;
+  return state;
+});
+
+console.log(myState.props());
 
 /* 
 const myState = node({
