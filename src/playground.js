@@ -88,16 +88,11 @@ export const mut = (init) => {
     }
   };
   const mutate = (editFunction) => {
-    /* const newState = editFunction();
-    if (newState && newState[$signature]) {
-      state.current[$mutate]((state) => {
-        commonForEach(newState)
-        return state
-      });
+    if (state.current && state.current[$signature]) {
+      state.current[$mutate](editFunction);
     } else {
       state.current = editFunction();
-    } */
-    state.current = editFunction();
+    }
   };
   return makeState({
     getState,
@@ -184,15 +179,9 @@ export const node = (init) => {
       if (newState && newState.hasOwnProperty(key)) {
         const newSubState = newState[key];
         if (newState[$signature]) {
-          if (newSubState[$signature]) {
-            state.current[key][$mutate](() => {
-              return newSubState[key];
-            });
-          } else {
-            state.current[key][$mutate](() => {
-              return newSubState[key];
-            });
-          }
+          state.current[key][$mutate](() => {
+            return newSubState[key];
+          });
         } else {
           state.current[key] = mut(newSubState[key]);
         }
