@@ -43,8 +43,10 @@ export const makeState = ({
   getProps = noop,
   mutate = noop,
   getSignedState = noop,
+  getChildren = noop,
 }) => {
   const state = {
+    ...getChildren(),
     state: getState,
     props: getProps,
   };
@@ -94,11 +96,15 @@ export const mut = (init) => {
       state.current = editFunction();
     }
   };
+  const getChildren = () => {
+    return state.current;
+  };
   return makeState({
     getState,
     getSignedState,
     getProps,
     mutate,
+    getChildren,
   });
 };
 
@@ -129,12 +135,16 @@ export const imm = (init) => {
       init[$mutate](editFunction);
     }
   };
+  const getChildren = () => {
+    return init;
+  };
   return makeState({
     getState,
     getSignedState,
     getProps,
     mutate,
     getSignedState,
+    getChildren,
   });
 };
 
@@ -178,108 +188,115 @@ export const node = (init) => {
     commonForEach(getState(), (key) => {
       if (newState && newState.hasOwnProperty(key)) {
         const newSubState = newState[key];
-        if (newState[$signature]) {
+        if (newSubState[$signature]) {
           state.current[key][$mutate](() => {
-            return newSubState[key];
+            return newSubState;
           });
         } else {
-          state.current[key] = mut(newSubState[key]);
+          state.current[key] = mut(newSubState);
         }
       } else {
         delete state.current[key];
       }
     });
   };
+  const getChildren = () => {
+    return state.current;
+  };
   return makeState({
     getState,
     getProps,
     mutate,
     getSignedState,
+    getChildren,
   });
 };
 
-/* const state = (init, getMutations = noop) => {
-  const node = { current: init };
-
-  //const mutations = getMutations((fn) => node.current[$mutate](fn));
-
-  return {
-    state() {
-      return node.current.state();
-    },
-    props() {
-      return node.current.props();
-    },
-    changeA(val) {
-      node.current[$mutate]((state) => {
-        state.a = val;
-        console.log(state);
-        return state;
-      });
-    },
-  };
-}; */
-
-const state = (hey, getMutations) => {
-  const mutations = getMutations(hey[$mutate]);
-
-  return {
-    state: () => hey.state(),
-    props: () => hey.props(),
-    mutate: mutations,
-  };
+const createState = (state, getMutations = () => ({})) => {
+  state.mutate = getMutations(state[$mutate]);
+  return state;
 };
 
-/* export const myState = state(
-  node({
-    //a: mut(1),
-    b: mut(node({ c: mut(1) })),
-    //b: mut(node({ a: mut(1), b: imm(1) })),
-    //x: imm(1),
-    //y: imm(node({ a: mut(1), b: imm(1) })),
-  }),
-  (mutate) => {
-    return {
-      changeA: (val) => {
-        mutate((state) => {
-          state.b.c = val;
-          return state;
-        });
-      },
-    };
-  },
-); */
+const transform = (mutate) => (fn) => {
+  return (...ags) => mutate((state) => fn(state)(...args));
+};
 
-/* export const myState = state(
+const parse = (template, ...args) => {
+  console.log(template, args);
+};
+
+//this:
+parse`dogGirl *{
+  name: 'nomi',
+  !setName: (state) => (name) => {
+    state.name = name;
+    return state
+  }
+  ^loudName: (state) => state.name + '!!!'
+  -species: 'dog',
+  -info: *{
+    isCute: true,
+    isScary: true,
+  },
+  -likes: *[
+    -'dogs',
+    'burrito'
+  ]
+}`;
+
+//should become:
+createState(
+  node({
+    name: mut('nomi'),
+    species: imm('dog'),
+    info: imm(
+      createState(
+        node({
+          isCute: mut(true),
+          isScary: mut(true),
+        }),
+      ),
+    ),
+    likes: imm(node([imm('dogs'), mut('burrito')])),
+  }),
+  (mutate) => ({
+    setName: (name) =>
+      mutate((state) => {
+        state.name = name;
+        return name;
+      }),
+  }),
+);
+
+export const subState = createState(
+  node({ x: mut(1), y: imm(1) }),
+  (mutate) => ({
+    setX: (val) =>
+      mutate((state) => {
+        state.x = val;
+        return state;
+      }),
+  }),
+);
+
+export const myState = createState(
   node({
     a: mut(1),
-    b: mut(node({ a: mut(1), b: imm(1) })),
+    b: mut(subState),
     x: imm(1),
     y: imm(node({ a: mut(1), b: imm(1) })),
   }),
   (mutate) => ({
-    changeA: (val) => {
-      console.log(val, mutate);
+    setA: (val) =>
       mutate((state) => {
-        console.log('mutate!!', state);
         state.a = val;
-        console.log('mut', state);
         return state;
-      });
-    },
+      }),
   }),
-); */
+);
 
-/* console.log(myState.props());
-myState.mutate.changeA(2);
-console.log(myState.props()); */
-
-export const myState = node({
-  b: mut(node({ c: mut(1) })),
-});
-
-myState[$mutate]((state) => {
-  state.b.c = 2;
-  return state;
-});
+console.log(myState);
 console.log(myState.props());
+myState.mutate.setA(2);
+myState.b.mutate.setX(4);
+console.log(myState.b.props());
