@@ -6,28 +6,29 @@ import { Garden } from './garden';
 import { Inventory } from './inventory';
 
 const screens = {
-  garden: <Garden />,
-  shop: <div>hi im shop</div>,
+   garden: <Garden />,
+   shop: <div>hi im shop</div>,
 };
 
 export const Main = () => {
-  const { state, handleState } = useAppContext();
+   const { state, handleState } = useAppContext();
 
-  const openScreen = (screen) => () => {
-    handleState((state) => {
-      state.screen = screen;
-      return state;
-    });
-  };
+   const openScreen = (screen) => () => {
+      handleState((state) => {
+         state.screen = screen;
+         return state;
+      });
+      //state.setScreen(screen);
+   };
 
-  return (
-    <>
-      <InlineDiv>
-        <StyledButton onClick={openScreen('garden')}>garden</StyledButton>
-        <StyledButton onClick={openScreen('shop')}>shop</StyledButton>
-      </InlineDiv>
-      <Inventory />
-      {screens[state.screen]}
-    </>
-  );
+   return (
+      <>
+         <InlineDiv>
+            <StyledButton onClick={openScreen('garden')}>garden</StyledButton>
+            <StyledButton onClick={openScreen('shop')}>shop</StyledButton>
+         </InlineDiv>
+         <Inventory />
+         {screens[state.screen]}
+      </>
+   );
 };
