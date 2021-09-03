@@ -123,11 +123,71 @@ const myState = {
    inventory: [],
 };
 
-const define = () => {
-   return () => {};
+const saveDataIdeal = {
+   screen: {
+      leaf: true,
+      value: 'garden',
+   },
+   planters: {
+      leaf: false,
+      value: [
+         {
+            leaf: false,
+            id: 'planter',
+            value: {},
+         },
+      ],
+   },
 };
 
-const pennyPlant = define(() => ({
+const commonReducer = (target, func) => {
+   return Array.isArray(target)
+      ? target.reduce((grow, item, index) => func(grow, index, item), [])
+      : Object.entries(target).reduce(
+           (grow, [prop, item]) => func(grow, prop, item),
+           {},
+        );
+};
+
+const recursiveReduce = (saveData, dependencies) => {
+   return commonReducer(saveData, (grow, key, { leaf, value, id }) => ({
+      ...grow,
+      ...(leaf
+         ? { [key]: value }
+         : id
+         ? dependencies[id](value)
+         : recursiveReduce(value, dependencies)),
+   }));
+};
+
+/* const recursiveExpand = (saveData) => {
+   return commonReducer(saveData, (grow, ))
+}; */
+
+const define = (id, func, dependencies = {}) => {
+   const {
+      mutable = {},
+      immutable = {},
+      virtual = {},
+      mutations = {},
+   } = func(dependencies);
+   return ({ id, value } = {}) => {
+      const state = {
+         current: {
+            ...mutable,
+            //...recursiveReduce(initialData.value, dependencies),
+         },
+      };
+
+      const showSaveableState = () => {
+         return { id, value: state };
+      };
+
+      return showSaveableState;
+   };
+};
+
+const pennyPlant = define('pennyPlant', () => ({
    mutable: {
       lifeStage: 0,
       hydration: 0,
@@ -235,6 +295,7 @@ const pennyPlant = define(() => ({
 }));
 
 const starterSoil = define(
+   'starterSoil',
    (dependencies) => ({
       mutable: {
          timeStamp: null,
@@ -269,33 +330,8 @@ const starterSoil = define(
    { pennyPlant },
 );
 
-export const harvest = (state, { planterIndex }) => {
-   const { drops } = getPlanterState(state.planters[planterIndex]);
-
-   drops.forEach(({ item, amount, max }) => {
-      console.log(item);
-      const invItem = state.inventory.find(({ item: invItem }) => {
-         console.log(invItem, item);
-         return invItem === item;
-      });
-      if (!invItem) {
-         state.inventory.push({ item, amount: Math.min(amount, max) });
-      } else {
-         const { amount: invAmount } = getItemState(invItem);
-         invItem.amount = Math.min(invAmount + amount, max);
-      }
-   });
-
-   const soil = state.planters[planterIndex].soil;
-   soil.hasPlant = false;
-   soil.plant = {
-      plant: initialPlantState,
-   };
-
-   return state;
-};
-
 const planter = define(
+   'planter',
    (soils) => ({
       mutatable: {
          hasSoil: false,
@@ -314,6 +350,7 @@ const planter = define(
 );
 
 const gameState = define(
+   'gameState',
    ({ planter }) => ({
       mutable: {
          screen: 'garden',
@@ -322,4 +359,34 @@ const gameState = define(
       },
    }),
    { planter },
-)();
+)({
+   id: 'gameState',
+   value: {
+      screen: {
+         leaf: true,
+         value: 'shop',
+      },
+      planters: {
+         value: [
+            {
+               id: 'planter',
+               value: {},
+            },
+            {
+               id: 'planter',
+               value: {},
+            },
+            {
+               id: 'planter',
+               value: {},
+            },
+            {
+               id: 'planter',
+               value: {},
+            },
+         ],
+      },
+   },
+});
+
+window.state = gameState;
