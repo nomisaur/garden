@@ -1,45 +1,18 @@
-const isFunction = (value) => {
-   return typeof value === 'function';
-};
+import safely from '@emberscodes/safely';
 
-const isPromise = (value) => {
-   return isFunction(value?.then);
-};
+const why = async () => {};
 
-const tryPromise = async (promise) => {
-   try {
-      return [await promise];
-   } catch (err) {
-      return [undefined, err];
-   }
-};
-
-const safely = (thingToTry) => {
-   if (isPromise(thingToTry)) {
-      return tryPromise(thingToTry);
-   }
-   if (isFunction(thingToTry)) {
-      try {
-         const result = thingToTry();
-         if (isPromise(result)) {
-            return tryPromise(result);
-         }
-         return [result];
-      } catch (err) {
-         return [undefined, err];
-      }
-   }
-   return [thingToTry];
-};
+//window.safely = safely;
 
 ////////////////////////// test
+//console.log(safely(() => 'hi'));
 
 const thrower = () => {
-   throw Error();
+   throw 'hi';
 };
 
 const asyncThrower = async () => {
-   throw Error();
+   throw 'hi';
 };
 
 const timer = async (func = () => {}) => {

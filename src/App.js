@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { config } from './config';
@@ -28,20 +28,23 @@ export const App = ({ initialState }) => {
 
    const [isTimePaused, setIsTimePaused] = useState(false);
    const [pausedTime, setPausedTime] = useState(0);
-   if (config.isDev) {
-      window.dev.showState = () => log(state);
-      window.dev.forceState = (func) =>
-         handleState((state) => {
-            func(state);
-            return state;
-         });
-      window.dev.stop = () => {
-         setIsTimePaused(true);
-         setPausedTime(currentTime);
-      };
-      window.dev.start = () => setIsTimePaused(false);
-      window.dev.jump = (amount) => setPausedTime(pausedTime + time(amount));
-   }
+
+   useEffect(() => {
+      if (config.isDev) {
+         window.dev.showState = () => log(state);
+         window.dev.forceState = (func) =>
+            handleState((state) => {
+               func(state);
+               return state;
+            });
+         window.dev.stop = () => {
+            setIsTimePaused(true);
+            setPausedTime(currentTime);
+         };
+         window.dev.start = () => setIsTimePaused(false);
+         window.dev.jump = (amount) => setPausedTime(pausedTime + time(amount));
+      }
+   }, []);
 
    return (
       <React.StrictMode>
