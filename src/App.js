@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { config } from './config';
-import { log } from './log';
+import { log } from './utils';
 import { update } from './update';
 import { AppContext, useFancyReducer, useInterval } from './hooks';
 
@@ -21,7 +21,7 @@ export const App = ({ initialState }) => {
 
    const setPaused = useInterval(
       () => Date.now() >= state.timeAtWhichToUpdate && handleState(update),
-      100,
+      config.ticRate,
       [state],
    );
 
@@ -37,8 +37,6 @@ export const App = ({ initialState }) => {
          window.dev.start = () => setPaused(false);
       }
    }, []);
-
-   log('App render');
 
    return (
       <React.StrictMode>

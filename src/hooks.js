@@ -7,8 +7,7 @@ import {
    createContext,
 } from 'react';
 import localForage from 'localforage';
-import { log } from './log';
-import { clone } from './utils';
+import { clone, log } from './utils';
 import { getState } from './state';
 
 export const AppContext = createContext();

@@ -1,6 +1,13 @@
 import _clone from 'rfdc';
+import { config } from './config';
 
 export const clone = _clone();
+
+export const log = (...args) => {
+   if (config.isDev) {
+      console.log(...args);
+   }
+};
 
 export const getQueryParams = () => {
    const paramsIter = new URL(window.location.href).searchParams.entries();
@@ -50,8 +57,7 @@ export const addToPayload = (handleState, addition) => {
    };
 };
 
-const numberList = (num) => [...Array(num)];
-export const list = (num, func) => numberList(num).map((_, i) => func(i));
+export const list = (num, func) => [...Array(num)].map((_, i) => func(i));
 
 export const includeIf = (condition, item) =>
    condition && item != null ? [item] : [];
