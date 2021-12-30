@@ -1,0 +1,15 @@
+how...
+
+mutate
+
+user gets cloned version of state
+returns new state
+
+mutate will either replace child or pass sub state to child, calling that childs mutate fn
+
+
+.... okay
+i can get state into a database
+but how do i get back into a structure that can be understood???
+and what if the structure changes because of mutate???
+what do???????

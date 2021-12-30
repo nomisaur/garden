@@ -1,0 +1,23 @@
+plants can be dug at any time, gives different stuff at each stage.
+
+plants can grow fruit.
+each stage can have unique grow settings
+ - amount that grows
+ - time of growth
+persists between plant age.
+can fall from plant if:
+ - fall timer
+ - life stage doesnt support??
+can pick up fallen fruits
+fruits can rot???
+
+plants can die
+ - if final stage timer ends
+ - if too dry or too wet for too long
+   - health timer that resets when healthy again
+dead plants yeild diffrent items when dug at different stages
+
+soils should hold different amounts of water
+ - different watering rates
+ - different drink rates
+ - should also affect evaporation rates
