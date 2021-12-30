@@ -1,12 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useAppContext } from '../../hooks';
-import { getPlanterState } from '../../state';
 import { soilModels, plantModels, planterImage } from '../../models';
-import { shouldUpdate, plant, soil, harvest, update, water } from './handlers';
+import { plant, soil, harvest, water } from './handlers';
 
 import { StyledImage, StyledButton } from '../styled';
-
-const currentTime = () => Date.now();
 
 export const Planter = ({ planterState, planterIndex }) => {
    const { handleState } = useAppContext();
@@ -40,34 +37,21 @@ export const Planter = ({ planterState, planterIndex }) => {
          {!hasSoil && (
             <StyledButton
                onClick={() =>
-                  handleState(soil, {
-                     planterIndex,
-                     currentTime: currentTime(),
-                     type: 'starter',
-                  })
+                  handleState(soil, { planterIndex, type: 'starter' })
                }
             >
                add soil
             </StyledButton>
          )}
          {hasSoil && (
-            <StyledButton
-               onClick={() =>
-                  handleState(water, {
-                     planterIndex,
-                  })
-               }
-            >
+            <StyledButton onClick={() => handleState(water, { planterIndex })}>
                water
             </StyledButton>
          )}
          {hasSoil && !hasPlant && (
             <StyledButton
                onClick={() =>
-                  handleState(plant, {
-                     planterIndex,
-                     type: 'pennyPlant',
-                  })
+                  handleState(plant, { planterIndex, type: 'pennyPlant' })
                }
             >
                add plant
@@ -75,11 +59,7 @@ export const Planter = ({ planterState, planterIndex }) => {
          )}
          {hasPlant && (
             <StyledButton
-               onClick={() =>
-                  handleState(harvest, {
-                     planterIndex,
-                  })
-               }
+               onClick={() => handleState(harvest, { planterIndex })}
             >
                harvest
             </StyledButton>

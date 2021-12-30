@@ -93,8 +93,6 @@ export const getPlanterState = (planterState) => {
    const shouldDrink = drinkTimerActive && drinkTimeLeft === tickTime;
    const shouldDry = dryTimerActive && dryTimeLeft === tickTime;
    const shouldGrow = growTimerActive && growTimeLeft === tickTime;
-   const shouldUpdate =
-      shouldEvaporate || shouldDrink || shouldDry || shouldGrow;
 
    return {
       // STATE
@@ -146,7 +144,6 @@ export const getPlanterState = (planterState) => {
       shouldDrink,
       shouldDry,
       shouldGrow,
-      shouldUpdate,
       timeAtWhichToUpdatePlanter,
    };
 };

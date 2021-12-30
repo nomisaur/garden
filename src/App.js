@@ -1,16 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
 import { config } from './config';
-import { time } from './utils';
 import { log } from './log';
-import { update } from './components/planter/handlers';
-import {
-   AppContext,
-   useAutoSave,
-   useFancyReducer,
-   useCurrentTime,
-} from './hooks';
+import { update } from './update';
+import { AppContext, useFancyReducer, useInterval } from './hooks';
 
 import { Main } from './components/main';
 
@@ -25,34 +19,13 @@ const AppStyle = styled.div`
 export const App = ({ initialState }) => {
    const [state, handleState] = useFancyReducer(initialState);
 
-   const timer = useRef();
-   const updating = useRef(false);
+   const setPaused = useInterval(
+      () => Date.now() >= state.timeAtWhichToUpdate && handleState(update),
+      100,
+      [state],
+   );
+
    useEffect(() => {
-      updating.current = false;
-      timer.current = setInterval(() => {
-         if (updating.current) {
-            return;
-         }
-         const { timeAtWhichToUpdate } = state;
-         const currentTime = Date.now();
-         if (currentTime < timeAtWhichToUpdate) {
-            console.log('return');
-            return;
-         }
-         updating.current = true;
-         clearInterval(timer.current);
-         handleState(update, currentTime);
-      }, 200);
-      return () => clearInterval(timer.current);
-   }, [state]);
-
-   //const currentTime = useCurrentTime();
-   //useAutoSave(state, config.autosave);
-
-   //const [isTimePaused, setIsTimePaused] = useState(false);
-   //const [pausedTime, setPausedTime] = useState(0);
-
-   /* useEffect(() => {
       if (config.isDev) {
          window.dev.showState = () => log(state);
          window.dev.forceState = (func) =>
@@ -60,27 +33,17 @@ export const App = ({ initialState }) => {
                func(state);
                return state;
             });
-         window.dev.stop = () => {
-            setIsTimePaused(true);
-            setPausedTime(currentTime);
-         };
-         window.dev.start = () => setIsTimePaused(false);
-         window.dev.jump = (amount) => setPausedTime(pausedTime + time(amount));
+         window.dev.stop = () => setPaused(true);
+         window.dev.start = () => setPaused(false);
       }
-   }, []); */
+   }, []);
 
-   console.log('App render');
+   log('App render');
 
    return (
       <React.StrictMode>
          <AppStyle>
-            <AppContext.Provider
-               value={{
-                  state,
-                  handleState,
-                  //currentTime: isTimePaused ? pausedTime : currentTime,
-               }}
-            >
+            <AppContext.Provider value={{ state, handleState }}>
                <Main />
             </AppContext.Provider>
          </AppStyle>

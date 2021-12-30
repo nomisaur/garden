@@ -15,7 +15,7 @@ export const AppContext = createContext();
 
 export const useAppContext = () => useContext(AppContext);
 
-export const save = (state, message = 'saved') => {
+const save = (state, message = 'saved') => {
    localForage
       .setItem('savedState', state)
       .then(() => log(message))
@@ -33,8 +33,8 @@ export const useFancyReducer = (initialState) => {
          },
          payload,
       );
-      !handler.shouldNotSave && save(newState, 'saved on state change');
-      console.log('newState', newState);
+      log(`state change (${handler.name})`, newState);
+      !handler.shouldNotSave && save(newState, `saved on ${handler.name}`);
       return newState;
    }, initialState);
    return [
@@ -43,22 +43,15 @@ export const useFancyReducer = (initialState) => {
    ];
 };
 
-export const useInterval = (callback, interval) => {
+export const useInterval = (callback, interval, deps = []) => {
    const timer = useRef();
+   const [paused, setPaused] = useState(false);
    useEffect(() => {
-      timer.current = setInterval(callback, interval);
+      timer.current = setInterval(() => !paused && callback(), interval);
       return () => clearInterval(timer.current);
-   }, []);
-};
-
-export const useCurrentTime = (tick = 200) => {
-   const [currentTime, setCurrentTime] = useState(Date.now());
-   useInterval(() => setCurrentTime(Date.now()), tick);
-   return currentTime;
-};
-
-export const useAutoSave = (state, interval) => {
-   const stateRef = useRef(state);
-   stateRef.current = state;
-   useInterval(() => save(stateRef.current, 'auto saved'), interval);
+   }, deps);
+   return (bool) => {
+      setPaused(bool);
+      log(bool ? 'paused' : 'unpaused');
+   };
 };
