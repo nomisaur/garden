@@ -1,12 +1,12 @@
 import React from 'react';
-import { useAppContext } from '../../hooks';
+import { usePlanterContext } from '../../hooks';
 import { soilModels, plantModels, planterImage } from '../../models';
 import { plant, soil, harvest, water } from './handlers';
 
 import { StyledImage, StyledButton } from '../styled';
 
-export const Planter = ({ planterState, planterIndex }) => {
-   const { handleState } = useAppContext();
+export const Planter = ({ planterIndex }) => {
+   const { planterState, handlePlanterState } = usePlanterContext(planterIndex);
 
    const {
       hasSoil,
@@ -36,31 +36,25 @@ export const Planter = ({ planterState, planterIndex }) => {
 
          {!hasSoil && (
             <StyledButton
-               onClick={() =>
-                  handleState(soil, { planterIndex, type: 'starter' })
-               }
+               onClick={() => handlePlanterState(soil, { type: 'starter' })}
             >
                add soil
             </StyledButton>
          )}
          {hasSoil && (
-            <StyledButton onClick={() => handleState(water, { planterIndex })}>
+            <StyledButton onClick={() => handlePlanterState(water)}>
                water
             </StyledButton>
          )}
          {hasSoil && !hasPlant && (
             <StyledButton
-               onClick={() =>
-                  handleState(plant, { planterIndex, type: 'pennyPlant' })
-               }
+               onClick={() => handlePlanterState(plant, { type: 'pennyPlant' })}
             >
                add plant
             </StyledButton>
          )}
          {hasPlant && (
-            <StyledButton
-               onClick={() => handleState(harvest, { planterIndex })}
-            >
+            <StyledButton onClick={() => handlePlanterState(harvest)}>
                harvest
             </StyledButton>
          )}

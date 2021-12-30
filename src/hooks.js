@@ -15,6 +15,15 @@ export const AppContext = createContext();
 
 export const useAppContext = () => useContext(AppContext);
 
+export const usePlanterContext = (planterIndex) => {
+   const { state, handleState } = useAppContext();
+   return {
+      planterState: state.planters[planterIndex],
+      handlePlanterState: (handler, payload = {}) =>
+         handleState(handler, { planterIndex, ...payload }),
+   };
+};
+
 const save = (state, message = 'saved') => {
    localForage
       .setItem('savedState', state)
