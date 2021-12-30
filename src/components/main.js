@@ -14,7 +14,7 @@ export const Main = () => {
    const { state, handleState } = useAppContext();
 
    const openScreen = (screen) => () => {
-      handleState((state) => {
+      handleState(({ state }) => {
          state.screen = screen;
          return state;
       });

@@ -29,7 +29,7 @@ export const App = ({ initialState }) => {
       if (config.isDev) {
          window.dev.showState = () => log(state);
          window.dev.forceState = (func) =>
-            handleState((state) => {
+            handleState(({ state }) => {
                func(state);
                return state;
             });

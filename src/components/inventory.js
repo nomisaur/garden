@@ -5,7 +5,7 @@ import { InlineDiv } from './styled';
 import { itemModels } from '../models';
 
 export const Inventory = () => {
-   const { state, handleState, currentTime } = useAppContext();
+   const { state } = useAppContext();
    return (
       <InlineDiv>
          {state.inventory.map(({ item, amount }, index) => {
