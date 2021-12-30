@@ -6,9 +6,9 @@ import { shouldUpdate, plant, soil, harvest, update, water } from './handlers';
 
 import { StyledImage, StyledButton } from '../styled';
 
-export const Planter = ({ planterState, handleState }) => {
-   const { currentTime } = useAppContext();
-   const fullPlanterState = getPlanterState(planterState);
+export const Planter = ({ planterState, planterIndex }) => {
+   const { handleState, currentTime } = useAppContext();
+   const fullPlanterState = getPlanterState(planterState, true);
 
    const {
       hasSoil,
@@ -23,7 +23,7 @@ export const Planter = ({ planterState, handleState }) => {
 
    useEffect(() => {
       if (shouldUpdate(fullPlanterState, currentTime).shouldDoUpdate) {
-         handleState(update);
+         handleState(update, { planterIndex, currentTime });
       }
    });
 
@@ -45,25 +45,43 @@ export const Planter = ({ planterState, handleState }) => {
 
          {!hasSoil && (
             <StyledButton
-               onClick={() => handleState(soil, { type: 'starter' })}
+               onClick={() =>
+                  handleState(soil, {
+                     planterIndex,
+                     currentTime,
+                     type: 'starter',
+                  })
+               }
             >
                add soil
             </StyledButton>
          )}
          {hasSoil && (
-            <StyledButton onClick={() => handleState(water)}>
+            <StyledButton
+               onClick={() => handleState(water, { planterIndex, currentTime })}
+            >
                water
             </StyledButton>
          )}
          {hasSoil && !hasPlant && (
             <StyledButton
-               onClick={() => handleState(plant, { type: 'pennyPlant' })}
+               onClick={() =>
+                  handleState(plant, {
+                     planterIndex,
+                     currentTime,
+                     type: 'pennyPlant',
+                  })
+               }
             >
                add plant
             </StyledButton>
          )}
          {hasPlant && (
-            <StyledButton onClick={() => handleState(harvest)}>
+            <StyledButton
+               onClick={() =>
+                  handleState(harvest, { planterIndex, currentTime })
+               }
+            >
                harvest
             </StyledButton>
          )}
