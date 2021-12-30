@@ -1,0 +1,4 @@
+first, calculate the next timers, do NOT recalculate
+have timer that simply checks against update value and kicks off update,
+rerenders should not happen with timer ticks
+new state should then calculate next timer info

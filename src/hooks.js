@@ -9,6 +9,7 @@ import {
 import localForage from 'localforage';
 import { log } from './log';
 import { clone } from './utils';
+import { getState } from './state';
 
 export const AppContext = createContext();
 
@@ -23,14 +24,26 @@ export const save = (state, message = 'saved') => {
 
 export const useFancyReducer = (initialState) => {
    const [state, handleState] = useReducer((state, [handler, payload]) => {
-      const newState = handler(clone(state), payload);
+      const clonedState = clone(state);
+      const newState = handler(
+         {
+            state: clonedState,
+            fullState: getState(clonedState),
+            currentTime: Date.now(),
+         },
+         payload,
+      );
       !handler.shouldNotSave && save(newState, 'saved on state change');
+      console.log('newState', newState);
       return newState;
    }, initialState);
-   return [state, (handler, payload) => handleState([handler, payload])];
+   return [
+      getState(state),
+      (handler, payload) => handleState([handler, payload]),
+   ];
 };
 
-const useInterval = (callback, interval) => {
+export const useInterval = (callback, interval) => {
    const timer = useRef();
    useEffect(() => {
       timer.current = setInterval(callback, interval);

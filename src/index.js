@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM, { hydrate } from 'react-dom';
+import ReactDOM from 'react-dom';
 import localForage from 'localforage';
 
 import { log } from './log';
@@ -8,7 +8,6 @@ import { config } from './config';
 import { initialState } from './initialState';
 import { App } from './App';
 import * as playground from './playground';
-import { save } from './hooks';
 
 if (config.isDev) {
    window.dev = {};
@@ -19,16 +18,11 @@ if (config.isDev) {
    window.p = playground;
 }
 
-//const appStateModel =
-
 localForage
    .getItem('savedState')
    .then((savedState) => {
-      //const appState = hydrate(appStateModel, savedState);
-
       ReactDOM.render(
          <App initialState={savedState || initialState} />,
-         //<App appState={appState} />,
          document.getElementById('app'),
       );
    })

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 
 import { config } from './config';
 import { time } from './utils';
 import { log } from './log';
+import { update } from './components/planter/handlers';
 import {
    AppContext,
    useAutoSave,
@@ -23,13 +24,35 @@ const AppStyle = styled.div`
 
 export const App = ({ initialState }) => {
    const [state, handleState] = useFancyReducer(initialState);
-   const currentTime = useCurrentTime();
-   useAutoSave(state, config.autosave);
 
-   const [isTimePaused, setIsTimePaused] = useState(false);
-   const [pausedTime, setPausedTime] = useState(0);
-
+   const timer = useRef();
+   const updating = useRef(false);
    useEffect(() => {
+      updating.current = false;
+      timer.current = setInterval(() => {
+         if (updating.current) {
+            return;
+         }
+         const { timeAtWhichToUpdate } = state;
+         const currentTime = Date.now();
+         if (currentTime < timeAtWhichToUpdate) {
+            console.log('return');
+            return;
+         }
+         updating.current = true;
+         clearInterval(timer.current);
+         handleState(update, currentTime);
+      }, 200);
+      return () => clearInterval(timer.current);
+   }, [state]);
+
+   //const currentTime = useCurrentTime();
+   //useAutoSave(state, config.autosave);
+
+   //const [isTimePaused, setIsTimePaused] = useState(false);
+   //const [pausedTime, setPausedTime] = useState(0);
+
+   /* useEffect(() => {
       if (config.isDev) {
          window.dev.showState = () => log(state);
          window.dev.forceState = (func) =>
@@ -44,7 +67,9 @@ export const App = ({ initialState }) => {
          window.dev.start = () => setIsTimePaused(false);
          window.dev.jump = (amount) => setPausedTime(pausedTime + time(amount));
       }
-   }, []);
+   }, []); */
+
+   console.log('App render');
 
    return (
       <React.StrictMode>
@@ -53,7 +78,7 @@ export const App = ({ initialState }) => {
                value={{
                   state,
                   handleState,
-                  currentTime: isTimePaused ? pausedTime : currentTime,
+                  //currentTime: isTimePaused ? pausedTime : currentTime,
                }}
             >
                <Main />

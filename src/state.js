@@ -1,4 +1,5 @@
 import { plantModels, soilModels, itemModels } from './models';
+import { includeIf } from './utils';
 
 export const getItemState = (inventoryState) => {
    // STATE
@@ -72,6 +73,29 @@ export const getPlanterState = (planterState) => {
    const isHealthy = status === 'healthy';
    const isWet = status === 'wet';
 
+   // UPDATE DATA
+   const evaporateTimerActive = hasSoil && waterLevel > 0;
+   const drinkTimerActive =
+      hasPlant && hydration < 100 && waterLevel >= drainValue;
+   const dryTimerActive = hasPlant && hydration > 0 && waterLevel === 0;
+   const growTimerActive = hasPlant && !fullyGrown && isHealthy;
+   const tickTime = Math.min(
+      ...[
+         ...includeIf(evaporateTimerActive, evaporateTimeLeft),
+         ...includeIf(drinkTimerActive, drinkTimeLeft),
+         ...includeIf(dryTimerActive, dryTimeLeft),
+         ...includeIf(growTimerActive, growTimeLeft),
+      ],
+   );
+   const timeAtWhichToUpdatePlanter = tickTime + timeStamp;
+   const shouldEvaporate =
+      evaporateTimerActive && evaporateTimeLeft === tickTime;
+   const shouldDrink = drinkTimerActive && drinkTimeLeft === tickTime;
+   const shouldDry = dryTimerActive && dryTimeLeft === tickTime;
+   const shouldGrow = growTimerActive && growTimeLeft === tickTime;
+   const shouldUpdate =
+      shouldEvaporate || shouldDrink || shouldDry || shouldGrow;
+
    return {
       // STATE
       timeStamp,
@@ -111,14 +135,34 @@ export const getPlanterState = (planterState) => {
       isDry,
       isWet,
       isHealthy,
+
+      // UPDATE DATA
+      evaporateTimerActive,
+      drinkTimerActive,
+      dryTimerActive,
+      growTimerActive,
+      tickTime,
+      shouldEvaporate,
+      shouldDrink,
+      shouldDry,
+      shouldGrow,
+      shouldUpdate,
+      timeAtWhichToUpdatePlanter,
    };
 };
 
 export const getState = (state) => {
    const { screen, planters, inventory } = state;
+   const fullPlanterStates = planters.map(getPlanterState);
+   const timeAtWhichToUpdate = fullPlanterStates.reduce(
+      (timeAtWhichToUpdate, { timeAtWhichToUpdatePlanter }) =>
+         Math.min(timeAtWhichToUpdate, timeAtWhichToUpdatePlanter),
+      Infinity,
+   );
    return {
       screen,
-      planters: planters.map(getPlanterState),
+      timeAtWhichToUpdate,
+      planters: fullPlanterStates,
       inventory: inventory.map(getItemState),
    };
 };

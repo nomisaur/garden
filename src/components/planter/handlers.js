@@ -3,7 +3,7 @@ import { getPlanterState, getItemState } from '../../state';
 import { initialPlantState } from '../../initialState';
 import { plantModels, soilModels } from '../../models';
 
-export const plant = (state, { planterIndex, type, currentTime }) => {
+export const plant = ({ state, currentTime }, { planterIndex, type }) => {
    const {
       lifeStages: [{ growRate, drinkRate, dryRate }],
    } = plantModels[type];
@@ -23,18 +23,7 @@ export const plant = (state, { planterIndex, type, currentTime }) => {
    return state;
 };
 
-/* export const plant = (state, { planterIndex, type, currentTime }) => {
-  const planterState = state.getPlanter(planterIndex);
-  const newPlant = createPlant(type);
-
-  planterState.setTimeStamp(currentTime);
-  planterState.setHasPlant(true);
-  planterState.setPlant(newPlant);
-
-  return state.state();
-}; */
-
-export const soil = (state, { planterIndex, type, currentTime }) => {
+export const soil = ({ state, currentTime }, { planterIndex, type }) => {
    const { initialWaterLevel, evaporationRate } = soilModels[type];
    state.planters[planterIndex] = {
       ...state.planters[planterIndex],
@@ -51,7 +40,7 @@ export const soil = (state, { planterIndex, type, currentTime }) => {
    return state;
 };
 
-export const water = (state, { planterIndex, currentTime }) => {
+export const water = ({ state, currentTime }, { planterIndex }) => {
    const soilState = state.planters[planterIndex].soil;
    state.planters[planterIndex].soil = {
       ...soilState,
@@ -62,13 +51,11 @@ export const water = (state, { planterIndex, currentTime }) => {
    return state;
 };
 
-export const harvest = (state, { planterIndex }) => {
+export const harvest = ({ state }, { planterIndex }) => {
    const { drops } = getPlanterState(state.planters[planterIndex]);
 
    drops.forEach(({ item, amount, max }) => {
-      console.log(item);
       const invItem = state.inventory.find(({ item: invItem }) => {
-         console.log(invItem, item);
          return invItem === item;
       });
       if (!invItem) {
@@ -118,10 +105,10 @@ export const shouldUpdate = (planterState, currentTime) => {
 
    const tickTime = Math.min(
       ...[
-         ...includeIf(evaporateTimeLeft, evaporateTimerActive),
-         ...includeIf(drinkTimeLeft, drinkTimerActive),
-         ...includeIf(dryTimeLeft, dryTimerActive),
-         ...includeIf(growTimeLeft, growTimerActive),
+         ...includeIf(evaporateTimerActive, evaporateTimeLeft),
+         ...includeIf(drinkTimerActive, drinkTimeLeft),
+         ...includeIf(dryTimerActive, dryTimeLeft),
+         ...includeIf(growTimerActive, growTimeLeft),
       ],
    );
 
@@ -158,8 +145,7 @@ export const shouldUpdate = (planterState, currentTime) => {
 const getNewTimer = (timeLeft, oldTimer, newTimer) =>
    Math.round(newTimer * (timeLeft / oldTimer));
 
-const getNewPlanterState = (planterState, currentTime) => {
-   const fullPlanterState = getPlanterState(planterState);
+const getNewPlanterState = ([planterState, fullPlanterState], currentTime) => {
    const {
       evaporateTimerActive,
       drinkTimerActive,
@@ -169,11 +155,11 @@ const getNewPlanterState = (planterState, currentTime) => {
       shouldDrink,
       shouldDry,
       shouldGrow,
-      shouldDoUpdate,
-      timePassed,
-   } = shouldUpdate(fullPlanterState, currentTime);
+      timeAtWhichToUpdatePlanter,
+      tickTime: timePassed,
+   } = fullPlanterState;
 
-   if (!shouldDoUpdate) {
+   if (currentTime < timeAtWhichToUpdatePlanter) {
       return planterState;
    }
 
@@ -269,20 +255,21 @@ const getNewPlanterState = (planterState, currentTime) => {
       newState.soil.waterLevel = Math.max(newState.soil.waterLevel - 1, 0);
    }
 
-   return getNewPlanterState(newState, currentTime);
-};
-
-export const update = (state, { planterIndex, currentTime }) => {
-   const newPlanterState = getNewPlanterState(
-      state.planters[planterIndex],
+   return getNewPlanterState(
+      [newState, getPlanterState(newState)],
       currentTime,
    );
-
-   state.planters[planterIndex].soil = {
-      ...state.planters[planterIndex].soil,
-      ...newPlanterState.soil,
-   };
-
-   return state;
 };
-update.shouldNotSave = true;
+
+export const update = ({ state, fullState }, currentTime) => {
+   return {
+      ...state,
+      planters: state.planters.map((planterState, planterIndex) =>
+         getNewPlanterState(
+            [planterState, fullState.planters[planterIndex]],
+            currentTime,
+         ),
+      ),
+   };
+};
+//update.shouldNotSave = true;

@@ -6,26 +6,20 @@ import { shouldUpdate, plant, soil, harvest, update, water } from './handlers';
 
 import { StyledImage, StyledButton } from '../styled';
 
+const currentTime = () => Date.now();
+
 export const Planter = ({ planterState, planterIndex }) => {
-   const { handleState, currentTime } = useAppContext();
-   const fullPlanterState = getPlanterState(planterState, true);
+   const { handleState } = useAppContext();
 
    const {
       hasSoil,
       hasPlant,
       waterLevel,
       hydration,
-      fullyGrown,
       status,
       plantImage,
       soilImage,
-   } = fullPlanterState;
-
-   useEffect(() => {
-      if (shouldUpdate(fullPlanterState, currentTime).shouldDoUpdate) {
-         handleState(update, { planterIndex, currentTime });
-      }
-   });
+   } = planterState;
 
    return (
       <div>
@@ -48,7 +42,7 @@ export const Planter = ({ planterState, planterIndex }) => {
                onClick={() =>
                   handleState(soil, {
                      planterIndex,
-                     currentTime,
+                     currentTime: currentTime(),
                      type: 'starter',
                   })
                }
@@ -58,7 +52,11 @@ export const Planter = ({ planterState, planterIndex }) => {
          )}
          {hasSoil && (
             <StyledButton
-               onClick={() => handleState(water, { planterIndex, currentTime })}
+               onClick={() =>
+                  handleState(water, {
+                     planterIndex,
+                  })
+               }
             >
                water
             </StyledButton>
@@ -68,7 +66,6 @@ export const Planter = ({ planterState, planterIndex }) => {
                onClick={() =>
                   handleState(plant, {
                      planterIndex,
-                     currentTime,
                      type: 'pennyPlant',
                   })
                }
@@ -79,7 +76,9 @@ export const Planter = ({ planterState, planterIndex }) => {
          {hasPlant && (
             <StyledButton
                onClick={() =>
-                  handleState(harvest, { planterIndex, currentTime })
+                  handleState(harvest, {
+                     planterIndex,
+                  })
                }
             >
                harvest

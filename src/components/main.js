@@ -18,7 +18,6 @@ export const Main = () => {
          state.screen = screen;
          return state;
       });
-      //state.setScreen(screen);
    };
 
    return (
