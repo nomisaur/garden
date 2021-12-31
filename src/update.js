@@ -20,17 +20,19 @@ const getNewPlanterState = ([planterState, fullPlanterState], currentTime) => {
       timeStamp,
       waterLevel,
       evaporateTimeLeft,
-      lifeStage,
       hydration,
       growTimeLeft,
       drinkTimeLeft,
       dryTimeLeft,
       drinkRate,
       dryRate,
-      lifeStages,
       evaporationRate,
       drinkValue,
       drainValue,
+      nextLifeStage,
+      nextGrowRate,
+      nextDryRate,
+      nextDrinkRate,
    } = fullPlanterState;
 
    if (currentTime < timeAtWhichToUpdatePlanter) {
@@ -42,32 +44,24 @@ const getNewPlanterState = ([planterState, fullPlanterState], currentTime) => {
    newState.soil.timeStamp = timeStamp + timePassed;
 
    if (shouldGrow) {
-      const newLifeStage = Math.min(lifeStage + 1, lifeStages.length - 1);
+      newState.soil.plant.lifeStage = nextLifeStage;
 
-      const {
-         growRate: newGrowRate,
-         dryRate: newDryRate,
-         drinkRate: newDrinkRate,
-      } = lifeStages[newLifeStage];
-
-      newState.soil.plant.lifeStage = newLifeStage;
-
-      newState.soil.plant.growTimeLeft = newGrowRate;
+      newState.soil.plant.growTimeLeft = nextGrowRate;
 
       newState.soil.plant.dryTimeLeft = shouldDry
-         ? newDryRate
+         ? nextDryRate
          : getNewTimer(
               dryTimerActive ? dryTimeLeft - timePassed : dryTimeLeft,
               dryRate,
-              newDryRate,
+              nextDryRate,
            );
 
       newState.soil.plant.drinkTimeLeft = shouldDrink
-         ? newDrinkRate
+         ? nextDrinkRate
          : getNewTimer(
               drinkTimerActive ? drinkTimeLeft - timePassed : dryTimeLeft,
               drinkRate,
-              newDrinkRate,
+              nextDrinkRate,
            );
 
       newState.soil.evaporateTimeLeft = shouldEvaporate

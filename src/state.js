@@ -60,6 +60,13 @@ export const getPlanterState = (planterState) => {
       soilRange: [waterMin, waterMax] = [],
       image: plantImage,
    } = hasPlant ? lifeStages[lifeStage] : {};
+   const nextLifeStage =
+      hasPlant && Math.min(lifeStage + 1, lifeStages.length - 1);
+   const {
+      growRate: nextGrowRate,
+      dryRate: nextDryRate,
+      drinkRate: nextDrinkRate,
+   } = hasPlant ? lifeStages[nextLifeStage] : {};
 
    // MISC
    const fullyGrown = hasPlant && lifeStage >= lifeStages.length - 1;
@@ -135,6 +142,10 @@ export const getPlanterState = (planterState) => {
       healthyMin,
       healthyMax,
       plantImage,
+      nextLifeStage,
+      nextGrowRate,
+      nextDryRate,
+      nextDrinkRate,
 
       // MISC
       fullyGrown,
