@@ -1,5 +1,6 @@
 import { clone } from './utils';
 import { getPlanterState } from './state';
+import { soil } from './components/planter/handlers';
 
 const getNewTimer = (timeLeft, oldTimer, newTimer) =>
    Math.round(newTimer * (timeLeft / oldTimer));
@@ -16,13 +17,6 @@ const getNewPlanterState = ([planterState, fullPlanterState], currentTime) => {
       shouldGrow,
       timeAtWhichToUpdatePlanter,
       tickTime: timePassed,
-   } = fullPlanterState;
-
-   if (currentTime < timeAtWhichToUpdatePlanter) {
-      return planterState;
-   }
-
-   const {
       timeStamp,
       waterLevel,
       evaporateTimeLeft,
@@ -38,6 +32,10 @@ const getNewPlanterState = ([planterState, fullPlanterState], currentTime) => {
       drinkValue,
       drainValue,
    } = fullPlanterState;
+
+   if (currentTime < timeAtWhichToUpdatePlanter) {
+      return planterState;
+   }
 
    const newState = clone(planterState);
 
@@ -120,14 +118,12 @@ const getNewPlanterState = ([planterState, fullPlanterState], currentTime) => {
    );
 };
 
-export const update = ({ state, fullState, currentTime }) => {
-   return {
-      ...state,
-      planters: state.planters.map((planterState, planterIndex) =>
-         getNewPlanterState(
-            [planterState, fullState.planters[planterIndex]],
-            currentTime,
-         ),
+export const update = ({ state, fullState, currentTime }) => ({
+   ...state,
+   planters: state.planters.map((planterState, planterIndex) =>
+      getNewPlanterState(
+         [planterState, fullState.planters[planterIndex]],
+         currentTime,
       ),
-   };
-};
+   ),
+});

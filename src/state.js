@@ -56,8 +56,8 @@ export const getPlanterState = (planterState) => {
       drinkRate,
       dryRate,
       conversion: [drinkValue, drainValue] = [],
-      healthyMin,
-      healthyMax,
+      plantRange: [healthyMin, healthyMax] = [],
+      soilRange: [waterMin, waterMax] = [],
       image: plantImage,
    } = hasPlant ? lifeStages[lifeStage] : {};
 
@@ -72,13 +72,22 @@ export const getPlanterState = (planterState) => {
    const isDry = status === 'dry';
    const isHealthy = status === 'healthy';
    const isWet = status === 'wet';
+   const soilStatus =
+      hasPlant && waterLevel < waterMin
+         ? 'dry'
+         : waterLevel > waterMax
+         ? 'wet'
+         : 'comfy';
+   const isSoilDry = soilStatus === 'dry';
+   const isSoilComfy = soilStatus === 'comfy';
+   const isSoilWet = soilStatus === 'wet';
 
    // UPDATE DATA
    const evaporateTimerActive = hasSoil && waterLevel > 0;
    const drinkTimerActive =
       hasPlant && hydration < 100 && waterLevel >= drainValue;
    const dryTimerActive = hasPlant && hydration > 0 && waterLevel === 0;
-   const growTimerActive = hasPlant && !fullyGrown && isHealthy;
+   const growTimerActive = hasPlant && !fullyGrown && isHealthy && isSoilComfy;
    const tickTime = Math.min(
       ...[
          ...includeIf(evaporateTimerActive, evaporateTimeLeft),
@@ -133,6 +142,10 @@ export const getPlanterState = (planterState) => {
       isDry,
       isWet,
       isHealthy,
+      soilStatus,
+      isSoilDry,
+      isSoilComfy,
+      isSoilWet,
 
       // UPDATE DATA
       evaporateTimerActive,

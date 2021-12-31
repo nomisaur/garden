@@ -14,6 +14,7 @@ export const Planter = ({ planterIndex }) => {
       waterLevel,
       hydration,
       status,
+      soilStatus,
       plantImage,
       soilImage,
    } = planterState;
@@ -30,9 +31,18 @@ export const Planter = ({ planterIndex }) => {
             {planterImage}
          </StyledImage>
 
-         {hasPlant && <div>status: {status}</div>}
-         {hasPlant && <div>hydration: {hydration}</div>}
-         {hasSoil && <div>water lvl: {waterLevel}</div>}
+         {hasSoil && (
+            <div>
+               soil: {waterLevel}
+               {hasPlant && ` ${soilStatus}`}
+            </div>
+         )}
+
+         {hasPlant && (
+            <div>
+               plant: {hydration} {status}
+            </div>
+         )}
 
          {!hasSoil && (
             <StyledButton
