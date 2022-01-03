@@ -11,4 +11,4 @@ export const fit = (n) => {
 
 //[0, 1, 29, 31, 32].forEach(fit);
 
-window.fit = fit;
+//window.fit = fit;

@@ -65,3 +65,15 @@ export const includeIf = (condition, item) =>
 
 export const arrayToObject = (list, getKey) =>
    list.reduce((grow, feed) => ({ ...grow, [getKey(feed)]: feed }), {});
+
+export const displayNumber = (num) => {
+   const string = num.toFixed(1);
+   const [whole, decimal] = string.split('.');
+   return decimal === '0' ? whole : string;
+};
+
+export const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+export const reduceFraction = ([a, b]) => {
+   const reducer = gcd(a, b);
+   return [a / reducer, b / reducer];
+};
