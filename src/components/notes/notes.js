@@ -5,16 +5,24 @@ import { Fraction } from '../styled/fractions';
 
 import { list } from '../../utils';
 
-const Box = styled.div`
-   width: 80px;
-   height: 80px;
+const Box = styled.div.attrs(({ isOn = false, ab = [1, 1], size }) => {
+   const [a, b] = ab
+      .map((n) => n - 1)
+      .map((n) => parseInt(((n / size) * 16).toFixed(0)).toString(16));
+   return {
+      style: {
+         background: isOn ? '#151' : `#${a}0${b}`,
+      },
+   };
+})`
+   width: 40px;
+   height: 40px;
+   font-size: 10px;
    border: 1px solid white;
    margin: 2px;
    display: flex;
    justify-content: center;
    align-items: center;
-   background: ${({ isOn = false, ab: [a = 1, b = 1] = [] }) =>
-      isOn ? '#151' : `#${(a - 1).toString(16)}0${(b - 1).toString(16)}`};
 `;
 
 const Row = styled.div`
@@ -22,9 +30,9 @@ const Row = styled.div`
 `;
 
 const displayNumber = (num) => {
-   const string = num.toFixed(2);
+   const string = num.toFixed(1);
    const [whole, decimal] = string.split('.');
-   return decimal === '00' ? whole : string;
+   return decimal === '0' ? whole : string;
 };
 
 const gcd = (a, b) => (b ? gcd(b, a % b) : a);
@@ -54,7 +62,7 @@ const PlayNote = ({ frequency, audioCtx }) => {
    return null;
 };
 
-const Note = ({ root, top, bottom, audioCtx }) => {
+const Note = ({ root, top, bottom, audioCtx, size }) => {
    const [on, setOn] = useState(false);
    const frequency = (root * bottom) / top;
 
@@ -62,6 +70,7 @@ const Note = ({ root, top, bottom, audioCtx }) => {
       <Box
          isOn={on}
          ab={reduceFraction([top, bottom])}
+         size={size}
          onClick={() => setOn(!on)}
       >
          <div>
@@ -73,9 +82,7 @@ const Note = ({ root, top, bottom, audioCtx }) => {
    );
 };
 
-const ratios = list(16, (a) => list(16, (b) => [a + 1, b + 1]));
-
-const NoteRow = ({ row, audioCtx, root }) => {
+const NoteRow = ({ row, audioCtx, root, size }) => {
    return (
       <Row>
          {row.map(([top, bottom], i) => (
@@ -85,6 +92,7 @@ const NoteRow = ({ row, audioCtx, root }) => {
                root={root}
                top={top}
                bottom={bottom}
+               size={size}
             />
          ))}
       </Row>
@@ -94,6 +102,8 @@ const NoteRow = ({ row, audioCtx, root }) => {
 export const Notes = () => {
    const audioCtx = new AudioContext();
    const [root, setRoot] = useState(200);
+   const size = 24;
+   const ratios = list(size, (a) => list(size, (b) => [a + 1, b + 1]));
    return (
       <>
          <input
@@ -102,7 +112,13 @@ export const Notes = () => {
             onChange={(e) => setRoot(e.target.value)}
          ></input>
          {ratios.map((row, i) => (
-            <NoteRow key={i} root={root} row={row} audioCtx={audioCtx} />
+            <NoteRow
+               key={i}
+               root={root}
+               row={row}
+               audioCtx={audioCtx}
+               size={size}
+            />
          ))}
       </>
    );
