@@ -17,9 +17,10 @@ const reduceFraction = ([a, b]) => {
    return [a / reducer, b / reducer];
 };
 
-const PlayNote = ({ frequency, audioCtx }) => {
+const PlayNote = ({ frequency, audioCtx, toggleMode = false }) => {
    useEffect(() => {
       const now = audioCtx.currentTime;
+      const startTime = Date.now();
       const osc = audioCtx.createOscillator();
       osc.frequency.setValueAtTime(frequency, now);
 
@@ -43,11 +44,23 @@ const PlayNote = ({ frequency, audioCtx }) => {
       gain.gain.setValueAtTime(0, now);
       gain.gain.linearRampToValueAtTime(attackLevel, peak);
       gain.gain.exponentialRampToValueAtTime(sustainLevel, valley);
-      gain.gain.setValueAtTime(sustainLevel, body);
-      gain.gain.exponentialRampToValueAtTime(0.00000001, tail);
+      !toggleMode && gain.gain.setValueAtTime(sustainLevel, body);
+      !toggleMode && gain.gain.exponentialRampToValueAtTime(0.00000001, tail);
 
       osc.start();
-      osc.stop(tail);
+      !toggleMode && osc.stop(tail);
+
+      return () => {
+         if (toggleMode) {
+            const duration = (Date.now() - startTime) / 1000;
+            gain.gain.setValueAtTime(sustainLevel, valley + duration);
+            gain.gain.exponentialRampToValueAtTime(
+               0.00000001,
+               valley + duration + releaseTime,
+            );
+            osc.stop(valley + duration + releaseTime);
+         }
+      };
    }, []);
    return null;
 };
@@ -87,7 +100,14 @@ const Bottom = styled.div`
    justify-content: flex-end;
 `;
 
-const Note = ({ root, top, bottom, audioCtx, gridSize }) => {
+const Note = ({
+   root,
+   top,
+   bottom,
+   audioCtx,
+   gridSize,
+   toggleMode = false,
+}) => {
    const [on, setOn] = useState(false);
    const frequency = (root * top) / bottom;
 
@@ -98,7 +118,7 @@ const Note = ({ root, top, bottom, audioCtx, gridSize }) => {
          gridSize={gridSize}
          onClick={() => {
             setOn(!on);
-            setTimeout(() => setOn(false), 150);
+            !toggleMode && setTimeout(() => setOn(false), 150);
          }}
       >
          <div>&nbsp;</div>
@@ -106,12 +126,18 @@ const Note = ({ root, top, bottom, audioCtx, gridSize }) => {
             <Fraction top={top} bottom={bottom} />
          </Top>
          <Bottom>{displayNumber(frequency)}</Bottom>
-         {on && <PlayNote frequency={frequency} audioCtx={audioCtx} />}
+         {on && (
+            <PlayNote
+               frequency={frequency}
+               audioCtx={audioCtx}
+               toggleMode={toggleMode}
+            />
+         )}
       </Box>
    );
 };
 
-const NoteRow = ({ row, audioCtx, root, gridSize }) => {
+const NoteRow = ({ row, audioCtx, root, gridSize, toggleMode }) => {
    return (
       <Row>
          {row.map(([top, bottom], i) => (
@@ -122,6 +148,7 @@ const NoteRow = ({ row, audioCtx, root, gridSize }) => {
                top={top}
                bottom={bottom}
                gridSize={gridSize}
+               toggleMode={toggleMode}
             />
          ))}
       </Row>
@@ -132,6 +159,8 @@ export const Notes = () => {
    const audioCtx = new AudioContext();
    const [root, setRoot] = useState(200);
    const [gridSize, setGridSize] = useState(12);
+   const [toggleMode, setToggleMode] = useState(false);
+
    const ratios = list(gridSize || 1, (a) =>
       list(gridSize || 1, (b) => [b + 1, a + 1]),
    );
@@ -153,6 +182,14 @@ export const Notes = () => {
                setGridSize(Number.isNaN(num) ? '' : num);
             }}
          ></input>
+         <input
+            type='checkbox'
+            value={toggleMode}
+            onChange={(e) => {
+               console.log(e);
+               setToggleMode(e.target.checked);
+            }}
+         ></input>
          {ratios.map((row, i) => (
             <NoteRow
                key={i}
@@ -160,6 +197,7 @@ export const Notes = () => {
                row={row}
                audioCtx={audioCtx}
                gridSize={gridSize || 1}
+               toggleMode={toggleMode}
             />
          ))}
       </>
