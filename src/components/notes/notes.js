@@ -11,7 +11,7 @@ const Box = styled.div.attrs(({ isOn = false, ab = [1, 1], size }) => {
       .map((n) => parseInt(((n / size) * 16).toFixed(0)).toString(16));
    return {
       style: {
-         background: isOn ? '#151' : `#${a}0${b}`,
+         background: isOn ? '#151' : `#${b}0${a}`,
       },
    };
 })`
@@ -64,7 +64,7 @@ const PlayNote = ({ frequency, audioCtx }) => {
 
 const Note = ({ root, top, bottom, audioCtx, size }) => {
    const [on, setOn] = useState(false);
-   const frequency = (root * bottom) / top;
+   const frequency = (root * top) / bottom;
 
    return (
       <Box
@@ -103,7 +103,7 @@ export const Notes = () => {
    const audioCtx = new AudioContext();
    const [root, setRoot] = useState(200);
    const size = 24;
-   const ratios = list(size, (a) => list(size, (b) => [a + 1, b + 1]));
+   const ratios = list(size, (a) => list(size, (b) => [b + 1, a + 1]));
    return (
       <>
          <input
