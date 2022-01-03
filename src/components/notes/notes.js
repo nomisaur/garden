@@ -34,7 +34,7 @@ const PlayNote = ({ frequency, audioCtx, toggleMode = false }) => {
       const attackTime = 0.01;
       const decayTime = 0.05;
       const sustainTime = 0.1;
-      const releaseTime = 15;
+      const releaseTime = toggleMode ? 2 : 15;
 
       const peak = now + attackTime;
       const valley = peak + decayTime;
@@ -72,7 +72,7 @@ const Row = styled.div`
 const Box = styled.div.attrs(({ isOn = false, ab = [1, 1], gridSize }) => {
    const [a, b] = ab
       .map((n) => n - 1)
-      .map((n) => parseInt(15 - ((n / gridSize) * 16).toFixed(0)).toString(16));
+      .map((n) => parseInt((15 - (n / gridSize) * 15).toFixed(0)).toString(16));
    return {
       style: {
          background: isOn ? '#080' : `#${b}0${a}`,
@@ -159,10 +159,11 @@ export const Notes = () => {
    const audioCtx = new AudioContext();
    const [root, setRoot] = useState(200);
    const [gridSize, setGridSize] = useState(12);
+   const realGridSize = Math.min(gridSize || 1, 32);
    const [toggleMode, setToggleMode] = useState(false);
 
-   const ratios = list(gridSize || 1, (a) =>
-      list(gridSize || 1, (b) => [b + 1, a + 1]),
+   const ratios = list(realGridSize, (a) =>
+      list(realGridSize, (b) => [b + 1, a + 1]),
    );
    return (
       <>
@@ -196,7 +197,7 @@ export const Notes = () => {
                root={root || 1}
                row={row}
                audioCtx={audioCtx}
-               gridSize={gridSize || 1}
+               gridSize={realGridSize}
                toggleMode={toggleMode}
             />
          ))}
