@@ -13,84 +13,97 @@ const Box = styled.div`
    display: flex;
    justify-content: center;
    align-items: center;
-   background: ${({ background = '#000' }) => background};
+   background: ${({ isOn = false, ab: [a = 1, b = 1] = [] }) =>
+      isOn ? '#151' : `#${(a - 1).toString(16)}0${(b - 1).toString(16)}`};
 `;
 
 const Row = styled.div`
    display: flex;
 `;
 
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-
-const nums = list(12, (a) => a + 1).map((a) =>
-   list(15, (b) => b + 1)
-      .map((b) => [a, b])
-      .filter(([a, b]) => b / a >= 1),
-);
-
-const decimals = (num) => {
+const displayNumber = (num) => {
    const string = num.toFixed(2);
    const [whole, decimal] = string.split('.');
    return decimal === '00' ? whole : string;
 };
 
-function reduce(numerator, denominator) {
-   var gcd = function gcd(a, b) {
-      return b ? gcd(b, a % b) : a;
-   };
-   gcd = gcd(numerator, denominator);
-   return [numerator / gcd, denominator / gcd];
-}
+const gcd = (a, b) => (b ? gcd(b, a % b) : a);
+const reduceFraction = ([a, b]) => {
+   const reducer = gcd(a, b);
+   return [a / reducer, b / reducer];
+};
 
-const Note = ({ root, a, b, osc, toggle }) => {
-   const [on, setOn] = useState(false);
-   const frequency = (root * b) / a;
-   osc.frequency.value = frequency;
+const PlayNote = ({ frequency, audioCtx }) => {
    useEffect(() => {
-      osc.start();
-      return () => osc.stop();
-   }, []);
+      const osc = audioCtx.createOscillator();
+      osc.frequency.value = frequency;
 
-   const [a_, b_] = reduce(a, b);
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+
+      osc.start();
+
+      return () => {
+         gain.gain.exponentialRampToValueAtTime(0.00001, 0);
+         osc.stop(0);
+      };
+   }, []);
+   return null;
+};
+
+const Note = ({ root, top, bottom, audioCtx }) => {
+   const [on, setOn] = useState(false);
+   const frequency = (root * bottom) / top;
 
    return (
       <Box
-         background={on ? '#151' : `#${a_.toString(16)}0${b_.toString(16)}`}
-         onClick={() => {
-            setOn(!on);
-            toggle(!on);
-         }}
+         isOn={on}
+         ab={reduceFraction([top, bottom])}
+         onClick={() => setOn(!on)}
       >
          <div>
-            <Fraction top={b} bottom={a} />
-            <div>{decimals(frequency)}</div>
+            <Fraction top={top} bottom={bottom} />
+            <div>{displayNumber(frequency)}</div>
          </div>
+         {on && <PlayNote frequency={frequency} audioCtx={audioCtx} />}
       </Box>
+   );
+};
+
+const ratios = list(16, (a) => list(16, (b) => [a + 1, b + 1]));
+
+const NoteRow = ({ row, audioCtx, root }) => {
+   return (
+      <Row>
+         {row.map(([top, bottom], i) => (
+            <Note
+               key={i}
+               audioCtx={audioCtx}
+               root={root}
+               top={top}
+               bottom={bottom}
+            />
+         ))}
+      </Row>
    );
 };
 
 export const Notes = () => {
    const audioCtx = new AudioContext();
-   const gainNode = audioCtx.createGain();
-   gainNode.connect(audioCtx.destination);
-   gainNode.gain.value = 1 / 12;
-   return nums.map((row, i1) => (
-      <Row key={i1}>
-         {row.map(([a, b], i2) => {
-            const osc = audioCtx.createOscillator();
-            return (
-               <Note
-                  key={i2}
-                  root={200}
-                  a={a}
-                  b={b}
-                  osc={osc}
-                  toggle={(on) => {
-                     on ? osc.connect(gainNode) : osc.disconnect(0);
-                  }}
-               />
-            );
-         })}
-      </Row>
-   ));
+   const [root, setRoot] = useState(200);
+   return (
+      <>
+         <input
+            type='text'
+            value={root}
+            onChange={(e) => setRoot(e.target.value)}
+         ></input>
+         {ratios.map((row, i) => (
+            <NoteRow key={i} root={root} row={row} audioCtx={audioCtx} />
+         ))}
+      </>
+   );
 };
