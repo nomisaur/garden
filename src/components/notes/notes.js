@@ -5,30 +5,6 @@ import { Fraction } from '../styled/fractions';
 
 import { list } from '../../utils';
 
-const Box = styled.div.attrs(({ isOn = false, ab = [1, 1], size }) => {
-   const [a, b] = ab
-      .map((n) => n - 1)
-      .map((n) => parseInt(((n / size) * 16).toFixed(0)).toString(16));
-   return {
-      style: {
-         background: isOn ? '#151' : `#${b}0${a}`,
-      },
-   };
-})`
-   width: 40px;
-   height: 40px;
-   font-size: 10px;
-   border: 1px solid white;
-   margin: 2px;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-`;
-
-const Row = styled.div`
-   display: flex;
-`;
-
 const displayNumber = (num) => {
    const string = num.toFixed(1);
    const [whole, decimal] = string.split('.');
@@ -62,7 +38,50 @@ const PlayNote = ({ frequency, audioCtx }) => {
    return null;
 };
 
-const Note = ({ root, top, bottom, audioCtx, size }) => {
+const Row = styled.div`
+   display: flex;
+`;
+
+const Box = styled.div.attrs(({ isOn = false, ab = [1, 1], gridSize }) => {
+   const [a, b] = ab
+      .map((n) => n - 1)
+      .map((n) => parseInt(((n / gridSize) * 16).toFixed(0)).toString(16));
+   return {
+      style: {
+         background: isOn ? '#151' : `#${b}0${a}`,
+      },
+   };
+})`
+   width: 80px;
+   height: 80px;
+   font-size: 12px;
+   border: 1px solid white;
+   margin: 2px;
+   display: flex;
+
+   flex-direction: column;
+   justify-content: space-between;
+   //justify-content: center;
+   //align-items: center;
+`;
+
+const Top = styled.div`
+   display: flex;
+   justify-content: center;
+   font-size: 18px;
+   //align-self: center;
+`;
+const Bottom = styled.div`
+   margin-right: 4px;
+   display: flex;
+   justify-content: flex-end;
+   //align-self: flex-end;
+   //display: flex;
+   //justify-content: center;
+   //align-items: center;
+`;
+
+const Note = ({ root, top, bottom, audioCtx, gridSize }) => {
    const [on, setOn] = useState(false);
    const frequency = (root * top) / bottom;
 
@@ -70,19 +89,21 @@ const Note = ({ root, top, bottom, audioCtx, size }) => {
       <Box
          isOn={on}
          ab={reduceFraction([top, bottom])}
-         size={size}
+         gridSize={gridSize}
          onClick={() => setOn(!on)}
       >
-         <div>
+         <div>&nbsp;</div>
+         <Top>
             <Fraction top={top} bottom={bottom} />
-            <div>{displayNumber(frequency)}</div>
-         </div>
+            {/* <div>{displayNumber(frequency)}</div> */}
+         </Top>
+         <Bottom>{displayNumber(frequency)}</Bottom>
          {on && <PlayNote frequency={frequency} audioCtx={audioCtx} />}
       </Box>
    );
 };
 
-const NoteRow = ({ row, audioCtx, root, size }) => {
+const NoteRow = ({ row, audioCtx, root, gridSize }) => {
    return (
       <Row>
          {row.map(([top, bottom], i) => (
@@ -92,7 +113,7 @@ const NoteRow = ({ row, audioCtx, root, size }) => {
                root={root}
                top={top}
                bottom={bottom}
-               size={size}
+               gridSize={gridSize}
             />
          ))}
       </Row>
@@ -102,8 +123,8 @@ const NoteRow = ({ row, audioCtx, root, size }) => {
 export const Notes = () => {
    const audioCtx = new AudioContext();
    const [root, setRoot] = useState(200);
-   const size = 24;
-   const ratios = list(size, (a) => list(size, (b) => [b + 1, a + 1]));
+   const gridSize = 12;
+   const ratios = list(gridSize, (a) => list(gridSize, (b) => [b + 1, a + 1]));
    return (
       <>
          <input
@@ -117,7 +138,7 @@ export const Notes = () => {
                root={root}
                row={row}
                audioCtx={audioCtx}
-               size={size}
+               gridSize={gridSize}
             />
          ))}
       </>
