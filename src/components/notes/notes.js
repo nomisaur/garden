@@ -19,21 +19,35 @@ const reduceFraction = ([a, b]) => {
 
 const PlayNote = ({ frequency, audioCtx }) => {
    useEffect(() => {
+      const now = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
-      osc.frequency.value = frequency;
+      osc.frequency.setValueAtTime(frequency, now);
 
       const gain = audioCtx.createGain();
       osc.connect(gain);
       gain.connect(audioCtx.destination);
 
-      gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+      const attackLevel = 0.1;
+      const sustainLevel = 0.05;
+
+      const attackTime = 0.01;
+      const decayTime = 0.05;
+      const sustainTime = 0.1;
+      const releaseTime = 15;
+
+      const peak = now + attackTime;
+      const valley = peak + decayTime;
+      const body = valley + sustainTime;
+      const tail = body + releaseTime;
+
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(attackLevel, peak);
+      gain.gain.exponentialRampToValueAtTime(sustainLevel, valley);
+      gain.gain.setValueAtTime(sustainLevel, body);
+      gain.gain.exponentialRampToValueAtTime(0.00000001, tail);
 
       osc.start();
-
-      return () => {
-         gain.gain.exponentialRampToValueAtTime(0.00001, 0);
-         osc.stop(0);
-      };
+      osc.stop(tail);
    }, []);
    return null;
 };
@@ -45,40 +59,32 @@ const Row = styled.div`
 const Box = styled.div.attrs(({ isOn = false, ab = [1, 1], gridSize }) => {
    const [a, b] = ab
       .map((n) => n - 1)
-      .map((n) => parseInt(((n / gridSize) * 16).toFixed(0)).toString(16));
+      .map((n) => parseInt(15 - ((n / gridSize) * 16).toFixed(0)).toString(16));
    return {
       style: {
-         background: isOn ? '#151' : `#${b}0${a}`,
+         background: isOn ? '#080' : `#${b}0${a}`,
       },
    };
 })`
    width: 80px;
    height: 80px;
    font-size: 12px;
-   border: 1px solid white;
    margin: 2px;
    display: flex;
 
    flex-direction: column;
    justify-content: space-between;
-   //justify-content: center;
-   //align-items: center;
 `;
 
 const Top = styled.div`
    display: flex;
    justify-content: center;
    font-size: 18px;
-   //align-self: center;
 `;
 const Bottom = styled.div`
    margin-right: 4px;
    display: flex;
    justify-content: flex-end;
-   //align-self: flex-end;
-   //display: flex;
-   //justify-content: center;
-   //align-items: center;
 `;
 
 const Note = ({ root, top, bottom, audioCtx, gridSize }) => {
@@ -90,12 +96,14 @@ const Note = ({ root, top, bottom, audioCtx, gridSize }) => {
          isOn={on}
          ab={reduceFraction([top, bottom])}
          gridSize={gridSize}
-         onClick={() => setOn(!on)}
+         onClick={() => {
+            setOn(!on);
+            setTimeout(() => setOn(false), 150);
+         }}
       >
          <div>&nbsp;</div>
          <Top>
             <Fraction top={top} bottom={bottom} />
-            {/* <div>{displayNumber(frequency)}</div> */}
          </Top>
          <Bottom>{displayNumber(frequency)}</Bottom>
          {on && <PlayNote frequency={frequency} audioCtx={audioCtx} />}
@@ -123,22 +131,35 @@ const NoteRow = ({ row, audioCtx, root, gridSize }) => {
 export const Notes = () => {
    const audioCtx = new AudioContext();
    const [root, setRoot] = useState(200);
-   const gridSize = 12;
-   const ratios = list(gridSize, (a) => list(gridSize, (b) => [b + 1, a + 1]));
+   const [gridSize, setGridSize] = useState(12);
+   const ratios = list(gridSize || 1, (a) =>
+      list(gridSize || 1, (b) => [b + 1, a + 1]),
+   );
    return (
       <>
          <input
             type='text'
             value={root}
-            onChange={(e) => setRoot(e.target.value)}
+            onChange={(e) => {
+               const num = parseInt(e.target.value);
+               setRoot(Number.isNaN(num) ? '' : num);
+            }}
+         ></input>
+         <input
+            type='text'
+            value={gridSize}
+            onChange={(e) => {
+               const num = parseInt(e.target.value);
+               setGridSize(Number.isNaN(num) ? '' : num);
+            }}
          ></input>
          {ratios.map((row, i) => (
             <NoteRow
                key={i}
-               root={root}
+               root={root || 1}
                row={row}
                audioCtx={audioCtx}
-               gridSize={gridSize}
+               gridSize={gridSize || 1}
             />
          ))}
       </>
