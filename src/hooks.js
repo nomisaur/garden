@@ -7,6 +7,7 @@ import {
    createContext,
 } from 'react';
 import localForage from 'localforage';
+import { config } from './config';
 import { clone, log } from './utils';
 import { getState } from './state';
 
@@ -53,13 +54,27 @@ export const useFancyReducer = (initialState) => {
 
 export const useInterval = (callback, interval, deps = []) => {
    const timer = useRef();
-   const [paused, setPaused] = useState(false);
+   const paused = useRef(false);
    useEffect(() => {
-      timer.current = setInterval(() => !paused && callback(), interval);
+      timer.current = setInterval(
+         () => !paused.current && callback(),
+         interval,
+      );
       return () => clearInterval(timer.current);
    }, deps);
    return (bool) => {
-      setPaused(bool);
+      paused.current = bool;
       log(bool ? 'paused' : 'unpaused');
    };
+};
+
+export const useDevFunctions = (functions = {}) => {
+   useEffect(() => {
+      if (config.isDev) {
+         window.dev = {
+            ...window.dev,
+            ...functions,
+         };
+      }
+   }, []);
 };

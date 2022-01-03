@@ -1,6 +1,5 @@
-import { clone } from './utils';
-import { getPlanterState } from './state';
-import { soil } from './components/planter/handlers';
+import { clone } from '../../utils';
+import { getPlanterState } from '../../state';
 
 const getNewTimer = (timeLeft, oldTimer, newTimer) =>
    Math.round(newTimer * (timeLeft / oldTimer));

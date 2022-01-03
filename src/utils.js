@@ -57,7 +57,8 @@ export const addToPayload = (handleState, addition) => {
    };
 };
 
-export const list = (num, func) => [...Array(num)].map((_, i) => func(i));
+export const list = (num, func = (a) => a) =>
+   [...Array(num)].map((_, i) => func(i));
 
 export const includeIf = (condition, item) =>
    condition && item != null ? [item] : [];

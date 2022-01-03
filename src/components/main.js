@@ -3,11 +3,13 @@ import { useAppContext } from '../hooks';
 
 import { StyledButton, InlineDiv } from './styled';
 import { Garden } from './garden';
+import { Notes } from './notes';
 import { Inventory } from './inventory';
 
 const screens = {
    garden: <Garden />,
    shop: <div>hi im shop</div>,
+   notes: <Notes />,
 };
 
 export const Main = () => {
@@ -25,6 +27,7 @@ export const Main = () => {
          <InlineDiv>
             <StyledButton onClick={openScreen('garden')}>garden</StyledButton>
             <StyledButton onClick={openScreen('shop')}>shop</StyledButton>
+            <StyledButton onClick={openScreen('notes')}>notes</StyledButton>
          </InlineDiv>
          <Inventory />
          {screens[state.screen]}
