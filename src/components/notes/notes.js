@@ -43,20 +43,21 @@ const Bottom = styled.div`
 `;
 
 const Note = ({
-   root,
    top,
    bottom,
+   root,
    audioCtx,
    gridSize,
    toggleMode = false,
    longRelease = true,
 }) => {
    const [on, setOn] = useState(false);
-   const frequency = (root * top) / bottom;
 
    useEffect(() => {
       setOn(false);
    }, [toggleMode]);
+
+   const frequency = (root * top) / bottom;
 
    return (
       <Box
@@ -84,40 +85,23 @@ const Note = ({
    );
 };
 
-const NoteRow = ({
-   row,
-   audioCtx,
-   root,
-   gridSize,
-   toggleMode,
-   longRelease,
-}) => {
-   return (
-      <Row>
-         {row.map(([top, bottom], i) => (
-            <Note
-               key={i}
-               audioCtx={audioCtx}
-               root={root}
-               top={top}
-               bottom={bottom}
-               gridSize={gridSize}
-               toggleMode={toggleMode}
-               longRelease={longRelease}
-            />
-         ))}
-      </Row>
-   );
-};
+const NoteRow = ({ row, props }) => (
+   <Row>
+      {row.map(([top, bottom], i) => (
+         <Note key={i} top={top} bottom={bottom} {...props} />
+      ))}
+   </Row>
+);
 
 export const Notes = () => {
-   const audioCtx = new AudioContext();
+   const audioCtx = useRef(new AudioContext()).current;
+
    const [root, setRoot] = useState(200);
    const [gridSize, setGridSize] = useState(12);
-   const realGridSize = Math.min(gridSize || 1, 32);
    const [toggleMode, setToggleMode] = useState(false);
    const [longRelease, setLongRelease] = useState(true);
 
+   const realGridSize = Math.min(gridSize || 1, 32);
    const ratios = list(realGridSize, (a) =>
       list(realGridSize, (b) => [b + 1, a + 1]),
    );
@@ -154,12 +138,14 @@ export const Notes = () => {
          {ratios.map((row, i) => (
             <NoteRow
                key={i}
-               root={root || 1}
                row={row}
-               audioCtx={audioCtx}
-               gridSize={realGridSize}
-               toggleMode={toggleMode}
-               longRelease={longRelease}
+               props={{
+                  audioCtx,
+                  root: root || 1,
+                  gridSize: realGridSize,
+                  toggleMode,
+                  longRelease,
+               }}
             />
          ))}
       </div>
