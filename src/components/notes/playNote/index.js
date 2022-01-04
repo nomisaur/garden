@@ -1,6 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
+import { useDidMountEffect } from './../../../hooks';
 
 export const PlayNote = ({
+   playing = false,
    audioCtx,
    frequency,
    envelope: {
@@ -11,46 +13,62 @@ export const PlayNote = ({
       peak = 0.1,
    } = {},
 }) => {
-   const osc = useRef(audioCtx.createOscillator());
-   let mountTime = Date.now();
+   const oscRef = useRef(false);
+   const gainRef = useRef(false);
+   const startDateRef = useRef(Date.now());
+   const startTimeRef = useRef(audioCtx.currentTime);
 
    const decayTime = attack + decay;
    const stopTime = decayTime + release;
 
-   useEffect(() => {
-      mountTime = Date.now();
-      const startTime = audioCtx.currentTime;
-      osc.current.frequency.setValueAtTime(frequency, startTime);
+   useDidMountEffect(() => {
+      startTimeRef.current = audioCtx.currentTime;
+      const startTime = startTimeRef.current;
+      startDateRef.current = Date.now();
 
-      const gain = audioCtx.createGain();
-      osc.current.connect(gain);
-      gain.connect(audioCtx.destination);
+      const stop = () => {
+         const osc = oscRef.current;
+         const gain = gainRef.current;
+         const duration =
+            (Date.now() - startDateRef.current) / 1000 + startTime;
 
-      gain.gain.setValueAtTime(0, startTime);
-      gain.gain.linearRampToValueAtTime(peak, startTime + attack);
-      gain.gain.exponentialRampToValueAtTime(sustain, startTime + decayTime);
-
-      osc.current.start();
-
-      return () => {
-         const duration = (Date.now() - mountTime) / 1000 + startTime;
          gain.gain.setValueAtTime(sustain, duration + decayTime);
          gain.gain.exponentialRampToValueAtTime(
             0.00000001,
             duration + stopTime,
          );
-         osc.current.stop(duration + stopTime);
-         osc.current = audioCtx.createOscillator();
+         osc.stop(duration + stopTime);
       };
-   }, []);
 
-   useEffect(() => {
-      const duration = (Date.now() - mountTime) / 1000;
-      osc.current.frequency.linearRampToValueAtTime(
-         frequency,
-         audioCtx.currentTime + 3,
-      );
-      osc.current.frequency.setValueAtTime(frequency, duration + 3);
+      if (playing) {
+         oscRef.current = audioCtx.createOscillator();
+         gainRef.current = audioCtx.createGain();
+         const osc = oscRef.current;
+         const gain = gainRef.current;
+
+         osc.connect(gain);
+         gain.connect(audioCtx.destination);
+
+         osc.frequency.setValueAtTime(frequency, startTime);
+         gain.gain.setValueAtTime(0, startTime);
+         gain.gain.linearRampToValueAtTime(peak, startTime + attack);
+         gain.gain.exponentialRampToValueAtTime(sustain, startTime + decayTime);
+
+         osc.start(startTime);
+      } else {
+         stop();
+      }
+      return () => playing && stop();
+   }, [playing]);
+
+   useDidMountEffect(() => {
+      if (playing) {
+         const osc = oscRef.current;
+         const duration =
+            (Date.now() - startDateRef.current) / 1000 + startTimeRef.current;
+         osc.frequency.linearRampToValueAtTime(frequency, duration + 0.5);
+      }
    }, [frequency]);
+
    return null;
 };

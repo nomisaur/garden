@@ -78,3 +78,16 @@ export const useDevFunctions = (functions = {}) => {
       }
    }, []);
 };
+
+export const useDidMountEffect = (func, deps = []) => {
+   const didMount = useRef(false);
+   const cleanup = useRef(() => {});
+   useEffect(() => {
+      if (didMount.current) {
+         cleanup.current = func();
+      } else {
+         didMount.current = true;
+      }
+      return cleanup.current;
+   }, deps);
+};

@@ -72,15 +72,14 @@ const Note = ({
             <Fraction top={top} bottom={bottom} />
          </Top>
          <Bottom>{displayNumber(frequency)}</Bottom>
-         {on && (
-            <PlayNote
-               playing={on}
-               frequency={frequency}
-               audioCtx={audioCtx}
-               toggleMode={toggleMode}
-               envelope={{ release: longRelease ? 15 : 2 }}
-            />
-         )}
+
+         <PlayNote
+            playing={on}
+            frequency={frequency}
+            audioCtx={audioCtx}
+            toggleMode={toggleMode}
+            envelope={{ release: longRelease ? 15 : 2 }}
+         />
       </Box>
    );
 };
