@@ -10,6 +10,13 @@ const Row = styled.div`
    display: flex;
 `;
 
+const GridOptions = styled.div`
+   display: flex;
+   margin: 5px;
+   justify-content: space-between;
+   width: 800px;
+`;
+
 const NoteRow = ({ row, props }) => (
    <Row>
       {row.map((ratio, i) => (
@@ -32,41 +39,51 @@ export const NoteGrid = () => {
    );
    return (
       <div>
-         <div>
-            <input
-               type='number'
-               value={root}
-               min='1'
-               max='2000'
-               step='1'
-               onChange={(e) => {
-                  const num = parseInt(e.target.value);
-                  setRoot(Number.isNaN(num) ? '' : num);
-               }}
-            />
-            <input
-               type='number'
-               value={gridSize}
-               min='1'
-               max='32'
-               onChange={(e) => {
-                  const num = parseInt(e.target.value);
-                  setGridSize(Number.isNaN(num) ? '' : num);
-               }}
-            />
-            long release:
-            <input
-               type='checkbox'
-               checked={longRelease}
-               onChange={(e) => setLongRelease(e.target.checked)}
-            />
-            toggle mode:
-            <input
-               type='checkbox'
-               checked={toggleMode}
-               onChange={(e) => setToggleMode(e.target.checked)}
-            />
-         </div>
+         <GridOptions>
+            <div>
+               root frequency:
+               <input
+                  type='number'
+                  value={root}
+                  min='1'
+                  max='2000'
+                  step='1'
+                  onChange={(e) => {
+                     const num = parseInt(e.target.value);
+                     setRoot(Number.isNaN(num) ? '' : num);
+                  }}
+               />
+            </div>
+            <div>
+               grid size:
+               <input
+                  type='number'
+                  value={gridSize}
+                  min='1'
+                  max='32'
+                  onChange={(e) => {
+                     const num = parseInt(e.target.value);
+                     setGridSize(Number.isNaN(num) ? '' : num);
+                  }}
+               />
+            </div>
+            <div>
+               long release:
+               <input
+                  type='checkbox'
+                  checked={longRelease}
+                  onChange={(e) => setLongRelease(e.target.checked)}
+               />
+            </div>
+            <div>
+               toggle mode:
+               <input
+                  type='checkbox'
+                  checked={toggleMode}
+                  onChange={(e) => setToggleMode(e.target.checked)}
+               />
+            </div>
+         </GridOptions>
          {ratios.map((row, i) => (
             <NoteRow
                key={i}

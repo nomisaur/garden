@@ -1,8 +1,13 @@
 import React from 'react';
+import styled from 'styled-components';
+
+const Slider = styled.div`
+   margin: 5px;
+`;
 
 export const VolumeSlider = ({ volume, setVolume }) => {
    return (
-      <div>
+      <Slider>
          volume:
          <input
             type='range'
@@ -12,6 +17,6 @@ export const VolumeSlider = ({ volume, setVolume }) => {
             value={volume}
             onChange={(e) => setVolume(parseFloat(e.target.value))}
          />
-      </div>
+      </Slider>
    );
 };

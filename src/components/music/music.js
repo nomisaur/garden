@@ -20,7 +20,7 @@ export const Music = () => {
       },
       [volume],
    );
-   return hasInteracted ? (
+   return true ? (
       <MusicContext.Provider value={{ audioCtx, masterGain }}>
          <VolumeSlider volume={volume} setVolume={setVolume} />
          <NoteGrid />
