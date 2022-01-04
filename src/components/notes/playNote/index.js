@@ -4,13 +4,14 @@ import { useDidMountEffect } from './../../../hooks';
 export const PlayNote = ({
    playing = false,
    audioCtx,
+   masterGain,
    frequency,
    envelope: {
       attack = 0.01,
       decay = 0.05,
-      sustain = 0.05,
+      sustain = 0.5,
       release = 2,
-      peak = 0.1,
+      peak = 1,
    } = {},
 }) => {
    const oscRef = useRef(false);
@@ -47,7 +48,7 @@ export const PlayNote = ({
          const gain = gainRef.current;
 
          osc.connect(gain);
-         gain.connect(audioCtx.destination);
+         gain.connect(masterGain);
 
          osc.frequency.setValueAtTime(frequency, startTime);
          gain.gain.setValueAtTime(0, startTime);

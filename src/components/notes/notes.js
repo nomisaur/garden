@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { Fraction } from '../styled/fractions';
 
 import { list, displayNumber, reduceFraction } from '../../utils';
+import { useCountEffect } from '../../hooks';
 
 import { PlayNote } from './playNote';
 
@@ -47,6 +48,7 @@ const Note = ({
    bottom,
    root,
    audioCtx,
+   masterGain,
    gridSize,
    toggleMode = false,
    longRelease = true,
@@ -64,7 +66,9 @@ const Note = ({
          isOn={on}
          ab={reduceFraction([top, bottom])}
          gridSize={gridSize}
-         onMouseDown={() => setOn(!on)}
+         onMouseDown={() => {
+            setOn(!on);
+         }}
          onMouseUp={() => !toggleMode && setOn(false)}
       >
          <div>&nbsp;</div>
@@ -74,11 +78,11 @@ const Note = ({
          <Bottom>{displayNumber(frequency)}</Bottom>
 
          <PlayNote
-            playing={on}
-            frequency={frequency}
             audioCtx={audioCtx}
-            toggleMode={toggleMode}
+            masterGain={masterGain}
+            frequency={frequency}
             envelope={{ release: longRelease ? 15 : 2 }}
+            playing={on}
          />
       </Box>
    );
@@ -94,11 +98,21 @@ const NoteRow = ({ row, props }) => (
 
 export const Notes = () => {
    const audioCtx = useRef(new AudioContext()).current;
+   const masterGain = useRef(audioCtx.createGain()).current;
 
    const [root, setRoot] = useState(200);
    const [gridSize, setGridSize] = useState(12);
    const [toggleMode, setToggleMode] = useState(false);
    const [longRelease, setLongRelease] = useState(true);
+   const [volume, setVolume] = useState(0.1);
+
+   useEffect(() => {
+      masterGain.connect(audioCtx.destination);
+      masterGain.gain.linearRampToValueAtTime(
+         volume,
+         audioCtx.currentTime + 0.2,
+      );
+   }, [volume]);
 
    const realGridSize = Math.min(gridSize || 1, 32);
    const ratios = list(realGridSize, (a) =>
@@ -106,40 +120,59 @@ export const Notes = () => {
    );
    return (
       <div>
-         <input
-            type='text'
-            value={root}
-            onChange={(e) => {
-               const num = parseInt(e.target.value);
-               setRoot(Number.isNaN(num) ? '' : num);
-            }}
-         />
-         <input
-            type='text'
-            value={gridSize}
-            onChange={(e) => {
-               const num = parseInt(e.target.value);
-               setGridSize(Number.isNaN(num) ? '' : num);
-            }}
-         />
-         long release:
-         <input
-            type='checkbox'
-            checked={longRelease}
-            onChange={(e) => setLongRelease(e.target.checked)}
-         />
-         toggle mode:
-         <input
-            type='checkbox'
-            checked={toggleMode}
-            onChange={(e) => setToggleMode(e.target.checked)}
-         />
+         <div>
+            <input
+               type='range'
+               min='0'
+               max='1'
+               step='0.05'
+               value={volume}
+               onChange={(e) => {
+                  const num = parseFloat(e.target.value);
+                  setVolume(Number.isNaN(num) ? '' : num);
+               }}
+            />
+            <input
+               type='number'
+               value={root}
+               min='1'
+               max='2000'
+               step='1'
+               onChange={(e) => {
+                  const num = parseInt(e.target.value);
+                  setRoot(Number.isNaN(num) ? '' : num);
+               }}
+            />
+            <input
+               type='number'
+               value={gridSize}
+               min='1'
+               max='32'
+               onChange={(e) => {
+                  const num = parseInt(e.target.value);
+                  setGridSize(Number.isNaN(num) ? '' : num);
+               }}
+            />
+            long release:
+            <input
+               type='checkbox'
+               checked={longRelease}
+               onChange={(e) => setLongRelease(e.target.checked)}
+            />
+            toggle mode:
+            <input
+               type='checkbox'
+               checked={toggleMode}
+               onChange={(e) => setToggleMode(e.target.checked)}
+            />
+         </div>
          {ratios.map((row, i) => (
             <NoteRow
                key={i}
                row={row}
                props={{
                   audioCtx,
+                  masterGain,
                   root: root || 1,
                   gridSize: realGridSize,
                   toggleMode,

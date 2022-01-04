@@ -91,3 +91,13 @@ export const useDidMountEffect = (func, deps = []) => {
       return cleanup.current;
    }, deps);
 };
+
+export const useCountEffect = (func, deps = []) => {
+   const count = useRef(0);
+   const cleanup = useRef(() => {});
+   useEffect(() => {
+      cleanup.current = func(count.ref);
+      count.current = count.current + 1;
+      return cleanup.current;
+   }, deps);
+};
