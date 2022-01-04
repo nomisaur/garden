@@ -106,13 +106,16 @@ export const Notes = () => {
    const [longRelease, setLongRelease] = useState(true);
    const [volume, setVolume] = useState(0.1);
 
-   useEffect(() => {
-      masterGain.connect(audioCtx.destination);
-      masterGain.gain.linearRampToValueAtTime(
-         volume,
-         audioCtx.currentTime + 0.2,
-      );
-   }, [volume]);
+   useCountEffect(
+      (count) => {
+         !count && masterGain.connect(audioCtx.destination);
+         masterGain.gain.linearRampToValueAtTime(
+            volume,
+            audioCtx.currentTime + 0.2,
+         );
+      },
+      [volume],
+   );
 
    const realGridSize = Math.min(gridSize || 1, 32);
    const ratios = list(realGridSize, (a) =>
