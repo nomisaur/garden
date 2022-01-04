@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { useCountEffect, MusicContext } from '../../hooks';
+import { useCountEffect, MusicContext, useAppContext } from '../../hooks';
 
 import { NoteGrid } from './noteGrid';
 import { VolumeSlider } from './volumeSlider';
 
 export const Music = () => {
+   const { hasInteracted } = useAppContext();
    const audioCtx = useRef(new AudioContext()).current;
    const masterGain = useRef(audioCtx.createGain()).current;
    const [volume, setVolume] = useState(0.1);
@@ -19,10 +20,12 @@ export const Music = () => {
       },
       [volume],
    );
-   return (
+   return hasInteracted ? (
       <MusicContext.Provider value={{ audioCtx, masterGain }}>
          <VolumeSlider volume={volume} setVolume={setVolume} />
          <NoteGrid />
       </MusicContext.Provider>
+   ) : (
+      <div>please click to allow sound</div>
    );
 };

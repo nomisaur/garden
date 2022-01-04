@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { log } from './utils';
@@ -16,6 +16,7 @@ const AppStyle = styled.div`
 
 export const App = ({ initialState }) => {
    const [state, handleState] = useFancyReducer(initialState);
+   const [hasInteracted, setHasInteracted] = useState(false);
 
    useDevFunctions({
       showState: () => log(state),
@@ -28,8 +29,8 @@ export const App = ({ initialState }) => {
 
    return (
       <React.StrictMode>
-         <AppStyle>
-            <AppContext.Provider value={{ state, handleState }}>
+         <AppStyle onClick={() => !hasInteracted && setHasInteracted(true)}>
+            <AppContext.Provider value={{ state, handleState, hasInteracted }}>
                <Main />
             </AppContext.Provider>
          </AppStyle>
