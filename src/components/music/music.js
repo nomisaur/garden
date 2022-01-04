@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useCountEffect, MusicContext } from '../../hooks';
 
-import { Notes } from './notes';
+import { NoteGrid } from './noteGrid';
 import { VolumeSlider } from './volumeSlider';
 
 export const Music = () => {
@@ -22,7 +22,7 @@ export const Music = () => {
    return (
       <MusicContext.Provider value={{ audioCtx, masterGain }}>
          <VolumeSlider volume={volume} setVolume={setVolume} />
-         <Notes />
+         <NoteGrid />
       </MusicContext.Provider>
    );
 };
