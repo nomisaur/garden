@@ -12,8 +12,10 @@ import { clone, log } from './utils';
 import { getState } from './state';
 
 export const AppContext = createContext();
-
 export const useAppContext = () => useContext(AppContext);
+
+export const MusicContext = createContext();
+export const useMusicContext = () => useContext(MusicContext);
 
 export const usePlanterContext = (planterIndex) => {
    const { state, handleState } = useAppContext();

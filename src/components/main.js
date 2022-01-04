@@ -3,13 +3,13 @@ import { useAppContext } from '../hooks';
 
 import { StyledButton, InlineDiv } from './styled';
 import { Garden } from './garden';
-import { Notes } from './notes';
+import { Music } from './music';
 import { Inventory } from './inventory';
 
 const screens = {
    garden: <Garden />,
    shop: <div>hi im shop</div>,
-   notes: <Notes />,
+   notes: <Music />,
 };
 
 export const Main = () => {

@@ -1,10 +1,8 @@
 import { useRef } from 'react';
-import { useDidMountEffect } from './../../../hooks';
+import { useDidMountEffect, useMusicContext } from '../../hooks';
 
 export const PlayNote = ({
-   playing = false,
-   audioCtx,
-   masterGain,
+   playing,
    frequency,
    envelope: {
       attack = 0.01,
@@ -14,6 +12,7 @@ export const PlayNote = ({
       peak = 1,
    } = {},
 }) => {
+   const { audioCtx, masterGain } = useMusicContext();
    const oscRef = useRef(false);
    const gainRef = useRef(false);
    const startDateRef = useRef(Date.now());

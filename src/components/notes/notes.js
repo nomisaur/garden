@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import { Fraction } from '../styled/fractions';
 
 import { list, displayNumber, reduceFraction } from '../../utils';
-import { useCountEffect } from '../../hooks';
+import { useCountEffect, useMusicContext } from '../../hooks';
 
-import { PlayNote } from './playNote';
+import { PlayNote } from '../playNote';
 
 const Row = styled.div`
    display: flex;
@@ -97,25 +97,12 @@ const NoteRow = ({ row, props }) => (
 );
 
 export const Notes = () => {
-   const audioCtx = useRef(new AudioContext()).current;
-   const masterGain = useRef(audioCtx.createGain()).current;
+   const { audioCtx, masterGain } = useMusicContext();
 
    const [root, setRoot] = useState(200);
    const [gridSize, setGridSize] = useState(12);
    const [toggleMode, setToggleMode] = useState(false);
    const [longRelease, setLongRelease] = useState(true);
-   const [volume, setVolume] = useState(0.1);
-
-   useCountEffect(
-      (count) => {
-         !count && masterGain.connect(audioCtx.destination);
-         masterGain.gain.linearRampToValueAtTime(
-            volume,
-            audioCtx.currentTime + 0.2,
-         );
-      },
-      [volume],
-   );
 
    const realGridSize = Math.min(gridSize || 1, 32);
    const ratios = list(realGridSize, (a) =>
@@ -124,17 +111,6 @@ export const Notes = () => {
    return (
       <div>
          <div>
-            <input
-               type='range'
-               min='0'
-               max='1'
-               step='0.05'
-               value={volume}
-               onChange={(e) => {
-                  const num = parseFloat(e.target.value);
-                  setVolume(Number.isNaN(num) ? '' : num);
-               }}
-            />
             <input
                type='number'
                value={root}
