@@ -44,8 +44,9 @@ export const useFancyReducer = (initialState) => {
          },
          payload,
       );
-      log(`state change (${handler.name})`, newState);
-      !handler.shouldNotSave && save(newState, `saved on ${handler.name}`);
+      log(`state change (${handler.name || 'anonymous handler'})`, newState);
+      !handler.shouldNotSave &&
+         save(newState, `saved on ${handler.name || 'anonymous handler'}`);
       return newState;
    }, initialState);
    return [
