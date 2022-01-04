@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useDidMountEffect, useMusicContext } from '../../hooks';
+import { useDidMountEffect, useMusicContext } from '../../../hooks';
 
 export const PlayNote = ({
    playing,

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useCountEffect, MusicContext } from '../../hooks';
 
-import { Notes } from './../notes';
+import { Notes } from './notes';
 
 export const Music = () => {
    const audioCtx = useRef(new AudioContext()).current;

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import { Fraction } from '../styled/fractions';
+import { Fraction } from '../../styled/fractions';
 
-import { list, displayNumber, reduceFraction } from '../../utils';
-import { useMusicContext } from '../../hooks';
+import { list, displayNumber, reduceFraction } from '../../../utils';
+import { useMusicContext } from '../../../hooks';
 
 import { PlayNote } from '../playNote';
 
@@ -12,22 +12,16 @@ const Row = styled.div`
    display: flex;
 `;
 
-const Box = styled.div.attrs(({ isOn = false, ab = [1, 1], gridSize }) => {
-   const [a, b] = ab
-      .map((n) => n - 1)
-      .map((n) => parseInt((15 - (n / gridSize) * 15).toFixed(0)).toString(16));
-   return {
-      style: {
-         background: isOn ? '#080' : `#${b}0${a}`,
-      },
-   };
-})`
+const Box = styled.div.attrs(({ color }) => ({
+   style: {
+      background: color,
+   },
+}))`
    width: 80px;
    height: 80px;
    font-size: 12px;
    margin: 2px;
    display: flex;
-
    flex-direction: column;
    justify-content: space-between;
 `;
@@ -43,34 +37,19 @@ const Bottom = styled.div`
    justify-content: flex-end;
 `;
 
-const Note = ({
-   top,
-   bottom,
+const NoteBox = ({
+   playing,
    root,
-   audioCtx,
-   masterGain,
-   gridSize,
+   ratio: [top, bottom] = [],
+   color,
    toggleMode = false,
    longRelease = true,
+   ...props
 }) => {
-   const [on, setOn] = useState(false);
-
-   useEffect(() => {
-      setOn(false);
-   }, [toggleMode]);
-
    const frequency = (root * top) / bottom;
 
    return (
-      <Box
-         isOn={on}
-         ab={reduceFraction([top, bottom])}
-         gridSize={gridSize}
-         onMouseDown={() => {
-            setOn(!on);
-         }}
-         onMouseUp={() => !toggleMode && setOn(false)}
-      >
+      <Box color={color} {...props}>
          <div>&nbsp;</div>
          <Top>
             <Fraction top={top} bottom={bottom} />
@@ -78,20 +57,51 @@ const Note = ({
          <Bottom>{displayNumber(frequency)}</Bottom>
 
          <PlayNote
-            audioCtx={audioCtx}
-            masterGain={masterGain}
+            playing={playing}
             frequency={frequency}
             envelope={{ release: longRelease ? 15 : 2 }}
-            playing={on}
+            {...props}
          />
       </Box>
    );
 };
 
+const GridNote = ({ root, ratio, gridSize, toggleMode, longRelease }) => {
+   const [playing, setPlaying] = useState(false);
+   const [color, setColor] = useState('#000');
+
+   useEffect(() => {
+      setPlaying(false);
+   }, [toggleMode]);
+
+   useEffect(() => {
+      const [blue, red] = reduceFraction(ratio)
+         .map((n) => n - 1)
+         .map((n) =>
+            parseInt((15 - (n / gridSize) * 15).toFixed(0)).toString(16),
+         );
+      setColor(playing ? '#080' : `#${blue}0${red}`);
+   }, [...ratio, gridSize, playing]);
+
+   return (
+      <NoteBox
+         playing={playing}
+         root={root}
+         ratio={ratio}
+         color={color}
+         onMouseDown={() => {
+            setPlaying(!playing);
+         }}
+         onMouseUp={() => !toggleMode && setPlaying(false)}
+         envelope={{ release: longRelease ? 15 : 2 }}
+      />
+   );
+};
+
 const NoteRow = ({ row, props }) => (
    <Row>
-      {row.map(([top, bottom], i) => (
-         <Note key={i} top={top} bottom={bottom} {...props} />
+      {row.map((ratio, i) => (
+         <GridNote key={i} ratio={ratio} {...props} />
       ))}
    </Row>
 );
