@@ -1,10 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Fraction } from '../styled/fractions';
 
 import { list, displayNumber, reduceFraction } from '../../utils';
-import { useCountEffect, useMusicContext } from '../../hooks';
+import { useMusicContext } from '../../hooks';
 
 import { PlayNote } from '../playNote';
 
