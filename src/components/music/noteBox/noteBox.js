@@ -7,11 +7,13 @@ import { displayNumber } from '../../../utils';
 
 import { PlayNote } from '../playNote';
 
-const Box = styled.div.attrs(({ color }) => ({
-   style: {
-      background: color,
-   },
-}))`
+const Box = styled.div.attrs(({ color }) => {
+   return {
+      style: {
+         background: color,
+      },
+   };
+})`
    width: 80px;
    height: 80px;
    font-size: 12px;

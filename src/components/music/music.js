@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useCountEffect, MusicContext } from '../../hooks';
 
 import { Notes } from './notes';
+import { VolumeSlider } from './volumeSlider';
 
 export const Music = () => {
    const audioCtx = useRef(new AudioContext()).current;
@@ -20,17 +21,7 @@ export const Music = () => {
    );
    return (
       <MusicContext.Provider value={{ audioCtx, masterGain }}>
-         <div>
-            volume:
-            <input
-               type='range'
-               min='0'
-               max='1'
-               step='0.05'
-               value={volume}
-               onChange={(e) => setVolume(parseFloat(e.target.value))}
-            />
-         </div>
+         <VolumeSlider volume={volume} setVolume={setVolume} />
          <Notes />
       </MusicContext.Provider>
    );
