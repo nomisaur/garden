@@ -19,8 +19,12 @@ const GridOptions = styled.div`
 
 const NoteRow = ({ row, props }) => (
    <Row>
-      {row.map((ratio, i) => (
-         <GridNote key={i} ratio={ratio} {...props} />
+      {row.map(([top, bottom], i) => (
+         <GridNote
+            key={i}
+            ratio={[props.upperMode ? top + bottom - 1 : top, bottom]}
+            {...props}
+         />
       ))}
    </Row>
 );
@@ -32,6 +36,7 @@ export const NoteGrid = () => {
    const [gridSize, setGridSize] = useState(12);
    const [toggleMode, setToggleMode] = useState(false);
    const [longRelease, setLongRelease] = useState(true);
+   const [upperMode, setUpperMode] = useState(false);
 
    const realGridSize = Math.min(gridSize || 1, 32);
    const ratios = list(realGridSize, (a) =>
@@ -83,6 +88,14 @@ export const NoteGrid = () => {
                   onChange={(e) => setToggleMode(e.target.checked)}
                />
             </div>
+            <div>
+               upper mode:
+               <input
+                  type='checkbox'
+                  checked={upperMode}
+                  onChange={(e) => setUpperMode(e.target.checked)}
+               />
+            </div>
          </GridOptions>
          {ratios.map((row, i) => (
             <NoteRow
@@ -95,6 +108,7 @@ export const NoteGrid = () => {
                   gridSize: realGridSize,
                   toggleMode,
                   longRelease,
+                  upperMode,
                }}
             />
          ))}

@@ -15,29 +15,21 @@ export const PlayNote = ({
    const { audioCtx, masterGain } = useMusicContext();
    const oscRef = useRef(false);
    const gainRef = useRef(false);
-   const startDateRef = useRef(Date.now());
-   const startTimeRef = useRef(audioCtx.currentTime);
 
    const decayTime = attack + decay;
    const stopTime = decayTime + release;
 
    useDidMountEffect(() => {
-      startTimeRef.current = audioCtx.currentTime;
-      const startTime = startTimeRef.current;
-      startDateRef.current = Date.now();
-
       const stop = () => {
          const osc = oscRef.current;
          const gain = gainRef.current;
-         const duration =
-            (Date.now() - startDateRef.current) / 1000 + startTime;
 
-         gain.gain.setValueAtTime(sustain, duration + decayTime);
+         gain.gain.setValueAtTime(sustain, audioCtx.currentTime + decayTime);
          gain.gain.exponentialRampToValueAtTime(
             0.00000001,
-            duration + stopTime,
+            audioCtx.currentTime + stopTime,
          );
-         osc.stop(duration + stopTime);
+         osc.stop(audioCtx.currentTime + stopTime);
       };
 
       if (playing) {
@@ -49,12 +41,15 @@ export const PlayNote = ({
          osc.connect(gain);
          gain.connect(masterGain);
 
-         osc.frequency.setValueAtTime(frequency, startTime);
-         gain.gain.setValueAtTime(0, startTime);
-         gain.gain.linearRampToValueAtTime(peak, startTime + attack);
-         gain.gain.exponentialRampToValueAtTime(sustain, startTime + decayTime);
+         osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+         gain.gain.setValueAtTime(0, audioCtx.currentTime);
+         gain.gain.linearRampToValueAtTime(peak, audioCtx.currentTime + attack);
+         gain.gain.exponentialRampToValueAtTime(
+            sustain,
+            audioCtx.currentTime + decayTime,
+         );
 
-         osc.start(startTime);
+         osc.start(audioCtx.currentTime);
       } else {
          stop();
       }
@@ -64,9 +59,10 @@ export const PlayNote = ({
    useDidMountEffect(() => {
       if (playing) {
          const osc = oscRef.current;
-         const duration =
-            (Date.now() - startDateRef.current) / 1000 + startTimeRef.current;
-         osc.frequency.linearRampToValueAtTime(frequency, duration + 0.5);
+         osc.frequency.linearRampToValueAtTime(
+            frequency,
+            audioCtx.currentTime + 0.5,
+         );
       }
    }, [frequency]);
 
