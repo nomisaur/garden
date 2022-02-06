@@ -44,9 +44,9 @@ export const useFancyReducer = (initialState) => {
          },
          payload,
       );
-      log(`state change (${handler.name || 'anonymous handler'})`, newState);
-      !handler.shouldNotSave &&
-         save(newState, `saved on ${handler.name || 'anonymous handler'}`);
+      const handlerName = handler.name || 'anonymous handler';
+      log(`state change (${handlerName})`, newState);
+      !handler.shouldNotSave && save(newState, `saved on ${handlerName}`);
       return newState;
    }, initialState);
    return [
@@ -82,25 +82,20 @@ export const useDevFunctions = (functions = {}) => {
    }, []);
 };
 
-export const useDidMountEffect = (func, deps = []) => {
-   const didMount = useRef(false);
-   const cleanup = useRef(() => {});
-   useEffect(() => {
-      if (didMount.current) {
-         cleanup.current = func();
-      } else {
-         didMount.current = true;
-      }
-      return cleanup.current;
-   }, deps);
-};
-
 export const useCountEffect = (func, deps = []) => {
    const count = useRef(0);
    const cleanup = useRef(() => {});
    useEffect(() => {
-      cleanup.current = func(count.ref);
+      cleanup.current = func(count.current);
       count.current = count.current + 1;
       return cleanup.current;
+   }, deps);
+};
+
+export const useDidMountEffect = (func, deps = []) => {
+   useCountEffect((count) => {
+      if (count > 0) {
+         return func();
+      }
    }, deps);
 };

@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { useCountEffect, MusicContext, useAppContext } from '../../hooks';
+import React, { useRef, useEffect } from 'react';
+import { MusicContext, useAppContext } from '../../hooks';
 
 import { NoteGrid } from './noteGrid';
 import { VolumeSlider } from './volumeSlider';
@@ -8,21 +8,14 @@ export const Music = () => {
    const { hasInteracted } = useAppContext();
    const audioCtx = useRef(new AudioContext()).current;
    const masterGain = useRef(audioCtx.createGain()).current;
-   const [volume, setVolume] = useState(0.1);
 
-   useCountEffect(
-      (count) => {
-         !count && masterGain.connect(audioCtx.destination);
-         masterGain.gain.linearRampToValueAtTime(
-            volume,
-            audioCtx.currentTime + 0.2,
-         );
-      },
-      [volume],
-   );
-   return true ? (
+   useEffect(() => {
+      masterGain.connect(audioCtx.destination);
+   }, []);
+
+   return hasInteracted ? (
       <MusicContext.Provider value={{ audioCtx, masterGain }}>
-         <VolumeSlider volume={volume} setVolume={setVolume} />
+         <VolumeSlider />
          <NoteGrid />
       </MusicContext.Provider>
    ) : (

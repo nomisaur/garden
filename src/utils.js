@@ -9,7 +9,7 @@ export const log = (...args) => {
    }
 };
 
-export const getQueryParams = () => {
+const getQueryParams = () => {
    const paramsIter = new URL(window.location.href).searchParams.entries();
    const params = {};
 
@@ -19,6 +19,8 @@ export const getQueryParams = () => {
 
    return params;
 };
+
+export const queryParams = getQueryParams();
 
 const secondsToMilliseconds = (seconds) => seconds * 1000;
 
@@ -48,7 +50,7 @@ export const time = (arg) => {
    );
 };
 
-export const addToPayload = (handleState, addition) => {
+export const addToPayload = (handleState, addition = {}) => {
    return (handler, payload = {}) => {
       handleState(handler, {
          ...payload,
@@ -57,8 +59,12 @@ export const addToPayload = (handleState, addition) => {
    };
 };
 
-export const list = (num, func = (a) => a) =>
-   [...Array(num)].map((_, i) => func(i));
+export const isFunction = (thing) => thing instanceof Function;
+
+export const list = (num, arg = (a) => a) => {
+   const func = isFunction(arg) ? arg : () => arg;
+   return [...Array(num)].map((_, i) => func(i));
+};
 
 export const includeIf = (condition, item) =>
    condition && item != null ? [item] : [];

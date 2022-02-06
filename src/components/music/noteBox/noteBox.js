@@ -39,26 +39,21 @@ export const NoteBox = ({
    root,
    ratio: [top, bottom] = [],
    color,
-   toggleMode = false,
-   longRelease = true,
+   onMouseDown,
+   onMouseUp,
    ...props
 }) => {
    const frequency = (root * top) / bottom;
 
    return (
-      <Box color={color} {...props}>
+      <Box color={color} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
          <div>&nbsp;</div>
          <Top>
             <Fraction top={top} bottom={bottom} />
          </Top>
          <Bottom>{displayNumber(frequency)}</Bottom>
 
-         <PlayNote
-            playing={playing}
-            frequency={frequency}
-            envelope={{ release: longRelease ? 15 : 2 }}
-            {...props}
-         />
+         <PlayNote playing={playing} frequency={frequency} {...props} />
       </Box>
    );
 };
