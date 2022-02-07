@@ -23,11 +23,9 @@ export const GridNote = ({
       const [top, bottom] = reduceFraction(ratio).map((n) => n - 1);
       const blue = parseInt(
          (255 - ((upperMode ? top - bottom : top) / gridSize) * 255).toFixed(0),
-      ).toString(16);
-      const red = parseInt(
-         (255 - (bottom / gridSize) * 255).toFixed(0),
-      ).toString(16);
-      setColor(playing ? '#080' : `#${blue}00${red}`);
+      );
+      const red = parseInt((255 - (bottom / gridSize) * 255).toFixed(0));
+      setColor(playing ? [0, 128, 0] : [blue, 0, red]);
    }, [...ratio, gridSize, playing, upperMode]);
 
    return (

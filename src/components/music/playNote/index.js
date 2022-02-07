@@ -4,6 +4,7 @@ import { useDidMountEffect, useMusicContext } from '../../../hooks';
 export const PlayNote = ({
    playing,
    frequency,
+   volume = 1,
    envelope: {
       attack = 0.01,
       decay = 0.05,
@@ -18,13 +19,18 @@ export const PlayNote = ({
 
    const decayTime = attack + decay;
    const stopTime = decayTime + release;
+   const sustainVolume = sustain * volume || 0.00000001;
+   const peakVolume = peak * volume || 0.00000001;
 
    useDidMountEffect(() => {
       const stop = () => {
          const osc = oscRef.current;
          const gain = gainRef.current;
 
-         gain.gain.setValueAtTime(sustain, audioCtx.currentTime + decayTime);
+         gain.gain.setValueAtTime(
+            sustainVolume,
+            audioCtx.currentTime + decayTime,
+         );
          gain.gain.exponentialRampToValueAtTime(
             0.00000001,
             audioCtx.currentTime + stopTime,
@@ -43,9 +49,12 @@ export const PlayNote = ({
 
          osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
          gain.gain.setValueAtTime(0, audioCtx.currentTime);
-         gain.gain.linearRampToValueAtTime(peak, audioCtx.currentTime + attack);
+         gain.gain.linearRampToValueAtTime(
+            peakVolume,
+            audioCtx.currentTime + attack,
+         );
          gain.gain.exponentialRampToValueAtTime(
-            sustain,
+            sustainVolume,
             audioCtx.currentTime + decayTime,
          );
 
@@ -65,6 +74,16 @@ export const PlayNote = ({
          );
       }
    }, [frequency]);
+
+   useDidMountEffect(() => {
+      if (playing) {
+         const gain = gainRef.current;
+         gain.gain.linearRampToValueAtTime(
+            sustainVolume,
+            audioCtx.currentTime + 0.05,
+         );
+      }
+   }, [volume]);
 
    return null;
 };

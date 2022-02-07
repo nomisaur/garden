@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { MusicContext, useAppContext } from '../../hooks';
+import { config } from '../../config';
 
 import { NoteGrid } from './noteGrid';
 import { VolumeSlider } from './volumeSlider';
@@ -13,7 +14,7 @@ export const Music = () => {
       masterGain.connect(audioCtx.destination);
    }, []);
 
-   return hasInteracted ? (
+   return hasInteracted || config.isDev ? (
       <MusicContext.Provider value={{ audioCtx, masterGain }}>
          <VolumeSlider />
          <NoteGrid />

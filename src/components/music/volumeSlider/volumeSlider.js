@@ -6,6 +6,8 @@ const Slider = styled.div`
    margin: 5px;
 `;
 
+const Volume = styled.input``;
+
 export const VolumeSlider = () => {
    const { audioCtx, masterGain } = useMusicContext();
    const [volume, setVolume] = useState(0.1);
@@ -13,14 +15,14 @@ export const VolumeSlider = () => {
    useEffect(() => {
       masterGain.gain.linearRampToValueAtTime(
          volume,
-         audioCtx.currentTime + 0.2,
+         audioCtx.currentTime + 0.05,
       );
    }, [volume]);
 
    return (
       <Slider>
          volume:
-         <input
+         <Volume
             type='range'
             min='0'
             max='1'
