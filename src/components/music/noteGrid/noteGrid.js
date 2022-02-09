@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { list } from '../../../utils';
+import { list, reduceFraction } from '../../../utils';
 import { useMusicContext } from '../../../hooks';
 
 import { GridNote } from './gridNote';
@@ -17,18 +17,6 @@ const GridOptions = styled.div`
    width: 800px;
 `;
 
-const NoteRow = ({ row, props }) => (
-   <Row>
-      {row.map(([top, bottom], i) => (
-         <GridNote
-            key={i}
-            ratio={[props.upperMode ? top + bottom - 1 : top, bottom]}
-            {...props}
-         />
-      ))}
-   </Row>
-);
-
 export const NoteGrid = () => {
    const { audioCtx, masterGain } = useMusicContext();
 
@@ -36,7 +24,8 @@ export const NoteGrid = () => {
    const [gridSize, setGridSize] = useState(12);
    const [toggleMode, setToggleMode] = useState(false);
    const [longRelease, setLongRelease] = useState(true);
-   const [upperMode, setUpperMode] = useState(false);
+   const [lowerMode, setLowerMode] = useState(false);
+   const [notesPlaying, setNotesPlaying] = useState({});
 
    const realGridSize = Math.min(gridSize || 1, 32);
    const ratios = list(realGridSize, (a) =>
@@ -89,28 +78,41 @@ export const NoteGrid = () => {
                />
             </div>
             <div>
-               upper mode:
+               lower mode:
                <input
                   type='checkbox'
-                  checked={upperMode}
-                  onChange={(e) => setUpperMode(e.target.checked)}
+                  checked={lowerMode}
+                  onChange={(e) => setLowerMode(e.target.checked)}
                />
             </div>
          </GridOptions>
-         {ratios.map((row, i) => (
-            <NoteRow
-               key={i}
-               row={row}
-               props={{
-                  audioCtx,
-                  masterGain,
-                  root: root || 1,
-                  gridSize: realGridSize,
-                  toggleMode,
-                  longRelease,
-                  upperMode,
-               }}
-            />
+         {ratios.map((row, i1) => (
+            <Row key={i1}>
+               {row.map(([top, bottom], i2) => {
+                  const ratio = [lowerMode ? top : top + bottom - 1, bottom];
+                  const reducedRatio = reduceFraction(ratio);
+                  const noteId = `${ratio[0]},${ratio[1]}`;
+                  const ratioId = `${reducedRatio[0]},${reducedRatio[1]}`;
+                  return (
+                     <GridNote
+                        key={i2}
+                        ratio={ratio}
+                        reducedRatio={reducedRatio}
+                        noteId={noteId}
+                        ratioId={ratioId}
+                        audioCtx={audioCtx}
+                        masterGain={masterGain}
+                        root={root || 1}
+                        gridSize={realGridSize}
+                        toggleMode={toggleMode}
+                        longRelease={longRelease}
+                        lowerMode={lowerMode}
+                        notesPlaying={notesPlaying}
+                        setNotesPlaying={setNotesPlaying}
+                     />
+                  );
+               })}
+            </Row>
          ))}
       </div>
    );
