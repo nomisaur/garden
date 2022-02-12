@@ -29,7 +29,6 @@ export const Main = () => {
             <StyledButton onClick={openScreen('shop')}>shop</StyledButton>
             <StyledButton onClick={openScreen('notes')}>notes</StyledButton>
          </InlineDiv>
-         <Inventory />
          {screens[state.screen]}
       </>
    );

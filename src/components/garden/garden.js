@@ -6,6 +6,7 @@ import { update } from './update';
 
 import { InlineDiv } from '../styled';
 import { Planter } from '../planter';
+import { Inventory } from '../inventory';
 
 export const Garden = () => {
    const { state, handleState } = useAppContext();
@@ -22,10 +23,13 @@ export const Garden = () => {
    });
 
    return (
-      <InlineDiv>
-         {state.planters.map((_, planterIndex) => (
-            <Planter key={planterIndex} planterIndex={planterIndex} />
-         ))}
-      </InlineDiv>
+      <>
+         <Inventory />
+         <InlineDiv>
+            {state.planters.map((_, planterIndex) => (
+               <Planter key={planterIndex} planterIndex={planterIndex} />
+            ))}
+         </InlineDiv>
+      </>
    );
 };

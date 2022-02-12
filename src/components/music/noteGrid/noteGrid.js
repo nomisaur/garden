@@ -9,7 +9,8 @@ import {
    initialToggleMode,
    initialLongRelease,
    initialLowerMode,
-} from './../../../config';
+} from '../../../config';
+import { inlineDiv } from '../../styled';
 
 import { GridNote } from './gridNote';
 
@@ -46,7 +47,7 @@ export const NoteGrid = () => {
                <input
                   type='number'
                   value={root}
-                  min='0'
+                  min='1'
                   max='2000'
                   step='1'
                   onChange={(e) => {
@@ -57,9 +58,9 @@ export const NoteGrid = () => {
                <input
                   type='range'
                   value={root}
-                  min='0'
+                  min='1'
                   max='800'
-                  step='5'
+                  step='1'
                   onChange={(e) => {
                      const num = parseInt(e.target.value);
                      setRoot(Number.isNaN(num) ? '' : num);

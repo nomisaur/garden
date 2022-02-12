@@ -14,26 +14,30 @@ export const PlayNote = ({
    } = {},
 }) => {
    const { audioCtx, masterGain } = useMusicContext();
+
    const oscRef = useRef(false);
-   const gainRef = useRef(false);
+   const envGainRef = useRef(false);
+   const noteGainRef = useRef(false);
+
    const soundingRef = useRef(false);
    const isSounding = soundingRef.current;
 
    const decayTime = attack + decay;
    const stopTime = decayTime + release;
-   const sustainVolume = sustain * volume || 0.00000001;
-   const peakVolume = peak * volume || 0.00000001;
+   const sustainVolume = sustain || 0.00000001;
+   const peakVolume = peak || 0.00000001;
+   const noteVolume = volume || 0.00000001;
 
    useDidMountEffect(() => {
       const stop = () => {
          const osc = oscRef.current;
-         const gain = gainRef.current;
+         const envGain = envGainRef.current;
 
-         gain.gain.setValueAtTime(
+         envGain.gain.setValueAtTime(
             sustainVolume,
             audioCtx.currentTime + decayTime,
          );
-         gain.gain.exponentialRampToValueAtTime(
+         envGain.gain.exponentialRampToValueAtTime(
             0.00000001,
             audioCtx.currentTime + stopTime,
          );
@@ -45,20 +49,25 @@ export const PlayNote = ({
 
       if (playing) {
          oscRef.current = audioCtx.createOscillator();
-         gainRef.current = audioCtx.createGain();
+         envGainRef.current = audioCtx.createGain();
+         noteGainRef.current = audioCtx.createGain();
+
          const osc = oscRef.current;
-         const gain = gainRef.current;
+         const envGain = envGainRef.current;
+         const noteGain = noteGainRef.current;
 
-         osc.connect(gain);
-         gain.connect(masterGain);
+         osc.connect(envGain);
+         envGain.connect(noteGain);
+         noteGain.connect(masterGain);
 
+         noteGain.gain.setValueAtTime(noteVolume, audioCtx.currentTime);
          osc.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-         gain.gain.setValueAtTime(0, audioCtx.currentTime);
-         gain.gain.linearRampToValueAtTime(
+         envGain.gain.setValueAtTime(0, audioCtx.currentTime);
+         envGain.gain.linearRampToValueAtTime(
             peakVolume,
             audioCtx.currentTime + attack,
          );
-         gain.gain.exponentialRampToValueAtTime(
+         envGain.gain.exponentialRampToValueAtTime(
             sustainVolume,
             audioCtx.currentTime + decayTime,
          );
@@ -83,9 +92,9 @@ export const PlayNote = ({
 
    useDidMountEffect(() => {
       if (isSounding) {
-         const gain = gainRef.current;
-         gain.gain.linearRampToValueAtTime(
-            sustainVolume,
+         const noteGain = noteGainRef.current;
+         noteGain.gain.linearRampToValueAtTime(
+            noteVolume,
             audioCtx.currentTime + 0.05,
          );
       }
