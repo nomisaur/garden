@@ -26,7 +26,7 @@ export const VolumeSlider = () => {
             type='range'
             min='0'
             max='1'
-            step='0.05'
+            step='0.01'
             value={volume}
             onChange={(e) => setVolume(parseFloat(e.target.value))}
          />

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 
 import { Fraction } from '../../styled/fractions';
 
@@ -7,7 +6,14 @@ import { displayNumber } from '../../../utils';
 
 import { PlayNote } from '../playNote';
 
-import { Box, Key, Top, Bottom, Volume, VolumeBox } from './noteStyles';
+import {
+   NoteBoxContainer,
+   KeyBox,
+   NoteFraction,
+   NoteFrequency,
+   Volume,
+   VolumeBox,
+} from './noteStyles';
 
 const toHexString = (n) => {
    const nString = n.toString(16);
@@ -39,11 +45,10 @@ export const NoteBox = ({
    );
 
    return (
-      <Box>
+      <NoteBoxContainer>
          <VolumeBox>
             <Volume
                type='range'
-               orient='vertical'
                min='0'
                max='1'
                step='0.05'
@@ -52,12 +57,16 @@ export const NoteBox = ({
                onChange={(e) => setVolume(parseFloat(e.target.value))}
             />
          </VolumeBox>
-         <Key color={keyColor} onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
+         <KeyBox
+            color={keyColor}
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
+         >
             <div>&nbsp;</div>
-            <Top>
+            <NoteFraction>
                <Fraction top={top} bottom={bottom} />
-            </Top>
-            <Bottom>{displayNumber(frequency)}</Bottom>
+            </NoteFraction>
+            <NoteFrequency>{displayNumber(frequency)}</NoteFrequency>
 
             <PlayNote
                playing={playing}
@@ -65,7 +74,7 @@ export const NoteBox = ({
                volume={volume}
                {...props}
             />
-         </Key>
-      </Box>
+         </KeyBox>
+      </NoteBoxContainer>
    );
 };

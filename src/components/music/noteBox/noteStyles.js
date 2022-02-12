@@ -1,20 +1,13 @@
 import styled from 'styled-components';
 
-export const Box = styled.div`
+export const NoteBoxContainer = styled.div`
    width: 80px;
    height: 80px;
    margin: 2px;
    position: relative;
 `;
 
-export const VolumeBox = styled.div`
-   position: absolute;
-   height: 80px;
-   width: 10px;
-   z-index: 1;
-`;
-
-export const Key = styled.div.attrs(({ color }) => {
+export const KeyBox = styled.div.attrs(({ color }) => {
    return {
       style: {
          background: color,
@@ -32,15 +25,22 @@ export const Key = styled.div.attrs(({ color }) => {
    position: absolute;
 `;
 
-export const Top = styled.div`
+export const NoteFraction = styled.div`
    display: flex;
    justify-content: center;
    font-size: 18px;
 `;
-export const Bottom = styled.div`
+export const NoteFrequency = styled.div`
    margin-right: 4px;
    display: flex;
    justify-content: flex-end;
+`;
+
+export const VolumeBox = styled.div`
+   position: absolute;
+   height: 80px;
+   width: 10px;
+   z-index: 1;
 `;
 
 export const Volume = styled.input.attrs(({ color }) => ({

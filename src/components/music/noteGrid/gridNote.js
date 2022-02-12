@@ -33,6 +33,7 @@ export const GridNote = ({
 
    useEffect(() => {
       setPlaying(false);
+      setNotesPlaying({});
    }, [toggleMode]);
 
    useEffect(() => {
