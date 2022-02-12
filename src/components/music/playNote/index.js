@@ -19,9 +19,6 @@ export const PlayNote = ({
    const envGainRef = useRef(false);
    const noteGainRef = useRef(false);
 
-   const soundingRef = useRef(false);
-   const isSounding = soundingRef.current;
-
    const decayTime = attack + decay;
    const stopTime = decayTime + release;
    const sustainVolume = sustain || 0.00000001;
@@ -41,9 +38,6 @@ export const PlayNote = ({
             0.00000001,
             audioCtx.currentTime + stopTime,
          );
-         setTimeout(() => {
-            soundingRef.current = false;
-         }, stopTime * 1000);
          osc.stop(audioCtx.currentTime + stopTime);
       };
 
@@ -73,7 +67,6 @@ export const PlayNote = ({
          );
 
          osc.start(audioCtx.currentTime);
-         soundingRef.current = true;
       } else {
          stop();
       }
@@ -81,18 +74,18 @@ export const PlayNote = ({
    }, [playing]);
 
    useDidMountEffect(() => {
-      if (isSounding) {
-         const osc = oscRef.current;
+      const osc = oscRef.current;
+      if (osc.frequency) {
          osc.frequency.linearRampToValueAtTime(
             frequency,
-            audioCtx.currentTime + 0.5,
+            audioCtx.currentTime + 0.05,
          );
       }
    }, [frequency]);
 
    useDidMountEffect(() => {
-      if (isSounding) {
-         const noteGain = noteGainRef.current;
+      const noteGain = noteGainRef.current;
+      if (noteGain.gain) {
          noteGain.gain.linearRampToValueAtTime(
             noteVolume,
             audioCtx.currentTime + 0.05,

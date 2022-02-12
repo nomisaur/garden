@@ -4,7 +4,6 @@ import { useAppContext } from '../hooks';
 import { StyledButton, InlineDiv } from './styled';
 import { Garden } from './garden';
 import { Music } from './music';
-import { Inventory } from './inventory';
 
 const screens = {
    garden: <Garden />,
