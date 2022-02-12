@@ -1,5 +1,5 @@
 import React from 'react';
-import { config } from '../../config';
+import { ticRate } from '../../config';
 import { useAppContext, useInterval, useDevFunctions } from '../../hooks';
 
 import { update } from './update';
@@ -12,7 +12,7 @@ export const Garden = () => {
 
    const setPaused = useInterval(
       () => Date.now() >= state.timeAtWhichToUpdate && handleState(update),
-      config.ticRate,
+      ticRate,
       [state],
    );
 

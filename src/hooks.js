@@ -7,7 +7,7 @@ import {
    createContext,
 } from 'react';
 import localForage from 'localforage';
-import { config } from './config';
+import { isDev } from './config';
 import { clone, log } from './utils';
 import { getState } from './state';
 
@@ -73,7 +73,7 @@ export const useInterval = (callback, interval, deps = []) => {
 
 export const useDevFunctions = (functions = {}) => {
    useEffect(() => {
-      if (config.isDev) {
+      if (isDev) {
          window.dev = {
             ...window.dev,
             ...functions,

@@ -1,10 +1,10 @@
 import _clone from 'rfdc';
-import { config } from './config';
+import { isDev } from './config';
 
 export const clone = _clone();
 
 export const log = (...args) => {
-   if (config.isDev) {
+   if (isDev) {
       console.log(...args);
    }
 };

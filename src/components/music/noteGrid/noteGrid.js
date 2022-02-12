@@ -3,6 +3,13 @@ import styled from 'styled-components';
 
 import { list, reduceFraction } from '../../../utils';
 import { useMusicContext } from '../../../hooks';
+import {
+   rootFrequency,
+   noteGridSize,
+   initialToggleMode,
+   initialLongRelease,
+   initialLowerMode,
+} from './../../../config';
 
 import { GridNote } from './gridNote';
 
@@ -20,11 +27,11 @@ const GridOptions = styled.div`
 export const NoteGrid = () => {
    const { audioCtx, masterGain } = useMusicContext();
 
-   const [root, setRoot] = useState(200);
-   const [gridSize, setGridSize] = useState(12);
-   const [toggleMode, setToggleMode] = useState(false);
-   const [longRelease, setLongRelease] = useState(true);
-   const [lowerMode, setLowerMode] = useState(false);
+   const [root, setRoot] = useState(rootFrequency);
+   const [gridSize, setGridSize] = useState(noteGridSize);
+   const [toggleMode, setToggleMode] = useState(initialToggleMode);
+   const [longRelease, setLongRelease] = useState(initialLongRelease);
+   const [lowerMode, setLowerMode] = useState(initialLowerMode);
    const [notesPlaying, setNotesPlaying] = useState({});
 
    const realGridSize = Math.min(gridSize || 1, 32);
@@ -39,9 +46,20 @@ export const NoteGrid = () => {
                <input
                   type='number'
                   value={root}
-                  min='1'
+                  min='0'
                   max='2000'
                   step='1'
+                  onChange={(e) => {
+                     const num = parseInt(e.target.value);
+                     setRoot(Number.isNaN(num) ? '' : num);
+                  }}
+               />
+               <input
+                  type='range'
+                  value={root}
+                  min='0'
+                  max='800'
+                  step='5'
                   onChange={(e) => {
                      const num = parseInt(e.target.value);
                      setRoot(Number.isNaN(num) ? '' : num);

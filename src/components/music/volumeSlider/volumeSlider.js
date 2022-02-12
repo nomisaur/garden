@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useMusicContext } from '../../../hooks';
+import { initialVolume } from '../../../config';
 
 const Slider = styled.div`
    margin: 5px;
@@ -10,7 +11,7 @@ const Volume = styled.input``;
 
 export const VolumeSlider = () => {
    const { audioCtx, masterGain } = useMusicContext();
-   const [volume, setVolume] = useState(0.1);
+   const [volume, setVolume] = useState(initialVolume);
 
    useEffect(() => {
       masterGain.gain.linearRampToValueAtTime(
