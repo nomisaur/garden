@@ -1,9 +1,11 @@
 import React from 'react';
-import { useMusicContext } from '../../../hooks';
+import { useMusicContext, useWindowDimensions } from '../../../hooks';
 import { Canvas } from '../canvas';
 
 export const Visualizer = () => {
    const { analyser } = useMusicContext();
+   const { width } = useWindowDimensions();
+
    analyser.fftSize = 2048;
    const bufferLength = analyser.frequencyBinCount;
    const dataArray = new Uint8Array(bufferLength);
@@ -11,7 +13,7 @@ export const Visualizer = () => {
    return (
       <Canvas
          height={200}
-         width={window.innerWidth}
+         width={width}
          draw={(canvasCtx) => {
             const { width, height } = canvasCtx.canvas;
             const sliceWidth = (width * 1.0) / bufferLength;
