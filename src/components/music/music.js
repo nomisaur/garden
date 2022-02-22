@@ -13,7 +13,6 @@ export const Music = () => {
    const [analyser] = useState(audioCtx.createAnalyser());
 
    useEffect(() => {
-      analyser.fftSize = 2048;
       masterGain.connect(analyser);
       analyser.connect(audioCtx.destination);
    }, []);

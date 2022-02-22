@@ -3,24 +3,27 @@ import { useMusicContext } from '../../../hooks';
 import { Canvas } from '../canvas';
 
 export const Visualizer = () => {
-   const { audioCtx, masterGain, analyser } = useMusicContext();
+   const { analyser } = useMusicContext();
+   analyser.fftSize = 2048;
    const bufferLength = analyser.frequencyBinCount;
-   const [dataArray] = useState(new Uint8Array(bufferLength));
-   useEffect(() => {
-      analyser.getByteTimeDomainData(dataArray);
-   }, []);
+   const dataArray = new Uint8Array(bufferLength);
 
    return (
       <Canvas
          height={200}
-         width={1100}
-         style={{ padding: '5px' }}
-         draw={(canvasCtx) => {
+         width={window.innerWidth}
+         setup={(canvasCtx) => {
             const { width, height } = canvasCtx.canvas;
+            canvasCtx.fillStyle = '#000';
+            canvasCtx.strokeStyle = '#fff';
+            canvasCtx.lineWidth = 1;
+            const sliceWidth = (width * 1.0) / bufferLength;
+            return { width, height, sliceWidth };
+         }}
+         draw={(canvasCtx, { width, height, sliceWidth }) => {
             analyser.getByteTimeDomainData(dataArray);
             canvasCtx.clearRect(0, 0, width, height);
             canvasCtx.beginPath();
-            const sliceWidth = (width * 1.0) / bufferLength;
             let x = 0;
             for (let i = 0; i < bufferLength; i++) {
                const v = dataArray[i] / 128.0;
@@ -34,7 +37,6 @@ export const Visualizer = () => {
 
                x += sliceWidth;
             }
-            canvasCtx.lineTo(width, height / 2);
             canvasCtx.stroke();
          }}
       />

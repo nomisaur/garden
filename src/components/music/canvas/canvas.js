@@ -1,28 +1,26 @@
 import React, { useRef, useEffect } from 'react';
 
-export const Canvas = ({ draw, ...props }) => {
+export const Canvas = ({ draw, setup, ...props }) => {
    const canvasRef = useRef(null);
 
    useEffect(() => {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
-      context.fillStyle = '#000';
-      context.lineWidth = 1;
-      context.strokeStyle = '#fff';
+      const drawArgs = setup(context);
+
       let animationFrameId;
 
       const render = () => {
-         draw(context);
+         draw(context, drawArgs);
          animationFrameId = window.requestAnimationFrame(render);
       };
+
       render();
 
       return () => {
          window.cancelAnimationFrame(animationFrameId);
       };
    }, [draw]);
-
-   console.log('Canvas render');
 
    return <canvas ref={canvasRef} {...props} />;
 };
