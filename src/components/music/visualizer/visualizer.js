@@ -12,29 +12,25 @@ export const Visualizer = () => {
       <Canvas
          height={200}
          width={window.innerWidth}
-         setup={(canvasCtx) => {
+         draw={(canvasCtx) => {
+            const { width, height } = canvasCtx.canvas;
+            const sliceWidth = (width * 1.0) / bufferLength;
             canvasCtx.fillStyle = '#000';
             canvasCtx.strokeStyle = '#fff';
             canvasCtx.lineWidth = 1;
-            const { width, height } = canvasCtx.canvas;
-            return {
-               width,
-               height,
-               sliceWidth: (width * 1.0) / bufferLength,
+            return () => {
+               analyser.getByteTimeDomainData(dataArray);
+               canvasCtx.clearRect(0, 0, width, height);
+               canvasCtx.beginPath();
+               let x = 0;
+               for (let i = 0; i < bufferLength; i++) {
+                  const v = dataArray[i] / 128.0;
+                  const y = (v * height) / 2;
+                  canvasCtx.lineTo(x, y);
+                  x += sliceWidth;
+               }
+               canvasCtx.stroke();
             };
-         }}
-         draw={(canvasCtx, { width, height, sliceWidth }) => {
-            analyser.getByteTimeDomainData(dataArray);
-            canvasCtx.clearRect(0, 0, width, height);
-            canvasCtx.beginPath();
-            let x = 0;
-            for (let i = 0; i < bufferLength; i++) {
-               const v = dataArray[i] / 128.0;
-               const y = (v * height) / 2;
-               canvasCtx.lineTo(x, y);
-               x += sliceWidth;
-            }
-            canvasCtx.stroke();
          }}
       />
    );

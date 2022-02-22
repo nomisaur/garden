@@ -1,17 +1,17 @@
 import React, { useRef, useEffect } from 'react';
 
-export const Canvas = ({ draw, setup, ...props }) => {
+export const Canvas = ({ draw, ...props }) => {
    const canvasRef = useRef(null);
 
    useEffect(() => {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
-      const drawArgs = setup(context);
+      const drawFn = draw(context);
 
       let animationFrameId;
 
       const render = () => {
-         draw(context, drawArgs);
+         drawFn();
          animationFrameId = window.requestAnimationFrame(render);
       };
 
