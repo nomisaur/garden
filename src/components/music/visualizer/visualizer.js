@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useRef } from 'react';
+import React from 'react';
 import { useMusicContext } from '../../../hooks';
 import { Canvas } from '../canvas';
 
@@ -16,10 +16,11 @@ export const Visualizer = () => {
             canvasCtx.fillStyle = '#000';
             canvasCtx.strokeStyle = '#fff';
             canvasCtx.lineWidth = 1;
+            const { width, height } = canvasCtx.canvas;
             return {
-               width: canvasCtx.canvas.width,
-               height: canvasCtx.canvas.height,
-               sliceWidth: (canvasCtx.canvas.width * 1.0) / bufferLength,
+               width,
+               height,
+               sliceWidth: (width * 1.0) / bufferLength,
             };
          }}
          draw={(canvasCtx, { width, height, sliceWidth }) => {
@@ -30,13 +31,7 @@ export const Visualizer = () => {
             for (let i = 0; i < bufferLength; i++) {
                const v = dataArray[i] / 128.0;
                const y = (v * height) / 2;
-
-               if (i === 0) {
-                  canvasCtx.moveTo(x, y);
-               } else {
-                  canvasCtx.lineTo(x, y);
-               }
-
+               canvasCtx.lineTo(x, y);
                x += sliceWidth;
             }
             canvasCtx.stroke();
