@@ -19,7 +19,7 @@ export const Visualizer = () => {
             return {
                width: canvasCtx.canvas.width,
                height: canvasCtx.canvas.height,
-               sliceWidth: (width * 1.0) / bufferLength,
+               sliceWidth: (canvasCtx.canvas.width * 1.0) / bufferLength,
             };
          }}
          draw={(canvasCtx, { width, height, sliceWidth }) => {

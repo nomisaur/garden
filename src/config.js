@@ -6,7 +6,7 @@ export const ticRate = 100;
 
 // initial music settings
 export const initialVolume = 0.5;
-export const rootFrequency = 187;
+export const rootFrequency = 187; // works nice with refresh rate
 export const noteGridSize = 14;
 export const initialToggleMode = false;
 export const initialLongRelease = true;
