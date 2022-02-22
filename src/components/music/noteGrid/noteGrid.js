@@ -10,7 +10,6 @@ import {
    initialLongRelease,
    initialLowerMode,
 } from '../../../config';
-import { inlineDiv } from '../../styled';
 
 import { GridNote } from './gridNote';
 

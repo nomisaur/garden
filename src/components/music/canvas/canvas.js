@@ -6,12 +6,14 @@ export const Canvas = ({ draw, ...props }) => {
    useEffect(() => {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
-      const drawFn = draw(context);
+      const drawFn = draw(context, canvas);
 
       let animationFrameId;
+      let lastTime = Date.now();
 
-      const render = () => {
-         drawFn();
+      const render = (currentTime) => {
+         drawFn(currentTime - lastTime);
+         lastTime = currentTime;
          animationFrameId = window.requestAnimationFrame(render);
       };
 
