@@ -5,9 +5,9 @@ export const { isDev } = webpackConfig;
 export const ticRate = 100;
 
 // initial music settings
-export const initialVolume = 0.1;
-export const rootFrequency = 200;
-export const noteGridSize = 12;
+export const initialVolume = 0.5;
+export const rootFrequency = 187;
+export const noteGridSize = 14;
 export const initialToggleMode = false;
 export const initialLongRelease = true;
 export const initialLowerMode = false;
