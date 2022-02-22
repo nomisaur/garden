@@ -13,12 +13,14 @@ export const Visualizer = () => {
          height={200}
          width={window.innerWidth}
          setup={(canvasCtx) => {
-            const { width, height } = canvasCtx.canvas;
             canvasCtx.fillStyle = '#000';
             canvasCtx.strokeStyle = '#fff';
             canvasCtx.lineWidth = 1;
-            const sliceWidth = (width * 1.0) / bufferLength;
-            return { width, height, sliceWidth };
+            return {
+               width: canvasCtx.canvas.width,
+               height: canvasCtx.canvas.height,
+               sliceWidth: (width * 1.0) / bufferLength,
+            };
          }}
          draw={(canvasCtx, { width, height, sliceWidth }) => {
             analyser.getByteTimeDomainData(dataArray);
